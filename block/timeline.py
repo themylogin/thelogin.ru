@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-def block(item=None):
+def block(request, item=None):
     if item is not None:
         start = item["created_at"]
     else:
