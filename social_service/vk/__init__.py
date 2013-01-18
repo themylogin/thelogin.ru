@@ -12,6 +12,9 @@ class Vk:
         return redirect("http://api.vk.com/oauth/authorize?client_id=" + self.client_id + "&redirect_uri=" + urlencode(callback_url) + "&display=page")
 
     def oauth_callback(self, request):
+        if request.args.get("error") is not None:
+            return False
+
         # TODO: import vkontakte
         from utils import urlencode
         import simplejson, urllib2

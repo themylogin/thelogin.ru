@@ -50,6 +50,8 @@
             {% endif %}
             <div class="comment" data-id="{{ comment.id }}">
                 <div class="headline">
+                    {{ comment.identity }}
+
                     {% if comment.identity %}
                         <a href="#" class="avatar"><img src="{{ comment.identity.user.default_identity|identity_avatar|internet_image("_/24") }}" /></a>
 
