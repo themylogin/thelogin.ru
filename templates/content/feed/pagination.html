@@ -1,0 +1,25 @@
+{% if not pagination_item_width %}
+    {% set pagination_item_width = 3.7 %}
+{% endif %}
+
+<div class="pagination" data-item-width="{{ pagination_item_width }}" data-items-per-page="{{ pagination.per_page }}">
+    <div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>
+    <div class="viewport">
+        <div class="overview" style="width: {{ pagination.pages|length * (pagination_item_width * pagination.per_page) }}px;">
+            <div class="seasons {{ pagination.seasons[-1][0] }}" style="width: {{ pagination.pages|length * (pagination_item_width * pagination.per_page) }}px;">
+                {% for (season, count) in pagination.seasons %}
+                    {% if not loop.last %}
+                        {% set width = (count * pagination_item_width)|round|int %}
+                        <div style="width: {{ width }}px;" class="{{ season }}"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="pages">
+                {% for (page, start, end) in pagination.pages %}
+                    <a href="{{ pagination.url }}page/{{ page + 1 }}/" {% if page == pagination.page %}class="current"{% endif %} title="{{ start|date_period(end) }}">{{ page + 1 }}</a>
+                {% endfor %}
+            </div>
+            <div class="marker"></div>
+        </div>
+    </div>
+</div>

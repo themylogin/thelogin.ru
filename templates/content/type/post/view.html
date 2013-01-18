@@ -1,0 +1,21 @@
+{% extends "content/type/abstract/view.html" %}
+
+{% block title %}
+    {% if item.title_html %}
+        <a href="{{ item.url }}">{{ item.title_html|safe }}</a>
+    {% else %}
+        <h1><a href="{{ item.url }}">{{ item.title }}</a></h1>
+    {% endif %}
+{% endblock %}
+
+{% block subtitle %}
+    {% if item.began %}
+        <div class="began">Начато {{ item.began.datetime|datetime }} {% if item.began.music %}под {{ item.began.music }}{% endif %}</div>
+    {% endif %}
+
+    Опубликовано {{ item.created_at|datetime }} {% if item.music %}под {{ item.music }}{% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ item.text|safe }}
+{% endblock %}

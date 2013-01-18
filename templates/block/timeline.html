@@ -1,0 +1,15 @@
+{% extends "block/abstract.html" %} 
+
+{% block title %}
+    Timeline
+    {% if start %}<sup>{{ start|datetime }}</sup>{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="timeline">
+        <div class="loading"></div>
+        <a class="scroll-button up"><div>›</div></a>
+        <div class="events"{% if start %} data-start="{{ start }}"{% endif %}></div>
+        <a class="scroll-button down"><div>‹</div></a>
+    </div>
+{% endblock %}

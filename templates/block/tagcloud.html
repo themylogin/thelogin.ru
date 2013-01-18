@@ -1,0 +1,11 @@
+{% extends "block/abstract.html" %} 
+
+{% block title %}Теги{% endblock %}
+
+{% block content %}
+    <div class="tagcloud">
+        {% for tag, used in tags %}
+            <a href="{{ feed_url }}/tag/{{ tag.url }}/" style="font-size: {{ (8 + 18 * used / biggest_tag)|int }}px;">{{ tag.title }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

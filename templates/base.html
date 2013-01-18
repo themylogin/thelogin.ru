@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="ru-RU">
+<head>
+    <title>
+        {% block base_title %}
+            {{ config.build_title(*breadcrumbs) }}
+        {% endblock %}
+   	</title>
+
+    <meta charset="UTF-8" />
+    {% for property_name in meta_properties %}
+        {% if meta_properties[property_name] %}
+            <meta property="{{ k }}" content="{{ meta_properties[property_name] }}" />
+        {% endif %}
+    {% endfor %}
+
+    <link rel="icon" href="/favicon.ico">
+    {% if rss_title and rss_url %}
+        <link rel="alternate" type="application/rss+xml" title="{{ rss_title }}" href="{{ rss_url }}" />
+    {% endif %}
+
+    {% for stylesheet in assets.css %}
+        <link href="/asset/css/{{ stylesheet }}" media="all" rel="stylesheet" type="text/css"/>
+    {% endfor %}
+
+    {% for script in assets.js %}
+        <script src="/asset/js/{{ script }}"></script>
+    {% endfor %}
+</head>
+<body class="{{ body_class }}">
+    <div id="wrapper">
+        {% block base_header %}
+            <div class="navbar"><div class="wrapper">
+                <ul class="menu">
+                    <li><a href="/" {% if "index" in body_class %}class="active"{% endif %}>Всё</a></li>
+                    <li><a href="/blog/" {% if "blog" in body_class %}class="active"{% endif %}>Блог</a></li>
+                    <li><a href="/gallery/" {% if "gallery" in body_class %}class="active"{% endif %}>Галерея</a></li>
+                    <li><a href="/video/" {% if "video" in body_class %}class="active"{% endif %}>Видео</a></li>
+                    <li><a href="/chatlogs/" {% if "chatlog" in body_class %}class="active"{% endif %}>Логи</a></li>
+                    <!--
+                    <li><a href="/music/" {% if "music" in body_class %}class="active"{% endif %}>Музыка</a></li>
+                    <li><a href="/shop/" {% if "shop" in body_class %}class="active"{% endif %}>Продам</a></li>
+                    -->
+                    <li><a href="/wiki/">Wiki</a></li>
+                    <li><a href="/forum/">Форум</a></li>
+                </ul>
+
+                <div class="authorization {% if request.user %}authorized{% endif %}">
+                    {% if request.user %}
+                        <img class="avatar" src="{{ request.user.default_identity|identity_avatar|internet_image("_/20") }}" />
+                        <span class="nickname">{{ request.user.default_identity|identity_name }}</span>
+                        <img src="/asset/img/social_service/{{ request.user.default_identity.service }}/12x12.png" style="vertical-align: top;" />
+
+                        <ul class="user-menu">
+                            <li><a href="/authorization/identities/">Подключенные сервисы</a></li>
+                            <li><a href="/authorization/logout-others/">Сбросить хэш</a></li>
+                            <li><a href="/authorization/logout/">Выход</a></li>
+                        </ul>
+                    {% else %}
+                        <span class="nickname">Войти через&nbsp;</span>
+                        {% for service in ['facebook', 'foursquare', 'last.fm', 'twitter', 'vk'] %}
+                            <a href="/authorization/{{ service }}/initiate/"><img src="/asset/img/social_service/{{ service }}/16x16.png" style="vertical-align: top; padding: 1px 0;" /></a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div></div>
+        {% endblock %}
+
+        <div class="page-content">
+            {% block base_content %}{% endblock %}
+            <div class="clear"></div>
+        </div>
+
+        <div class="page-footer">
+            {% block base_footer %}{% endblock %}
+
+            {{ block("sape") }}
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,14 @@
+{% extends "content/type/abstract/preview_in_timeline.html" %}
+
+{% block text %}
+    {{ item.description|safe }}
+
+    {% for image in item.images %}
+        <a class="block" href="{{ image.uri|internet_image }}" style="display: block; margin: 5px 0;"><img class="block" src="{{ image.uri|internet_image("48") }}" /></a>
+    {% endfor %}
+    {{ item.notes }}
+{% endblock %}
+
+{% block footer %}
+    {{ item.start|datetime }} &mdash; {{ item.created_at|datetime }}
+{% endblock %}

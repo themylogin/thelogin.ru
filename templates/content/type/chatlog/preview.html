@@ -1,0 +1,13 @@
+{% extends "content/type/abstract/preview.html" %}
+
+{% block title %}
+    <a href="{{ item.url }}">{{ item.type_key }}</a>
+    [ <span class="chatlog-{{ item.id }}-rating"><a href="#" class="chatlog-vote-plus" data-id="{{ item.id }}">+</a> {{ item.rating }} <a href="#" class="chatlog-vote-minus" data-id="{{ item.id }}">-</a></span> ]
+    утверждена {{ item.created_at|datetime }}
+{% endblock %}
+
+{% block subtitle %}{% endblock %}
+
+{% block content %}
+    {{ item.text|safe }}
+{% endblock %}

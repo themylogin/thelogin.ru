@@ -1,0 +1,24 @@
+<div class="title">
+    {% block title %}
+        <h1><a href="{{ item.url }}">{{ item.title }}</a></h1>
+    {% endblock %}
+</div>
+<div class="subtitle">
+    {% block subtitle %}
+        Опубликовано {{ item.created_at|datetime }}
+    {% endblock %}
+</div>
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+<div class="footer">
+    {% block footer %}
+        <div class="social">
+            <a class="share facebook" href="#" data-title="{{ item.title }}" data-url="{{ item.url }}"></a>
+            <a class="share vkontakte" href="#" data-title="{{ item.title }}" data-url="{{ item.url }}"></a>
+            <a class="share twitter" href="#" data-title="{{ item.title }}" data-url="{{ item.url }}"></a>
+        </div>
+        <div class="comments"><a href="{{ item.url }}#comments">{{ item.comments|count|decline("{0} комментарий", "{0} комментария", "{0} комментариев") }}</a> | <a href="{{ item.url }}#post-comment">Прокомментировать</a></div>
+        <div class="clear"></div>
+    {% endblock %}
+</div>

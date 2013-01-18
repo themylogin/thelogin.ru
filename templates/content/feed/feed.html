@@ -1,0 +1,17 @@
+{% extends "base_two_columns.html" %}
+
+{% block main_col %}
+    <div class="feed {{ feed }} content_items" data-feed="{{ feed }}">
+        {{ items|safe }}
+    </div>
+{% endblock %}
+
+{% block right_col %}
+    {{ block("last_comments") }}
+    {{ block("tagcloud", feed=feed) }}
+    {{ block("timeline") }}
+{% endblock %}
+
+{% block base_footer %}
+    {% include "content/feed/pagination.html" %}
+{% endblock %}

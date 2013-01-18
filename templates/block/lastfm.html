@@ -1,0 +1,23 @@
+{% extends "block/abstract.html" %} 
+
+{% block title %}
+    last.fm
+    <sup>{{ from|date }} - {{ to|date }}</sup>
+{% endblock %}
+
+{% block content %}
+    <div class="lastfm">
+        {% for artist in artists %}
+            <div class="artist-wrapper {% if loop.first %}first{% endif %} {% if loop.last %}last{% endif %} {{ loop.cycle('odd', 'even') }}"><div class="artist-wrapper2 {% if loop.first %}first{% endif %} {% if loop.last %}last{% endif %} {{ loop.cycle('odd', 'even') }}">
+                <div class="artist">
+                    <a href="{{ artist.artist_url }}">
+                        <img src="{{ artist.image|internet_image("crop/top/260/195") }}" />
+                        <div class="title">{{ artist.artist }}</div>
+                    </a>
+                    <a href="{{ artist.scrobble_url.thelogin }}" class="scrobbles">({{ artist.scrobbles|decline("{0} прослушивание", "{0} прослушивания", "{0} прослушиваний") }})</a>
+                </div>
+            </div></div>
+        {% endfor %}
+        <div class="clear"></div>
+    </div>
+{% endblock %}

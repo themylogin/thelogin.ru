@@ -1,0 +1,29 @@
+{% extends "content/type/abstract/view.html" %}
+
+{% block content %}
+    <a class="flowplayer video flowplayer-video" href="{{ item.path }}" style="margin: 0 auto;"></a>
+
+    <script type="text/javascript">
+        $(function(){
+            var $video = $(".flowplayer");
+            var $content = $(".content");
+            var onresize = function(){
+                var width = Math.max(Math.min($content.width(), {{ item.width }}), 598);
+                var height = Math.round(width / {{ item.width }} * {{ item.height }});
+
+                if (height > $(window).height() - 100)
+                {
+                    height = Math.max($(window).height() - 100, 480);
+                    width = Math.round(height / {{ item.height }} * {{ item.width }});
+                }
+                
+                $video.width(width);
+                $video.height(height + 30);
+            };
+            $(window).resize(onresize);
+            onresize();
+        });
+    </script>
+    
+    {{ item.text|safe }}
+{% endblock %}

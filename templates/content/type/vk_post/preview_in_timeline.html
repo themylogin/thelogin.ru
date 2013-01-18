@@ -1,0 +1,39 @@
+{% extends "content/type/abstract/preview_in_timeline.html" %}
+
+{% block text %}
+    {{ item.description|safe }}
+
+    {% if item.attachments %}
+        {% for attachment in item.attachments %}
+            {% if attachment.type == "photo" %}
+                {% if attachment.photo.src_xxxbig %}
+                    {% set photo = attachment.photo.src_xxxbig %}
+                {% else %}
+                    {% if attachment.photo.src_big %}
+                        {% set photo = attachment.photo.src_big %}
+                    {% else %}
+                        {% set photo = attachment.photo.src %}
+                    {% endif %}
+                {% endif %}
+                <a class="block" href="{{ photo|internet_image }}"><img class="block" src="{{ photo|internet_image('480') }}" /></a>
+            {% endif %}
+
+            {% if attachment.type == "video" %}
+                {% if attachment.video.image_big %}
+                    {% set image = attachment.video.image_big %}
+                {% else %}
+                    {% set image = attachment.video.image %}
+                {% endif %}
+                <a class="block" href="http://vk.com/video{{ attachment.video.owner_id }}_{{ attachment.video.vid }}"><img class="block" src="{{ image|internet_image('480') }}" /></a>
+            {% endif %}
+
+            {% if attachment.type == "audio" %}
+                <div><a href="{{ item.url }}">♫ {{ attachment.audio.performer }} – {{ attachment.audio.title }}</a></div>
+            {% endif %}
+
+            {% if attachment.type == "link" %}
+                <div><a href="{{ attachment.link.url }}">♞ {{ attachment.link.title }}</a></div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

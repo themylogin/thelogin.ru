@@ -1,0 +1,104 @@
+.navbar
+{
+    width: 100%;
+    height: 42px;
+    background: url(navbar-background.png) repeat-x;
+
+    font-family: 'Helvetica Neue', Arial, Helvetica, 'Liberation Sans', FreeSans, sans-serif;
+    font-size: 13px;
+
+    line-height: 19px;
+}
+.navbar .wrapper
+{
+    width: auto;
+    margin: 0 30px;
+}
+    .navbar .menu
+    {
+        float: left;
+    }
+        .navbar .menu li
+        {
+            float: left;
+            height: 19px;
+        }
+        .navbar .menu li a
+        {
+            display: block;
+            padding: 10px;
+
+            color: #fff;
+        }
+        .navbar .menu li a.active
+        {
+            background: rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+        }
+    .navbar .authorization
+    {
+        float: right;
+        padding: 10px 12px;
+        position: relative;
+    }
+    .navbar .authorization.clicked
+    {
+        background: url(navbar-background-active.png) repeat-x;
+    }
+        .navbar .authorization img.avatar
+        {
+            display: inline-block;
+            vertical-align: top;
+
+            height: 20px;
+            margin-right: 6px;
+        }
+        .navbar .authorization .nickname
+        {
+            color: #BABABA;
+        }
+        .navbar .authorization .dropdown
+        {
+            display: inline-block;
+
+            width: 7px;
+            height: 7px;
+            background: transparent url(navbar-sprite-icons.png) no-repeat scroll -79px -68px;
+
+            margin-top: 8px;
+            margin-left: 1px;
+        }
+
+        .navbar .authorization .user-menu
+        {
+            display: none;
+
+            position: absolute;
+            right: 0px;
+            top: 40px;
+
+            background: #121212;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+
+        }
+            .navbar .authorization .user-menu li a
+            {
+                display: block;
+                padding: 6px 15px;
+                color: #BABABA;
+
+                font-size: 12px;
+                line-height: 18px;
+                font-family: Helvetica Neue, Helvetica, sans-serif;
+            }
+            .navbar .authorization .user-menu li a:hover
+            {
+                background: #3d3d3d;
+                color: #fff;
+            }
+        .navbar .authorization.clicked .user-menu
+        {
+            display: block;
+        }

@@ -1,0 +1,189 @@
+.comments-title
+{
+    margin: 20px 0;
+    
+    font-size: 22px;
+    line-height: 26px;
+}
+
+.comment
+{
+    overflow: auto;
+    margin-bottom: 9px;
+
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+    .comment .headline
+    {
+    }
+        .comment .headline .avatar
+        {
+            float: left;
+            margin-right: 10px;
+        }
+            .comment .headline .avatar img
+            {
+                display: block;
+                height: 24px;
+            }
+        .comment .headline .username
+        {
+            float: left;
+            color: #666666;
+            font-weight: bold;
+            text-decoration: underline;
+
+            font-size: 11px;
+            margin-top: 2px;
+            margin-right: 10px;
+        }
+            .comment .headline .username.anonymous
+            {
+                text-decoration: none;
+            }
+        .comment .headline .datetime
+        {
+            float: left;
+            color: #666666;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .comment .headline .i
+        {
+            float: right;
+            color: #666666;
+            font-size: 11px;
+            margin-top: 2px;
+            margin-right: 8px;
+            text-decoration: underline;
+        }
+        .comment .headline .button
+        {
+            font-size: 12px;
+            line-height: 14px;
+            font-family: Tahoma, Arial, Helvetica, sans-serif;
+            
+            margin-top: 1px;
+            margin-left: 4px;
+            
+            float: right;
+            display: block;
+            width: 16px;
+            height: 16px;
+            text-align: center;
+            
+            border: 2px solid #aaa;
+            font-weight: 800;
+            color: #aaa;
+        }
+        .comment .headline .button.clicked
+        {
+            border: 2px solid #ddd;
+            color: #ddd;
+        }
+    .comment .text
+    {
+        margin: 5px 0 0;
+        padding-bottom: 6px;
+    }
+        .comment .text a
+        {
+            text-decoration: underline;
+        }
+        .comment .text img
+        {
+            max-width: 100%;
+        }
+        .comment .text var
+        {
+            background: #f0f0f0;
+            font-family: monospace;
+            font-style: normal;
+        }
+        .comment .text pre
+        {
+            /* white-space: normal; */
+            overflow: auto;
+            padding: 2px 5px;
+            background: #F0F0F0;
+            margin: 5px 0 5px;
+        }
+        .comment .text blockquote
+        {
+            border-left: 2px solid #BBB;
+            padding-left: 15px;
+            margin: 5px 0 5px;
+        }
+    .comment .plaintext
+    {
+        display: none;
+    }
+
+.comments-subtitle
+{
+    color: #666666;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+    .comments-subtitle a.username
+    {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+    .comments-subtitle .image-uploader
+    {
+        text-decoration: underline;
+    }
+    
+.comments-form
+{
+    
+}
+    .comments-form .email-field
+    {
+        display: none;
+    }
+    .comments-form textarea
+    {
+        width: 100%;
+        padding: 2px 4px;
+        height: 100px;
+
+        border: 1px solid #333;
+
+        color: #333;
+        font-size: 13px;
+        font-family: Helvetica Neue, Helvetica, sans-serif;
+    }
+    .comments-form input
+    {
+        margin-top: 2px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        padding: 2px 6px;
+        background: #eee;
+    }
+
+.user-comment-row
+{
+    position: relative;
+}
+    .user-comment-row .content
+    {
+        width: 170px;
+        position: absolute;
+
+        padding-top: 2px;
+        font-family: Tahoma, Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        line-height: 14px;
+    }
+        .user-comment-row .content a
+        {
+            text-decoration: underline;
+        }
+    .user-comment-row .comment
+    {
+        padding-left: 200px;
+    }

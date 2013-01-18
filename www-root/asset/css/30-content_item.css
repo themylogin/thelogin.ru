@@ -1,0 +1,217 @@
+.content_item
+{
+    margin-bottom: 20px;
+}
+    .content_item .title
+    {
+    }
+        .content_item .title h1
+        {
+            font-size: 22px;
+            line-height: 26px;
+        }
+        .content_item .title h1 a
+        {
+            font-size: 22px;
+            line-height: 26px;
+        }
+        .content_item .title h1 a:hover
+        {
+            background: #333;
+            color: #fff;
+        }
+    .content_item .subtitle
+    {
+        color: #aaa;
+        margin: 10px 0;
+        font-size: 13px;
+        line-height: 18px;
+    }
+        .content_item .subtitle .began
+        {
+            margin-bottom: 10px;
+        }
+        .content_item .subtitle .icons
+        {
+            float: right;
+        }
+    .content_item .content
+    {
+    }
+        .content_item .content a
+        {
+            color: #000;
+            text-decoration: underline;
+        }
+        .content_item .content a:hover
+        {
+            color: #999;
+        }
+        .content_item .content p
+        {
+            margin: 5px 0 5px;
+        }
+        .content_item .content h1
+        {
+            font-size: 20px;
+            margin: 10px 0 10px;
+        }
+        .content_item .content h2
+        {
+            font-size: 16px;
+            margin: 5px 0 5px;
+        }
+        .content_item .content blockquote
+        {
+            margin: 5px 0 5px 1px;
+            border-left: 2px solid #BBB;
+            padding-left: 15px;
+        }
+        .content_item .content hr
+        {
+            background: #666;
+            height: 1px;
+            margin: 6px 0 5px;
+        }
+        .content_item .content img
+        {
+            display: block;
+            max-width: 100%;
+        }
+        .content_item .content img.smilie, .content_item .content img.math
+        {
+            display: inline;
+        }
+        .content_item .content input
+        {
+            border: 1px solid #000;
+        }
+        .content_item .content pre
+        {
+            overflow: auto;
+            padding: 2px 5px;
+            background: #f0f0f0;
+        }
+        .content_item .content var
+        {
+            background: #f0f0f0;
+            font-family: monospace;
+            font-style: normal;
+        }
+        .content_item .content ul li
+        {
+            padding-left: 20px;
+            background: url('fleur-star.png') 0 6px no-repeat;
+        }
+        .content_item .content .image
+        {
+            max-width: 100%;
+        }
+        .content_item .content .image a
+        {
+            display: block;
+            max-width: 100%;
+        }
+        .content_item .content .image.big a
+        {
+            margin: 0 auto;
+        }
+        .content_item .content .image.left a
+        {
+            margin-left: 0;
+        }
+        .content_item .content .image.thumb.left
+        {
+            float: left;
+            margin: 5px 5px 5px 0;
+        }
+        .content_item .content .image.thumb.right
+        {
+            float: right;
+            margin: 5px 0 5px 5px;
+        }
+        
+        .content_item .content a.footnote-sup
+        {
+            font-size: 11px;
+            text-decoration: none;
+            
+            position: relative;
+            top: -5px;
+            left: 2px;
+            margin-right: 4px;
+        }
+        .content_item .content a.footnote-sup:hover
+        {
+            color: #fff;
+            background: #888;
+        }
+        .content_item .content .footnotes
+        {
+            font-size: 11px;
+            line-height: 18px;
+
+            margin-top: 10px;
+            padding: 11px 0 0;
+            border-top: 1px solid #aaa;
+        }
+
+        .content_item .content table, .content_item .content table td, .content_item .content table th
+        {
+            border-collapse: collapse;
+        }
+            .content_item .content table.light, .content_item .content table.light th, .content_item .content table.light td
+            {
+                border: 1px solid #aaa;
+            }
+            .content_item .content table.light th, .content_item .content table.light td
+            {
+                padding: 2px 4px;
+            }
+            .content_item .content table.light th
+            {
+                background: #eee;
+            }
+    .content_item .footer
+    {
+        color: #aaa;
+        margin: 10px 0;
+        font-size: 13px;
+        line-height: 18px;
+    }
+        .content_item .footer a
+        {
+            text-decoration: underline;
+        }
+        .content_item .footer .tags
+        {
+            margin-bottom: 10px;
+        }
+            .content_item .footer .tags.admin
+            {
+                background: #80ba47;
+                border: 1px solid #999;
+                color: #eee;
+                
+                padding: 10px;
+            }
+            .content_item .footer .tags.admin a
+            {
+                display: block;
+                float: left;
+                padding-right: 10px;
+            }
+        .content_item .footer .social
+        {
+            float: left;
+
+            padding-right: 10px;
+        }
+        .content_item .footer .comments
+        {
+            float: left;
+        }
+.content_item.invisible, .content_item.invisible a
+{
+    color: #888;
+}

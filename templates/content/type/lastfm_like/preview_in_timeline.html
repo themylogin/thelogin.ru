@@ -1,0 +1,5 @@
+{% extends "content/type/abstract/preview_in_timeline.html" %}
+
+{% block text %}
+    <a href="{{ item.artist_url }}">{{ item.artist }}</a> – <a href="{{ item.track_url }}">{{ item.track }}</a>
+{% endblock %}

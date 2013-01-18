@@ -1,0 +1,12 @@
+{% extends "block/abstract.html" %} 
+
+{% block title %}Навигация{% endblock %}
+
+{% block content %}
+    {% if prev %}
+        <div style="text-align: left;"><a href="{{ prev.url }}">← {{ prev.title }}</a></div>
+    {% endif %}
+    {% if next %}
+        <div style="text-align: right;"><a href="{{ next.url }}">{{ next.title }} →</a></div>
+    {% endif %}
+{% endblock %}

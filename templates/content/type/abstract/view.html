@@ -1,0 +1,109 @@
+{% extends "base_two_columns.html" %} 
+
+{% block main_col %}
+    <div class="view content_item {{ item.base_type }} {{ item.type }}">
+        {% block content_item %}
+            <div class="title">
+                {% block title %}
+                    <h1><a href="{{ item.url }}">{{ item.title }}</a></h1>
+                {% endblock %}
+            </div>
+            <div class="subtitle">
+                {% block subtitle %}
+                    Опубликовано {{ item.created_at|datetime }}
+                {% endblock %}
+            </div>
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+            <div class="footer">
+                {% block footer %}
+                    {% if item.tags %}
+                        <div class="tags">
+                            Теги:
+                            {% for tag in item.tags %}
+                                <a href="/tag/{{ tag.url }}/">{{ tag.title }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="social">
+                        <a class="share facebook" href="#" data-title="{{ item.title }}" data-url="{{ item.url }}"></a>
+                        <a class="share vkontakte" href="#" data-title="{{ item.title }}" data-url="{{ item.url }}"></a>
+                        <a class="share twitter" href="#" data-title="{{ item.title }}" data-url="{{ item.url }}"></a>
+                    </div>
+                    <div class="comments"><a href="{{ item.url }}#comments">{{ item.comments|count|decline("{0} комментарий", "{0} комментария", "{0} комментариев") }}</a> | <a href="{{ item.url }}#post-comment">Прокомментировать</a></div>
+                    <div class="clear"></div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+
+    <a name="comments"></a>
+    {% if item.comments %}
+        <div class="comments-title">Комментарии ({{ item.comments|length }})</div>
+    {% endif %}
+    <div class="comments-list">
+        {% for comment in item.comments %}
+            <a name="comment-{{ loop.index }}"></a>
+            {% if loop.last %}
+                <a name="last-comment"></a>
+            {% endif %}
+            <div class="comment" data-id="{{ comment.id }}">
+                <div class="headline">
+                    {% if comment.identity %}
+                        <a href="#" class="avatar"><img src="{{ comment.identity.user.default_identity|identity_avatar|internet_image("_/24") }}" /></a>
+
+                        <a href="/user/{{ comment.identity.user.id }}/comments/" class="username">{{ comment.identity.user.default_identity|identity_name }}</a>
+                    {% else %}
+                        <span class="username anonymous">anonymous</span>
+                    {% endif %}
+
+                    <div class="datetime">{{ comment.created_at|datetime }}</div>
+
+                    {% if request.user and comment.identity and request.user.id == comment.identity.user.id and loop.last %}<a class="button edit-comment" href="#" title="Редактировать комментарий">E</a>{% endif %}
+                    <a class="button quote-selected" href="#" title="Цитировать выделенное (Ctrl+Enter)">S</a>
+                    <a class="button quote-comment" href="#" title="Цитировать комментарий">Q</a>
+                    <a class="i" href="#comment-{{ loop.index }}">#{{ loop.index }}</a>
+
+                    <div class="clear"></div>
+                </div>
+
+                <div class="text">{{ comment.text|process_comment_text|safe }}</div>
+                <div class="plaintext">{{ comment.text }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a name="post-comment"></a>
+    <div class="comments-title" style="margin-bottom: 3px;">Добавить комментарий</div>
+    <div class="comments-subtitle">
+        {% if request.user %}
+            Вы вошли как <a class="username" href="/authorization/identities/">{{ request.user.default_identity|identity_name }}</a>.
+        {% else %}
+            Войдите через&nbsp;
+            {% for service in ['facebook', 'foursquare', 'last.fm', 'twitter', 'vk'] %}
+                <a href="/authorization/{{ service }}/initiate/"><img src="/asset/img/social_service/{{ service }}/16x16.png" style="vertical-align: top; margin: -1px 0;" /></a>
+            {% endfor %}
+        {% endif %}
+
+        Доступные тэги: <a class="tag-helper-b" href="#">&lt;b&gt;</a>, <a class="tag-helper-u" href="#">&lt;i&gt;</a>, <a class="tag-helper-s" href="#">&lt;s&gt;</a>, <a class="tag-helper-u" href="#">&lt;u&gt;</a>, <a class="tag-helper-a" href="#">&lt;a href=&quot;&quot;&gt;</a>, <a class="tag-helper-img" href="#">&lt;img src=&quot;&quot; /&gt;</a> (<a class="image-uploader" href="#">загрузить</a>), <a class="tag-helper-pre" href="#">&lt;pre&gt;</a>, <a class="tag-helper-quote" href="#">&lt;quote&gt;</a>
+    </div>
+    <div class="comments-form main">
+        <form action="/content/post-comment/{{ item.id }}/" method="post">
+            <div class="email-field">
+                E-Mail: <input type="text" name="email" />
+            </div>
+            
+            <textarea name="text"></textarea>
+            <input type="submit" value="Добавить комментарий" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block right_col %}
+    {{ block("content_item_next_prev", item=item, feed="index") }}
+    {{ block("last_comments") }}
+    {{ block("tagcloud", feed="index") }}
+    {{ block("timeline", item=item) }}
+    {{ block("lastfm", to=item.created_at) }}
+{% endblock %}

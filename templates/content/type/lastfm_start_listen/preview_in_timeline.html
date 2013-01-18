@@ -1,0 +1,10 @@
+{% extends "content/type/abstract/preview_in_timeline.html" %}
+
+{% block text %}
+    <a href="{{ item.artist_url }}">{{ item.artist }}</a> – <a href="{{ item.track_url }}">{{ item.track }}</a>
+    <a class="block" href="{{ item.picture|internet_image }}"><img src="{{ item.picture|internet_image('480') }}" /></a>
+{% endblock %}
+
+{% block footer %}
+    <a href="{{ item.scrobble_url.thelogin }}">{{ item.created_at|datetime }}</a>{% if item.totally_first_scrobble %}, первый раз <a href="{{ item.totally_first_scrobble.scrobble_url.thelogin }}">{{ item.totally_first_scrobble.created_at|datetime }}</a> (<a href="{{ item.totally_first_scrobble.track_url }}">{{ item.totally_first_scrobble.track }}</a>){% endif %}
+{% endblock %}

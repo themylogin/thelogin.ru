@@ -1,0 +1,20 @@
+{% set thumb_width = 345 %}
+{% set thumb_height = 259 %}
+
+{% if item.width / item.height > thumb_width / thumb_height %}
+    {% set uncropped_thumb_width = (thumb_height * item.width / item.height)|int %}
+    {% set uncropped_thumb_height = thumb_height %}
+{% else %}
+    {% set uncropped_thumb_width = thumb_width %}
+    {% set uncropped_thumb_height = (thumb_width * item.height / item.width)|int %}
+{% endif %}
+{% if (uncropped_thumb_width - thumb_width)|abs < 10 and (uncropped_thumb_height - thumb_height)|abs < 10 %}
+    {% set uncropped_thumb_width = thumb_width %}
+    {% set uncropped_thumb_height = thumb_height %}
+{% endif %}
+{% set crop_left = (uncropped_thumb_width - thumb_width) // 2 %}
+{% set crop_top = (uncropped_thumb_height - thumb_height) // 2 %}
+
+<a href="{{ item.url }}">
+    <img alt="{{ item.title }}" data-width="{{ item.width }}" data-height="{{ item.height }}" src="/{{ item.directory }}/stretch/{{ uncropped_thumb_width }}/{{ uncropped_thumb_height }}/{{ item.filename }}" style="top: -{{ crop_top }}px; left: -{{ crop_left }}px;" />
+</a>

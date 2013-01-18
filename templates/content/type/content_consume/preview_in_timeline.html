@@ -1,0 +1,29 @@
+{% extends "content/type/abstract/preview_in_timeline.html" %}
+
+{% block text %}
+    <table cellspacing="0" cellpassing="0" style="margin: 5px 0; width: 100%;">
+        <tr>
+            <td style="width: 50%; background: #000 url('/{{ item.image_directory }}/240/{{ item.images[0] }}') left bottom no-repeat;"><img src="/{{ item.image_directory }}/240/{{ item.images[0] }}" style="display: block; width: 100%;" /></td>
+            <td><div style="width: 8px;"></div></td>
+            <td style="width: 50%; background: #000 url('/{{ item.image_directory }}/240/{{ item.images[1] }}') left bottom no-repeat;"><img src="/{{ item.image_directory }}/240/{{ item.images[1] }}" style="display: block; width: 100%;" /></td>
+        </tr>
+        <tr><td colspan="3" style="height: 8px;"></td></td>
+        <tr>
+            <td style="width: 50%; background: #000 url('/{{ item.image_directory }}/240/{{ item.images[2] }}') left bottom no-repeat;"><img src="/{{ item.image_directory }}/240/{{ item.images[2] }}" style="display: block; width: 100%;" /></td>
+            <td><div style="width: 8px;"></div></td>
+            <td style="width: 50%; background: #000 url('/{{ item.image_directory }}/240/{{ item.images[3] }}') left bottom no-repeat;"><img src="/{{ item.image_directory }}/240/{{ item.images[3] }}" style="display: block; width: 100%;" /></td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block footer %}
+    {% if item.start %}
+        {{ item.start|datetime }} &mdash; {{ item.created_at|datetime }}
+    {% else %}
+        {{ item.created_at|datetime }}
+    {% endif %}
+    
+    {% if item.download %}
+        <div>Скачано {{ item.download|datetime }}</div>
+    {% endif %}
+{% endblock %}

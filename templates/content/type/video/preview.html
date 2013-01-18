@@ -1,0 +1,13 @@
+{% extends "content/type/abstract/preview.html" %}
+
+{% block content %}
+    <div class="image thumb left" style="margin-top: 2px; margin-bottom: 2px;">
+        <a href="{{ item.url }}">
+            <img src="/{{ item.preview_directory }}/stretch/150/{{ item.preview_filename }}" />
+        </a>
+    </div>
+
+    <div style="float: left; width: 545px; margin-top: -5px; margin-left: 2px;">{{ item.text|safe }}</div>
+
+    <div class="clear"></div>
+{% endblock %}

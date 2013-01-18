@@ -1,0 +1,97 @@
+.social .share
+{
+    display: block;
+    float: left;
+
+    margin-left: 3px;
+    width: 16px;
+    height: 16px;
+}
+    .social .share.facebook
+    {
+        background: url(/images/social-services/facebook.png);
+    }
+    .social .share.vkontakte
+    {
+        background: url(/images/social-services/vkontakte.png);
+    }
+    .social .share.twitter
+    {
+        background: url(/images/social-services/twitter.png);
+    }
+
+.social .shared
+{
+    display: block;
+    float: left;
+    
+    margin-left: 3px;
+}
+    .social .shared.vkontakte
+    {
+        text-decoration: none;
+    }
+        .social .shared.vkontakte .before
+        {
+            float: left;
+
+            width: 6px;
+            height: 16px;
+            background: url(/images/social-services/vkontakte-like-l.png);
+        }
+        .social .shared.vkontakte .middle
+        {
+            float: left;
+            
+            background: url(/images/social-services/vkontakte-like-m.png);
+            height: 16px;
+        }
+            .social .shared.vkontakte .middle div
+            {
+                padding: 0 2px;
+                
+                color: #2B587A;
+                font: bold 11px/15px tahoma, verdana, arial, sans-serif, 'Lucida Sans';
+            }
+        .social .shared.vkontakte .after
+        {
+            float: left;
+
+            width: 2px;
+            height: 16px;
+            background: url(/images/social-services/vkontakte-like-r.png);
+        }
+    .social .shared.twitter
+    {
+        text-decoration: none;
+    }
+        .social .shared.twitter .before
+        {
+            float: left;
+
+            width: 5px;
+            height: 16px;
+            background: url(/images/social-services/twitter-like-l.png);
+        }
+        .social .shared.twitter .middle
+        {
+            float: left;
+
+            background: url(/images/social-services/twitter-like-m.png);
+            height: 16px;
+        }
+            .social .shared.twitter .middle div
+            {
+                padding: 0 2px;
+
+                color: #333;
+                font: normal 11px/16px 'Helvetica Neue', Arial, sans-serif;
+            }
+        .social .shared.twitter .after
+        {
+            float: left;
+
+            width: 3px;
+            height: 16px;
+            background: url(/images/social-services/twitter-like-r.png);
+        }

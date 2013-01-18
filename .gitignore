@@ -1,0 +1,8 @@
+*.py[co]
+
+config.py
+log.txt
+log_debug.txt
+profile.txt
+
+packed-*

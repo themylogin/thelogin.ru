@@ -1,0 +1,26 @@
+.identity
+{
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+    .identity .avatar
+    {
+        float: left;
+        margin-right: 10px;
+    }
+        .identity .avatar img
+        {
+            display: block;
+            height: 24px;
+        }
+    .identity .username
+    {
+        float: left;
+        color: #666666;
+        font-weight: bold;
+        text-decoration: underline;
+
+        font-size: 11px;
+        margin-top: 2px;
+        margin-right: 10px;
+    }

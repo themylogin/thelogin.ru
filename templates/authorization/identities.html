@@ -1,0 +1,55 @@
+{% extends "base.html" %} 
+
+{% block base_content %}
+    <h1>Мои сервисы</h1>
+    <p>Вы можете входить в свой аккаунт, используя различные социальные сервисы.</p>
+
+    <h2>Основной сервис</h2>
+    <div style="margin: 10px 0;">
+        <div style="float: left; margin-right: 10px;">
+            <img src="/asset/img/social_service/{{ default_identity.service }}/145x45.png" />
+        </div>
+        <div style="float: left;">
+            <div class="identity">
+                <a href="#" class="avatar"><img src="{{ default_identity|identity_avatar|internet_image("_/24") }}"></a>
+                <a href="{{ default_identity|identity_url }}" class="username">{{ default_identity|identity_name }}</a>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    {% if attached_identities %}
+        <h2>Привязанные сервисы</h2>
+        {% for identity in attached_identities %}
+            <div style="margin: 10px 0;">
+                <div style="float: left; margin-right: 10px;">
+                    <img src="/asset/img/social_service/{{ identity.service }}/145x45.png" />
+                </div>
+                <div style="float: left;">
+                    <div class="identity">
+                        <a href="#" class="avatar"><img src="{{ identity|identity_avatar|internet_image("_/24") }}"></a>
+                        <a href="{{ identity|identity_url }}" class="username">{{ identity|identity_name }}</a>
+                        <div class="clear"></div>
+
+                        <div style="margin-top: 2px;">
+                            <form action="/authorization/set-default-identity/" method="post">
+                                <input type="hidden" name="id" value="{{ identity.id }}" />
+                                <a href="#" style="font-size: 12px; text-decoration: underline;" onclick="$(this).parent().submit(); return false;">Сделать основным</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if available_services %}
+        <h2>Доступные сервисы</h2>
+        {% for service in available_services %}
+            <div style="margin: 10px 0;">
+                <a href="/authorization/{{ service }}/initiate/"><img src="/asset/img/social_service/{{ service }}/145x45.png" /></a>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

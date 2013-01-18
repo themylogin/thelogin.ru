@@ -1,0 +1,230 @@
+.timeline
+{
+    margin-top: 5px;
+    background: #fff;
+    border-radius: 15px;
+
+    position: relative;
+    overflow: hidden;
+    height: 0px;
+}
+
+.timeline .scroll-button
+{
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    z-index: 1000;
+
+    font-size: 40px;
+    font-family: Arial;
+
+    display: block;
+    cursor: pointer;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.timeline .scroll-button:hover
+{
+    background: rgba(0, 0, 0, 0.0585938);
+}
+    .timeline .scroll-button div
+    {
+        display: none;
+    }
+    .timeline .scroll-button:hover div
+    {
+        display: block;
+        z-index: 1000;
+
+        width: 10px;
+        height: 30px;
+
+        margin: 6px auto;
+        color: rgba(0, 0, 0, 0.496094);
+
+        -webkit-transform: rotate(-90deg); 
+        -moz-transform: rotate(-90deg);
+    }
+.timeline .scroll-button.up
+{
+    top: 0px; left: 0px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+.timeline .scroll-button.down
+{
+    bottom: 0px; left: 0px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.timeline .events
+{
+    position: absolute;
+    width: 100%;
+}
+    .timeline .events .content_item
+    {
+        border-bottom: 1px solid #ebebeb;
+        margin: 0;
+        position: relative;
+    }
+        .timeline .events .content_item .copy
+        {
+            background: url(retweet.png) top right no-repeat;
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .timeline .events .content_item .left
+        {
+            float: left;
+            width: 48px;
+            padding: 13px 10px 11px 20px;
+        }
+        .timeline .events .content_item .right
+        {
+            padding: 8px 13px 8px 78px;
+        }
+            .timeline .events .content_item .right .title
+            {
+                font: 13px/20px Arial, Helvetica, sans-serif;
+            }
+                .timeline .events .content_item .right .title a
+                {
+                    font-weight: 800;
+                }
+                .timeline .events .content_item .right .title .light
+                {
+                    color: #999;
+                }
+
+            .timeline .events .content_item .right .text
+            {
+                overflow: hidden;
+            }
+                .timeline .events .content_item .right .text .block
+                {
+                    display: block;
+                    margin: 5px 0;
+                }
+                    .timeline .events .content_item .right .text .block img
+                    {
+                        display: block;
+                        max-width: 100%;
+                    }
+
+            .timeline .events .content_item .footer
+            {
+                margin: 0px;
+                color: #999;
+                font: 13px/20px Arial, Helvetica, sans-serif;
+            }
+                .timeline .events .content_item .footer a
+                {
+                    text-decoration: none;
+                }
+
+    .timeline .events .content_item.github_action
+    {
+
+    }
+        .timeline .events .content_item.github_action .right
+        {
+
+        }
+            .timeline .events .content_item.github_action .right .text
+            {
+            }
+                .timeline .events .content_item.github_action .right .text a
+                {
+                    color: #4183C4;
+                }
+                .timeline .events .content_item.github_action .right .text li a
+                {
+                    font-family: Consolas, "Liberation Mono", Courier, monospace;
+                    line-height: 14px;
+                }
+                .timeline .events .content_item.github_action .right .text li.more a
+                {
+                    font-family: inherit;
+                }
+                .timeline .events .content_item.github_action .right .text li .message,
+                .timeline .events .content_item.github_action .right .text li .message blockquote,
+                .timeline .events .content_item.github_action .right .text li .message blockquote div
+                {
+                    display: inline;
+                }
+
+    .timeline .events .content_item.lastfm_like
+    {
+
+    }
+        .timeline .events .content_item.lastfm_like .right
+        {
+
+        }
+            .timeline .events .content_item.lastfm_like .right .text
+            {
+            }
+                .timeline .events .content_item.lastfm_like .right .text a
+                {
+                    color: #0187c5;
+                }
+
+    .timeline .events .content_item.runkeeper
+    {
+
+    }
+        .timeline .events .content_item.runkeeper .right
+        {
+
+        }
+            .timeline .events .content_item.runkeeper .right .text
+            {
+            }
+                .timeline .events .content_item.runkeeper .right .text a
+                {
+                    color: #2A5db0;
+                }
+
+    .timeline .events .content_item.tweet
+    {
+
+    }
+        .timeline .events .content_item.tweet .right
+        {
+
+        }
+            .timeline .events .content_item.tweet .right .text
+            {
+            }
+                .timeline .events .content_item.tweet .right .text a
+                {
+                    color: #81b044;
+                }
+
+    .timeline .events .content_item.vk
+    {
+
+    }
+        .timeline .events .content_item.vk .right
+        {
+
+        }
+            .timeline .events .content_item.vk .right .text
+            {
+            }
+                .timeline .events .content_item.vk .right .text a
+                {
+                    color: #2d587a;
+                    font-weight: 800;
+                }

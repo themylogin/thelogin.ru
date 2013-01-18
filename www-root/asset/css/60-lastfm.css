@@ -1,0 +1,25 @@
+table.lastfm-scrobbles
+{
+    font-size: 11px;
+    font-family: "Lucida Grande", Arial, Helvetica, Verdana, sans-serif;
+    line-height: 1.5em;
+    border-spacing: 0px;
+    width: 100%;
+}
+    table.lastfm-scrobbles tr.even
+    {
+        background-color: #EBEBEB;
+    }
+    table.lastfm-scrobbles th
+    {
+        text-align: left;
+    }
+    table.lastfm-scrobbles th, table.lastfm-scrobbles td
+    {
+        padding: 5px 10px;
+        border-bottom: 1px solid #ccc;
+    }
+    table.lastfm-scrobbles td.border-left
+    {
+        border-left: 1px solid #ccc;
+    }

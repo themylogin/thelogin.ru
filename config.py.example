@@ -1,0 +1,111 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from utils import ReadonlyPropertiesMetaclass
+import russian_datetime
+import datetime
+import logging, os
+
+class Config:
+    __metaclass__ = ReadonlyPropertiesMetaclass
+    __readonly__ = {
+        "debug"                         : False,
+
+        "url"                           : "http://thelogin.ru",
+        "path"                          : "/home/themylogin/www/thelogin.ru",
+
+        "db"                            : "mysql://user:password@localhost/db?charset=utf8"
+        "cache"                         : {
+                                              "type"    : "ext:memcached",
+                                              "url"     : "127.0.0.1:11211",
+                                              "lock_dir": "/tmp/thelogin/lock",
+                                          },
+        "log"                           : logging.FileHandler(os.path.join(os.path.dirname(__file__), "log.txt")),
+
+        "format_date"                   : russian_datetime.format_date,
+        "format_time"                   : russian_datetime.format_time,
+        "format_datetime"               : russian_datetime.format_datetime,
+        "format_datetime_relative"      : russian_datetime.format_datetime_relative,
+        "format_date_period"            : russian_datetime.format_date_period,
+        "timezone"                      : datetime.timedelta(hours=7),
+                
+        "default_title"                 : "thelogin.ru",
+        "build_title"                   : lambda *breadcrumbs: u" - ".join(reversed(breadcrumbs)) + u" - thelogin.ru",
+
+        "user_inactivity_till_leave"    : datetime.timedelta(minutes=10),
+
+        "forbid_internet_image"         : ["thelogin.ru", "debug.thelogin.ru"],
+
+        "twitter_oauth_consumer_key"    : "https://dev.twitter.com/apps"
+        "twitter_oauth_consumer_secret" : "https://dev.twitter.com/apps"
+        "twitter_access_token_key"      : "https://dev.twitter.com/apps"
+        "twitter_access_token_secret"   : "https://dev.twitter.com/apps"
+
+        "facebook_client_id"            : "https://developers.facebook.com/apps"
+        "facebook_client_secret"        : "https://developers.facebook.com/apps"
+
+        "vk_client_id"                  : "http://vk.com/editapp?act=create"
+        "vk_client_secret"              : "http://vk.com/apps?act=settings"
+        "vk_user_id"                    : "4195573",
+        "vk_user_name"                  : "Lorem Ipsum",
+        "vk_user_avatar"                : "http://cs5143.userapi.com/u4195573/e_14f6dbfc.jpg",
+
+        "lastfm_api_key"                : "http://www.lastfm.ru/api/accounts"
+        "lastfm_api_secret"             : "http://www.lastfm.ru/api/accounts"
+        "lastfm_username"               : "themylogin",
+        "lastfm_thelogin_path"          : "/home/themylogin/www/apps/last.fm",
+
+        "foursquare_client_id"          : "https://ru.foursquare.com/developers/apps"
+        "foursquare_client_secret"      : "https://ru.foursquare.com/developers/apps"
+
+        "github_username"               : "themylogin",
+
+        "runkeeper_username"            : "themylogin",
+        "runkeeper_bearer"              : "http://runkeeper.com/partner/applications/view"
+        "runkeeper_image_directory"     : "data/runkeeper",
+        
+        "sape_user_id"                  : "http://sape.ru"
+        "sape_host"                     : "thelogin.ru",
+        
+        # { "Смайлик" : "путь к нему" }
+        "smilies"       :   {
+                                ":)"            :    "/images/smilies/00.png",
+                                "=)"            :    "/images/smilies/00.png",
+                                ":-)"           :    "/images/smilies/00.png",
+                                ":("            :    "/images/smilies/01.png",
+                                "=("            :    "/images/smilies/01.png",
+                                ":-("           :    "/images/smilies/01.png",
+                                ";)"            :    "/images/smilies/02.png",
+                                ";-)"           :    "/images/smilies/02.png",
+                                ":P"            :    "/images/smilies/03.png",
+                                ":-P"           :    "/images/smilies/03.png",
+                                "*JOKINGLY*"    :    "/images/smilies/04.png",
+                                ":'("           :    "/images/smilies/05.png",
+                                ":')"           :    "/images/smilies/05-the.png",
+                                "*KISSED*"      :    "/images/smilies/06.png",
+                                ":-*"           :    "/images/smilies/07.png",                                
+                                ":-["           :    "/images/smilies/08.png",
+                                "O:-)"          :    "/images/smilies/09.png",
+                                ":-X"           :    "/images/smilies/10.png",
+                                ":-\\"          :    "/images/smilies/11.png",
+                                ">:o"           :    "/images/smilies/12.png",
+                                ":D"            :    "/images/smilies/13.png",
+                                ":-D"           :    "/images/smilies/13.png",
+                                ":-|"           :    "/images/smilies/14.png",
+                                "=-O"           :    "/images/smilies/15.png",
+                                "8-)"           :    "/images/smilies/16.png",
+                                "[:-}"          :    "/images/smilies/17.png",
+                                "*TIRED*"       :    "/images/smilies/18.png",
+                                ":-!"           :    "/images/smilies/19.png",
+                                "*STOP*"        :    "/images/smilies/20.png",
+                                "*KISSING*"     :    "/images/smilies/21.png",
+                                "]:->"          :    "/images/smilies/22.png",
+                                "@}->--"        :    "/images/smilies/23.png",
+                                "@="            :    "/images/smilies/24.png",
+                                "*THUMBS UP*"   :    "/images/smilies/25.png",                                
+                                "*DRINK*"       :    "/images/smilies/26.png",
+                                "*IN LOVE*"     :    "/images/smilies/27.png",
+                            }
+    }
+
+config = Config()

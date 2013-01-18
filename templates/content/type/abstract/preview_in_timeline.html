@@ -1,0 +1,31 @@
+{% block content %}
+    {% if item.is_copy %}
+        <div class="copy"></div>
+    {% endif %}
+
+    <div class="left">
+        {% block left %}
+            <img class="image" src="{{ item.image|internet_image("48") }}" />
+        {% endblock %}
+    </div>
+    <div class="right">
+        {% block right %}
+            <div class="title">
+                {% block title %}{{ item.title|safe }}{% endblock %}
+            </div>
+            <div class="text">
+                {% block text %}{{ item.description|safe }}{% endblock %}
+            </div>
+            <div class="footer">
+                {% block footer %}
+                    {% if item.url %}
+                        <a href="{{ item.url }}">{{ item.created_at|datetime }}</a>
+                    {% else %}
+                        {{ item.created_at|datetime }}
+                    {% endif %}
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+<div class="clear"></div>

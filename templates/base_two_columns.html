@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block base_content %}
+    <div class="main-col-wrapper"><div class="main-col">
+        {% block main_col %}{% endblock %}
+    </div></div>
+
+    <div class="right-col-wrapper"><div class="right-col">
+        {% block right_col %}{% endblock %}
+        {{ block("sape") }}
+    </div></div>
+{% endblock %}

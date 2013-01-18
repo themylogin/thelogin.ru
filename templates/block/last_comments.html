@@ -1,0 +1,11 @@
+{% extends "block/abstract.html" %} 
+
+{% block title %}Последние комментарии{% endblock %}
+
+{% block content %}
+    <ul class="last-comments">
+        {% for comment in last_comments %}
+            <li{% if comment.count_new > 0 %} class="new"{% endif %}><a href="{{ comment.content_item.url }}{% if comment.count_new %}#comment-{{ comment.new_index }}{% else %}#comments{% endif %}"><span class="username">{% if comment.comment.identity %}{{ comment.comment.identity.user.default_identity|identity_name }}{% else %}anonymous{% endif %}</span> › <span class="item">{{ comment.content_item.title }}</span>{% if comment.count_new > 0 %} (+{{ comment.count_new }}){% endif %} <span class="datetime">{{ comment.comment.created_at|datetime_relative }}</span></a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

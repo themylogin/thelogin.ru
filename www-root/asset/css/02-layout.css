@@ -1,0 +1,254 @@
+body
+{
+    background: #f7f8f9;
+}
+
+#wrapper
+{
+    min-width: 1000px;
+}
+
+#header
+{
+    display: block;
+    width: 100%;
+}
+
+.page-content
+{
+    width: auto;
+    margin: 30px 30px;
+
+    color: #333;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: Verdana, sans-serif;
+}
+    .page-content .block
+    {
+        color: #333;
+    }
+        .page-content .block .title
+        {
+            font: 20px Tahoma, Verdana, sans-serif;
+        }
+            .page-content .block .title sup
+            {
+                font: 14px Tahoma, Verdana, sans-serif;
+            }
+
+    .page-content .main-col-wrapper
+    {
+        float: left;
+        width: 70%;
+    }
+        .page-content .main-col-wrapper .block
+        {
+            margin-top: 20px;
+        }
+    .page-content .main-col
+    {
+        border-radius: 15px;
+        padding: 20px 30px;
+        background: #fff;
+    }
+
+    .page-content .right-col-wrapper
+    {
+        float: left;
+        width: 30%;
+    }
+    .page-content .right-col
+    {
+        padding: 0 0 0 30px;
+    }
+        .page-content .right-col .block
+        {
+            margin-bottom: 20px;
+        }
+            .page-content .right-col .block:last-child
+            {
+                margin-bottom: 0;
+            }
+            .page-content .right-col .block.sape
+            {
+            }
+                .page-content .right-col .block.sape a
+                {
+                    text-decoration: underline;
+                }
+
+        .page-content .right-col .last-comments
+        {
+            margin-top: 5px;
+            
+            font-size: 11px;
+            font-family: Tahoma, Arial, Helvetica, sans-serif;
+        }
+            .page-content .right-col .last-comments li a
+            {
+                display: block;
+                width: 100%;
+            }
+            .page-content .right-col .last-comments li.new a, .page-content .right-col .last-comments li.new a *
+            {
+                font-weight: 800;
+            }
+            .page-content .right-col .last-comments li a .username
+            {
+                color: #666;
+                font-weight: 800;
+            }
+            .page-content .right-col .last-comments li a .item
+            {
+                text-decoration: underline;
+            }
+            .page-content .right-col .last-comments li a:hover .item
+            {
+                color: #999;
+            }
+            .page-content .right-col .last-comments li a .datetime
+            {
+                color: #aaa;
+            }
+
+        .page-content .right-col .content-item
+        {
+            margin: 5px 0 10px;
+        }
+            .page-content .right-col .content-item img.image
+            {
+                display: block;
+            }
+
+        .page-content .right-col .tagcloud
+        {
+            font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
+        }
+            .page-content .right-col .tagcloud a
+            {
+                white-space: nowrap;
+            }
+            .page-content .right-col .tagcloud a:hover
+            {
+                background: #333;
+                color: #fff;
+            }
+        .page-content .right-col .navigation
+        {
+            margin-top: 5px;
+        }
+            .page-content .right-col .navigation li
+            {
+                margin-bottom: 1px;
+            }
+            .page-content .right-col .navigation a img
+            {
+                width: 16px;
+                height: 16px;
+                vertical-align: bottom;
+            }
+            .page-content .right-col .navigation a:hover
+            {
+                background: #333;
+                color: #fff;
+            }
+
+        .page-content .right-col .blogroll
+        {
+            margin-top: 5px;
+        }
+            .page-content .right-col .blogroll a
+            {
+                display: block;
+                line-height: 16px;
+            }
+                .page-content .right-col .blogroll a img
+                {
+                    vertical-align: top;
+                }
+                .page-content .right-col .blogroll a:hover span
+                {
+                    text-decoration: underline;
+                }
+
+    .page-content .lastfm
+    {
+        margin-top: 5px;
+    }
+        .page-content .lastfm .artist-wrapper
+        {
+            float: left;
+        }
+        .page-content .main-col-wrapper .lastfm .artist-wrapper
+        {
+            width: 16%;
+        }
+            .page-content .main-col-wrapper .lastfm .artist-wrapper
+            {
+                margin-right: 0.8%;
+            }
+            .page-content .main-col-wrapper .lastfm .artist-wrapper.last
+            {
+                margin-right: 0px;
+            }
+        .page-content .right-col-wrapper .lastfm .artist-wrapper
+        {
+            width: 50%;
+        }
+            .page-content .right-col-wrapper .lastfm .artist-wrapper .artist-wrapper2.odd
+            {
+                padding-right: 10px;
+            }
+            .page-content .right-col-wrapper .lastfm .artist-wrapper .artist-wrapper2.even
+            {
+                padding-left: 10px;
+            }
+        .page-content .lastfm .artist
+        {
+            margin-bottom: 10px;
+        }
+            .page-content .lastfm .artist a
+            {
+                display: block;
+            }
+            .page-content .lastfm .artist img
+            {
+                display: block;
+                width: 100%;
+            }
+            .page-content .lastfm .artist div.title
+            {
+                font-size: 11px;
+                font-weight: 800;
+                line-height: 13px;
+                font-family: 'Lucida Grande', Arial, Helvetica, Verdana, sans-serif;
+                margin-top: 2px;
+            }
+            .page-content .lastfm .artist a:hover div.title
+            {
+                color: #0187C5;
+                text-decoration: underline;
+            }
+            .page-content .lastfm .artist .scrobbles
+            {
+                color: #0187C5;
+                font-size: 10px;
+                line-height: 13px;
+                font-family: 'Lucida Grande', Arial, Helvetica, Verdana, sans-serif;
+            }
+            .page-content .lastfm .artist .scrobbles:hover
+            {
+                text-decoration: underline;
+            }
+                
+.page-footer
+{
+    text-align: center;
+    font-size: 10px;
+}
+    .page-footer a:hover
+    {
+        background: #333;
+        color: #fff;
+    }

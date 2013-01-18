@@ -1,0 +1,7 @@
+{% extends "content/type/abstract/view.html" %}
+
+{% block content %}
+    <img src="/{{ item.directory }}/1280/960/{{ item.filename }}" style="display: block; margin: 0 auto; max-width: 100%;" />
+    
+    {{ item.text|safe }}
+{% endblock %}
