@@ -40,7 +40,7 @@ class LastFM:
         sk = sg.get_web_auth_session_key("fake")
         user = {}
         for k in pylast.get_lastfm_network(self.api_key, self.api_secret, session_key=sk).get_authenticated_user()._request("user.getInfo", True).getElementsByTagName('*'):
-            if k.firstChild.nodeValue.strip() != "":
+            if k.firstChild and k.firstChild.nodeValue.strip() != "":
                 user[k.tagName] = k.firstChild.nodeValue
         
         return (int(user["id"]), dict(user, session_key=sk))
