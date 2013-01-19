@@ -21,10 +21,10 @@ class Type(abstract.Type):
         self.image_directory = image_directory
 
     def get_provider(self):
-        return None
+        return Provider(self.bearer, self.image_directory)
 
     def get_formatter(self):
-        return Formatter(self.bearer, self.image_directory)
+        return Formatter(self.username, self.image_directory)
 
 class Provider(abstract.Provider):
     def __init__(self, bearer, image_directory):
@@ -32,14 +32,14 @@ class Provider(abstract.Provider):
         self.image_directory = image_directory
 
     def provide(self):
-        from socialservice.runkeeper import HealthGraphClient
+        from social_service.runkeeper import HealthGraphClient
         client = HealthGraphClient(self.bearer)
 
         import dateutil.parser
         from datetime import timedelta
 
-        for activity in self.client.make_request("/fitnessActivities", media_type="application/vnd.com.runkeeper.FitnessActivityFeed+json")["items"]:
-            data = self.client.make_request(activity["uri"], media_type="application/vnd.com.runkeeper.FitnessActivity+json")
+        for activity in client.make_request("/fitnessActivities", media_type="application/vnd.com.runkeeper.FitnessActivityFeed+json")["items"]:
+            data = client.make_request(activity["uri"], media_type="application/vnd.com.runkeeper.FitnessActivity+json")
 
             yield self.provider_item(
                 id          =   int(activity["uri"].split("/")[2]),
