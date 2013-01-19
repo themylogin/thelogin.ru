@@ -55,7 +55,7 @@ $(function(){
 				$pageContent.css("marginTop", margin);
 				$pageContent.css("marginBottom", margin);
 				$pageContent.css("marginLeft", margin);
-				$(".gallery.feed .feed-item").each(function(){
+				$("div.feed.gallery .content_item").each(function(){
 					var $feedItem = $(this);
 
 					$feedItem.css("marginRight", margin);
