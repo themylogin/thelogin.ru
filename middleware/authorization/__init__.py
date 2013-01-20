@@ -15,5 +15,6 @@ def middleware(request):
             if datetime.now() > request.user.last_activity + config.user_inactivity_till_leave:
                 request.user.last_visit = request.user.last_activity
             request.user.last_activity = datetime.now()
+            db.flush()
 
     return request
