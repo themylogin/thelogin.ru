@@ -10,7 +10,7 @@
 
 {% block subtitle %}
     {% if item.began %}
-        <div class="began">Начато {{ item.began.datetime|datetime }} {% if item.began.music %}под {{ item.began.music }}{% endif %}</div>
+        <div class="began">Начато {{ item.began.at|datetime }} {% if item.began.music %}под {{ item.began.music }}{% endif %}</div>
     {% endif %}
 
     Опубликовано {{ item.created_at|datetime }} {% if item.music %}под {{ item.music }}{% endif %}
