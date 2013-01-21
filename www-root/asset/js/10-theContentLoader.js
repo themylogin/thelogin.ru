@@ -58,7 +58,7 @@
 
             if ($contentArea.hasClass("loading"))
             {
-                return false;
+                return true;
             }
 
             $contentArea.addClass("loading");

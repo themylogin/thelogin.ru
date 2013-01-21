@@ -75,39 +75,28 @@ $(function(){
         {
             if (px > 0)
             {
-                $events.theContentLoader("loadDown", 100, {
+                return $events.theContentLoader("loadDown", 100, {
                     "load"  : function(){
                         scrollable.willAppend();
                     },
                     "ready" : function(){
                         var availablePx = scrollable.canScroll(px);
                         scrollable.scroll(availablePx, animate);
-
-                        if (availablePx != px)
-                        {
-                            nothingDownAt = new Date().getTime();
-                        }
                     }
                 });
             }
             else
             {
-                $events.theContentLoader("loadUp", 100, {
+                return $events.theContentLoader("loadUp", 100, {
                     "load"  : function(){
                         scrollable.willPrepend();
                     },
                     "ready" : function(){
                         var availablePx = scrollable.canScroll(px);
-                        scrollable.scroll(availablePx, animate);   
-
-                        if (availablePx != px)
-                        {
-                            nothingUpAt = new Date().getTime();
-                        }                     
+                        scrollable.scroll(availablePx, animate); 
                     }
                 });
             }
-            return availablePx > 0;
         }
     }
     // Колесо мыши по таймлайну
