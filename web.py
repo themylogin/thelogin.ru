@@ -13,24 +13,30 @@ class Application:
         self.url_map = Map([EndpointPrefix("{0}/".format(i), self.controllers[i].get_routes()) for i in range(0, len(self.controllers))])
 
     def __call__(self, environ, start_response):
-        from werkzeug.wrappers import Request
-        request = Request(environ)
+        def app(environ, start_response):
+            from werkzeug.wrappers import Request
+            request = Request(environ)
 
-        if config.debug:
-            response = self.process_request(request)
-        else:
-            from werkzeug.exceptions import HTTPException
-            try:
+            if config.debug:
                 response = self.process_request(request)
-            except HTTPException, e:
-                response = e
-            except Exception, e:               
-                from log import logger
-                logger.exception("An unhandled exception occurred during the execution of the current web request")
+            else:
+                from werkzeug.exceptions import HTTPException
+                try:
+                    response = self.process_request(request)
+                except HTTPException, e:
+                    response = e
+                except Exception, e:               
+                    from log import logger
+                    logger.exception("An unhandled exception occurred during the execution of the current web request")
 
-                from werkzeug.exceptions import InternalServerError
-                response = InternalServerError()
-        return response(environ, start_response)
+                    from werkzeug.exceptions import InternalServerError
+                    response = InternalServerError()
+            return response(environ, start_response)
+
+        from db import db
+        from local import local_manager
+        from werkzeug.wsgi import ClosingIterator
+        return ClosingIterator(local_manager.make_middleware(app)(environ, start_response), db.remove)
 
     def process_request(self, request):
         from middleware import all as all_middleware
