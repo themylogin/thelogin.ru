@@ -2,6 +2,7 @@
     {% set pagination_item_width = 3.7 %}
 {% endif %}
 
+{% if pagination.seasons %}
 <div class="pagination" data-item-width="{{ pagination_item_width }}" data-items-per-page="{{ pagination.per_page }}">
     <div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>
     <div class="viewport">
@@ -23,3 +24,4 @@
         </div>
     </div>
 </div>
+{% endif %}
