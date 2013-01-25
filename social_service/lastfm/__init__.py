@@ -12,15 +12,17 @@ class LastFM:
 
         import sys
         sys.path.append(thelogin_path)
-        from lastfm.models import DBSession, User, Scrobble
+        from lastfm.models import User, Scrobble
         sys.path.pop()
-        self.thelogin_db = DBSession
         self.thelogin_User = User
         self.thelogin_Scrobble = Scrobble
         import os.path
         import paste.deploy
         from sqlalchemy import engine_from_config
-        self.thelogin_db.configure(bind=engine_from_config(paste.deploy.appconfig("config://" + os.path.join(thelogin_path, "production.ini")), 'sqlalchemy.'))
+        engine = engine_from_config(paste.deploy.appconfig("config://" + os.path.join(thelogin_path, "production.ini")), 'sqlalchemy.')
+        from local import local_manager
+        from sqlalchemy.orm import create_session, scoped_session
+        self.thelogin_db = scoped_session(lambda: create_session(engine), local_manager.get_ident)
         self.thelogin_user = self.thelogin_db.query(self.thelogin_User).filter(self.thelogin_User.username == self.username)[0]
 
     #
