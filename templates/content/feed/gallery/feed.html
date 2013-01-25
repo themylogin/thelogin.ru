@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block base_content %}
-    <div class="feed {{ feed }} content_items" data-feed="{{ feed }}">
+    <div class="feed {{ feed }} content_items" data-feed="{{ feed }}" data-feed-url="{{ feed_url }}">
         {{ items|safe }}
     </div>
 {% endblock %}

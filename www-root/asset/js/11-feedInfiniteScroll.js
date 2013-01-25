@@ -22,8 +22,8 @@ $(function(){
     var $window = $(window);
     var $document = $(document);
     var $feed = $("div.feed:first");
-    $feed.theContentLoader({ "feed" : $feed.data("feed")}); // Загрузчик для контента
-    var scrollable = $window.theScrollable();               // Прокрутчик для окна
+    $feed.theContentLoader({ "feed" : $feed.data("feedUrl")});  // Загрузчик для контента
+    var scrollable = $window.theScrollable();                   // Прокрутчик для окна
 
     var $pagination = $(".pagination");
     $pagination.css("position", "fixed");

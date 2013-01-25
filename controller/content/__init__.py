@@ -52,6 +52,7 @@ class Controller(Abstract):
             if self.feeds[feed]["tag_allow"]:
                 rules.append(Rule(prefix + "/tag/<tag>/", endpoint="feed", defaults={"feed" : feed}))
                 rules.append(Rule(prefix + "/tag/<tag>/page/<int:page>/", endpoint="feed", defaults={"feed" : feed}))
+                rules.append(Rule(prefix + "/tag/<tag>/json/", endpoint="feed", defaults={"feed" : feed, "format" : "json"}))
             if self.feeds[feed]["rss_allow"]:
                 rules.append(Rule(prefix + "/rss/", endpoint="feed", defaults={"feed" : feed, "format" : "rss"}))
         # post comment
@@ -84,6 +85,7 @@ class Controller(Abstract):
         feed = self.feeds[kwargs["feed"]]
         format = kwargs.get("format", "html")
 
+        f = kwargs["feed"]
         q = db.query(ContentItem).filter(ContentItem.type.in_(feed["types"]), ContentItem.public == True).options(subqueryload("comments"), subqueryload("tags"))
         t = []
 
@@ -91,6 +93,7 @@ class Controller(Abstract):
             tag = db.query(Tag).filter(Tag.url == kwargs["tag"]).first()
             if tag is None:
                 raise NotFound()
+            f += "/tag/" + kwargs["tag"]
             q = q.filter(ContentItem.id.in_([content_item.id for content_item in tag.content_items]))
             t.append(tag.title)
 
@@ -211,6 +214,7 @@ class Controller(Abstract):
                 "rss_title"         :   rss_title,
                 "body_class"        :   "feed " + kwargs["feed"],
                 "feed"              :   kwargs["feed"],
+                "feed_url"          :   f,
                 "items"             :   "".join(items_formatted),
                 "items_skipped"     :   items_skipped,
                 "pagination"        :   {

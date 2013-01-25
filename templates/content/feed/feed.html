@@ -1,7 +1,7 @@
 {% extends "base_two_columns.html" %}
 
 {% block main_col %}
-    <div class="feed {{ feed }} content_items" data-feed="{{ feed }}">
+    <div class="feed {{ feed }} content_items" data-feed="{{ feed }}" data-feed-url="{{ feed_url }}">
         {{ items|safe }}
     </div>
 {% endblock %}
