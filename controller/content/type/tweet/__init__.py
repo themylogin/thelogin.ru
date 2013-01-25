@@ -41,7 +41,7 @@ class Provider(abstract.Provider):
             def foursquare_ll(_4sq_url):
                 import urllib2, re
                 html = urllib2.urlopen(urllib2.Request(_4sq_url)).read()
-                html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("fullVenue: {\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
+                html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("[vV]enue: {\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
                 return ",".join(reversed(re.search("\?daddr=([0-9\.,]+)", html).group(1).split(",")))
 
             def instagram_src(instagr_am_url):
