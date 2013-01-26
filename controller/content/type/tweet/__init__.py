@@ -153,6 +153,12 @@ class Formatter(abstract.Formatter):
             except KeyError:
                 logger.warning(u"kv_storage[\"instagr.am\"][\"%s\"] not found", url)
                 
+        # i.vas3k.ru
+        for url in re.findall('(http://i\.vas3k\.ru/[0-9A-Za-z\-_]+\.[0-9A-Za-z\-_]+)', text):
+            text += '<a class="block" href="/data/internet/%(vas3k)s"><img class="block" src="/data/internet/480/%(vas3k)s" /></a>' % {
+                "vas3k" : url.replace("://", "/"),
+            }
+
         return text
 
     def get_text(self, content_item, url):
