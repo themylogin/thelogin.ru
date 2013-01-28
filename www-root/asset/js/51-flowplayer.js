@@ -1,7 +1,7 @@
 $(function(){
     $.fn.extend({
         handle_flowplayers: function(){
-            $("a.flowplayer-audio:not(:has(object))").flowplayer("/js/flowplayer-3.2.7.swf", {
+            $("a.flowplayer-audio:not(:has(object))").flowplayer("/asset/js/flowplayer-3.2.7.swf", {
                 clip: {
                     autoPlay: false
                 },
@@ -27,7 +27,7 @@ $(function(){
                 }
             });
             
-            $("a.flowplayer-video:not(:has(object))").flowplayer("/js/flowplayer-3.2.7.swf", {
+            $("a.flowplayer-video:not(:has(object))").flowplayer("/asset/js/flowplayer-3.2.7.swf", {
                 clip: {
                     autoPlay: false,
                     scaling: 'fit'
