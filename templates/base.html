@@ -10,7 +10,7 @@
     <meta charset="UTF-8" />
     {% for property_name in meta_properties %}
         {% if meta_properties[property_name] %}
-            <meta property="{{ k }}" content="{{ meta_properties[property_name] }}" />
+            <meta property="{{ property_name }}" content="{{ meta_properties[property_name] }}" />
         {% endif %}
     {% endfor %}
 
