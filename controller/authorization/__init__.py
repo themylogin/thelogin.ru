@@ -54,6 +54,12 @@ class Controller(Abstract):
                 else:
                     identity.user = request.user
                     db.flush()
+            else:
+                if request.user is not None and request.user is not identity.user:
+                    for other_identity in request.user.identities:
+                        other_identity.user = identity.user
+                    db.delete(request.user)
+                    db.flush()
 
             from werkzeug.utils import redirect
             response = redirect(request.args.get("from", "/"))
