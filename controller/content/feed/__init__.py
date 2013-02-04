@@ -31,7 +31,7 @@ all = {
 
     "timeline"  : {
         "url"       : "timeline",
-        "types"     : ["movie", "game_session", "fitness_activity", "github_action", "lastfm_like", "lastfm_start_listen", "tcard_trip", "tweet", "vk_post"],
+        "types"     : ["movie", "game_session", "fitness_activity", "github_action", "lastfm_like", "lastfm_start_listen", "tcard_trip", "tweet", "vk_post", "vtb24_transaction"],
         "rss_allow" : False,
     }
 }

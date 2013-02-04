@@ -16,6 +16,7 @@ from controller.content.type.lastfm_start_listen import Type as LastFM_StartList
 from controller.content.type.tcard_trip import Type as TCardTrip
 from controller.content.type.tweet import Type as Tweet
 from controller.content.type.vk_post import Type as VkPost
+from controller.content.type.vtb24_transaction import Type as Vtb24Transaction
 
 from controller.content.model import ContentItem
 
@@ -76,5 +77,9 @@ all = {
     },
     "vk_post"               : {
         "type"              :   VkPost(config.vk_client_id, config.vk_client_secret, config.vk_user_id, config.vk_user_name, config.vk_user_avatar),
-    }
+    },
+    "vtb24_transaction"     : {
+        "type"              :   Vtb24Transaction(config.vtb24_username, config.imap_server, config.imap_login, config.imap_password),
+        "permissions"       :   ContentItem.permissions_PRIVATE,
+    },
 }

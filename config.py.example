@@ -70,46 +70,14 @@ class Config:
         "tcard_username"                : "themylogin",
         "tcard_session_id"              : "https://t-karta.ru/"
         "tcard_number"                  : "https://t-karta.ru/"
+
+        "vtb24_username"                : "themylogin",
+
+        "imap_server"                   : "imap.gmail.com",
+        "imap_login"                    : "http://mail.google.com"
+        "imap_password"                 : "http://mail.google.com"
         
         # { "Смайлик" : "путь к нему" }
         "smilies"       :   {
                                 ":)"            :    "/images/smilies/00.png",
-                                "=)"            :    "/images/smilies/00.png",
-                                ":-)"           :    "/images/smilies/00.png",
-                                ":("            :    "/images/smilies/01.png",
-                                "=("            :    "/images/smilies/01.png",
-                                ":-("           :    "/images/smilies/01.png",
-                                ";)"            :    "/images/smilies/02.png",
-                                ";-)"           :    "/images/smilies/02.png",
-                                ":P"            :    "/images/smilies/03.png",
-                                ":-P"           :    "/images/smilies/03.png",
-                                "*JOKINGLY*"    :    "/images/smilies/04.png",
-                                ":'("           :    "/images/smilies/05.png",
-                                ":')"           :    "/images/smilies/05-the.png",
-                                "*KISSED*"      :    "/images/smilies/06.png",
-                                ":-*"           :    "/images/smilies/07.png",                                
-                                ":-["           :    "/images/smilies/08.png",
-                                "O:-)"          :    "/images/smilies/09.png",
-                                ":-X"           :    "/images/smilies/10.png",
-                                ":-\\"          :    "/images/smilies/11.png",
-                                ">:o"           :    "/images/smilies/12.png",
-                                ":D"            :    "/images/smilies/13.png",
-                                ":-D"           :    "/images/smilies/13.png",
-                                ":-|"           :    "/images/smilies/14.png",
-                                "=-O"           :    "/images/smilies/15.png",
-                                "8-)"           :    "/images/smilies/16.png",
-                                "[:-}"          :    "/images/smilies/17.png",
-                                "*TIRED*"       :    "/images/smilies/18.png",
-                                ":-!"           :    "/images/smilies/19.png",
-                                "*STOP*"        :    "/images/smilies/20.png",
-                                "*KISSING*"     :    "/images/smilies/21.png",
-                                "]:->"          :    "/images/smilies/22.png",
-                                "@}->--"        :    "/images/smilies/23.png",
-                                "@="            :    "/images/smilies/24.png",
-                                "*THUMBS UP*"   :    "/images/smilies/25.png",                                
-                                "*DRINK*"       :    "/images/smilies/26.png",
-                                "*IN LOVE*"     :    "/images/smilies/27.png",
-                            }
-    }
-
-config = Config()
+                                "=)"            :    "/im
