@@ -31,6 +31,7 @@ class User(Base):
     last_visit          = Column(DateTime(), default=datetime.datetime.now)
     last_activity       = Column(DateTime(), default=datetime.datetime.now)
     default_identity_id = Column(Integer, ForeignKey("identity.id"))
+    permissions         = Column(Integer, default=0)
 
     identities          = relationship("Identity", primaryjoin="Identity.user_id == User.id", backref="user")
     default_identity    = relationship("Identity", foreign_keys=default_identity_id, primaryjoin="Identity.id == User.default_identity_id")

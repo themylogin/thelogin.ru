@@ -63,7 +63,7 @@ class Controller(Abstract):
     def execute_view(self, request, **kwargs):
         url = kwargs["url"]
         type = kwargs["type"]
-        content_item = db.query(ContentItem).filter(ContentItem.type == type, ContentItem.type_key == url).first()
+        content_item = db.query(ContentItem).filter(ContentItem.type == type, ContentItem.type_key == url, ContentItem.permissions_for(request.user)).first()
         if content_item is None:
         	raise NotFound()
         item_dict = self._item_dict(content_item)
@@ -86,7 +86,7 @@ class Controller(Abstract):
         format = kwargs.get("format", "html")
 
         f = kwargs["feed"]
-        q = db.query(ContentItem).filter(ContentItem.type.in_(feed["types"]), ContentItem.public == True).options(subqueryload("comments"), subqueryload("tags"))
+        q = db.query(ContentItem).filter(ContentItem.type.in_(feed["types"]), ContentItem.permissions_for(request.user)).options(subqueryload("comments"), subqueryload("tags"))
         t = []
 
         if "tag" in kwargs:

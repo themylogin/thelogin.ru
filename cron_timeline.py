@@ -26,7 +26,6 @@ if __name__ == "__main__":
                 content_item.type = type
                 content_item.type_key = id
                 content_item.created_at = item.created_at
-                content_item.public = True
                 content_item.data = item.data
 
                 for kv_directory in item.kv:
@@ -38,11 +37,11 @@ if __name__ == "__main__":
                 db.flush()
 
                 provider.on_item_inserted(content_item)
-            else:
-                content_item.public = True
 
-        for content_item in db.query(ContentItem).filter_by(type=type, public=True).order_by(-ContentItem.created_at)[:len(item_ids)]:
+            content_item.permissions = content_types[type].get("default_permissions", 0)
+
+        for content_item in db.query(ContentItem).filter(ContentItem.type == type, ContentItem.permissions != ContentItem.permissions_DELETED).order_by(-ContentItem.created_at)[:len(item_ids)]:
             if content_item.type_key not in item_ids and provider.is_not_actual_item(content_item):
-                content_item.public = False
+                content_item.permissions = ContentItem.permissions_DELETED
     
         db.flush()

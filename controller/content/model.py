@@ -24,7 +24,7 @@ class ContentItem(Base):
     type                = Column(String(length=32))
     type_key            = Column(String(length=255))
     created_at          = Column(DateTime())
-    public              = Column(Boolean())
+    permissions         = Column(Integer)
     data                = Column(PickleType(pickler=simplejson))
 
     type__type_key      = Index(type, type_key, unique=True)
@@ -32,6 +32,18 @@ class ContentItem(Base):
 
     tags                = relationship("Tag", secondary=ContentItemTag)
     comments            = relationship("Comment", primaryjoin="Comment.content_item_id == ContentItem.id", order_by="Comment.created_at", backref="content_item")
+
+    @classmethod
+    def permissions_for(cls, user):
+        if user is None:
+            return cls.permissions == 0
+
+        return (cls.permissions == 0) | (cls.permissions.op("&")(user.permissions) != 0)
+
+    permissions_PUBLIC      = 0x0
+    permissions_PRIVATE     = 0x1
+    permissions_NOT_READY   = 0x2
+    permissions_DELETED     = 0x4
 
 class Tag(Base):
     __tablename__       = "tag"
