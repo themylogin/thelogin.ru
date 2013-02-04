@@ -66,6 +66,10 @@ class Config:
         
         "sape_user_id"                  : "http://sape.ru"
         "sape_host"                     : "thelogin.ru",
+
+        "tcard_username"                : "themylogin",
+        "tcard_session_id"              : "https://t-karta.ru/"
+        "tcard_number"                  : "https://t-karta.ru/"
         
         # { "Смайлик" : "путь к нему" }
         "smilies"       :   {
