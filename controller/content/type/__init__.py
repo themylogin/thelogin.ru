@@ -13,8 +13,11 @@ from controller.content.type.fitness_activity import Type as FitnessActivity
 from controller.content.type.github_action import Type as GithubAction
 from controller.content.type.lastfm_like import Type as LastFM_Like
 from controller.content.type.lastfm_start_listen import Type as LastFM_StartListen
+from controller.content.type.tcard_trip import Type as TCardTrip
 from controller.content.type.tweet import Type as Tweet
 from controller.content.type.vk_post import Type as VkPost
+
+from controller.content.model import ContentItem
 
 from social_service import all as all_social_service
 
@@ -63,6 +66,10 @@ all = {
     },
     "lastfm_start_listen"   : {
         "type"              :   LastFM_StartListen(all_social_service["last.fm"]),
+    },
+    "tcard_trip"            : {
+        "type"              :   TCardTrip(config.tcard_username, config.tcard_session_id, config.tcard_number),
+        "permissions"       :   ContentItem.permissions_PRIVATE,
     },
     "tweet"                 : {
         "type"              :   Tweet(all_social_service["twitter"]),

@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
                 provider.on_item_inserted(content_item)
 
-            content_item.permissions = content_types[type].get("default_permissions", 0)
+            content_item.permissions = content_types[type].get("permissions", 0)
 
         for content_item in db.query(ContentItem).filter(ContentItem.type == type, ContentItem.permissions != ContentItem.permissions_DELETED).order_by(-ContentItem.created_at)[:len(item_ids)]:
             if content_item.type_key not in item_ids and provider.is_not_actual_item(content_item):
