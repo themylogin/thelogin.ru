@@ -59,9 +59,11 @@ class Formatter(abstract.Formatter):
         return """<b>%(username)s</b> """ % {
             "username"  : self.username,
         } + {
-            u"метро"     : lambda: u"зашёл в метро на станции «" + {
-                "MARKS"     : u"Площадь Маркса",
-            }[content_item.data["RouteNum"]] + u"»"
+            u"метро"            : lambda: u"зашёл в метро на станции «" + {
+                "MARKS"             : u"Площадь Маркса",
+            }[content_item.data["RouteNum"]] + u"»",
+
+            u"мун. троллейбус"  : lambda: u"ехал на троллейбусе №" + content_item.data["RouteNum"],
         }[content_item.data["RouteType"]]()
 
     def get_image(self, content_item):

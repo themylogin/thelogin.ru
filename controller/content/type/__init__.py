@@ -79,7 +79,7 @@ all = {
         "type"              :   VkPost(config.vk_client_id, config.vk_client_secret, config.vk_user_id, config.vk_user_name, config.vk_user_avatar),
     },
     "vtb24_transaction"     : {
-        "type"              :   Vtb24Transaction(config.vtb24_username, config.imap_server, config.imap_login, config.imap_password),
+        "type"              :   Vtb24Transaction(config.vtb24_username + "24", config.imap_server, config.imap_login, config.imap_password),
         "permissions"       :   ContentItem.permissions_PRIVATE,
     },
 }
