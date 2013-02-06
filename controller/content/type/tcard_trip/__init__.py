@@ -61,9 +61,12 @@ class Formatter(abstract.Formatter):
         } + {
             u"метро"            : lambda: u"зашёл в метро на станции «" + {
                 "MARKS"             : u"Площадь Маркса",
+                "STUD"              : u"Студенческая",
+                "ZAELC"             : u"Заельцовская",
             }[content_item.data["RouteNum"]] + u"»",
 
             u"мун. троллейбус"  : lambda: u"ехал на троллейбусе №" + content_item.data["RouteNum"],
+            u"ком. автобус"     : lambda: u"ехал на автобусе №" + content_item.data["RouteNum"],
         }[content_item.data["RouteType"]]()
 
     def get_image(self, content_item):
