@@ -149,6 +149,8 @@ class Controller(Abstract):
             if "page" in kwargs:
                 page = kwargs["page"]
                 items = list(reversed(q.order_by(ContentItem.created_at)[(page - 1) * feed["per_page"] : page * feed["per_page"]]))
+                if len(items) == 0:
+                    raise NotFound()
                 items_skipped = q.filter(ContentItem.created_at > items[0].created_at).count()
             else:
                 page = None
