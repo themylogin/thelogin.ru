@@ -76,8 +76,9 @@ class Config:
         "imap_server"                   : "imap.gmail.com",
         "imap_login"                    : "http://mail.google.com"
         "imap_password"                 : "http://mail.google.com"
+
+        "yandex_maps_api_key"           : "http://api.yandex.ru/maps/getkey.xml"
         
         # { "Смайлик" : "путь к нему" }
         "smilies"       :   {
-                                ":)"            :    "/images/smilies/00.png",
-                                "=)"            :    "/im
+                                ":)"            :    "

@@ -49,6 +49,12 @@ class Formatter(abstract.Formatter):
         return "/asset/img/content/type/vtb24_transaction/48.png"
 
     def get_description(self, content_item, url):
+        reason = self.parse_reason(content_item)
+        if "location" in reason:
+            return '<a href="http://maps.yandex.ru/?ll=%(ll)s&amp;pt=%(ll)s,pm2rdl&amp;l=map&amp;size=640,240&amp;z=14" style="display: block; background: url(http://static-maps.yandex.ru/1.x/?ll=%(ll)s&amp;pt=%(ll)s,pm2rdl&amp;l=map&amp;size=640,280&amp;z=14) center no-repeat; width: 100%%; height: 240px; margin: 4px 0;"></a>' % {
+                "ll"    : reason["location"],
+            }
+
         return ""
 
     def get_text(self, content_item, url):
@@ -61,37 +67,86 @@ class Formatter(abstract.Formatter):
         decline = lambda number, *args: args[0].format(number) if number % 10 == 1 and number % 100 != 11 else args[1].format(number) if number % 10 in [2, 3, 4] and (number % 100 < 10 or number % 100 > 20) else args[2].format(number)
         
         if content_item.data["currency"] == "RUR":
-            return u"<b>%(sum)d</b> %(currency)s" % {
-                "sum"       : int(abs(content_item.data["sum"])),
+            import re
+            return u"<b>%(sum)s %(currency)s</b>" % {
+                "sum"       : re.sub("(\d)(?=(\d{3})+(?!\d))", r"\1 ", "%d" % int(abs(content_item.data["sum"]))),
                 "currency"  : decline(int(abs(content_item.data["sum"])), u"рубль", u"рубля", u"рублей"),
             }
 
-        return u"<b>%(sum).2f</b> %(currency)s" % {
+        return u"<b>%(sum).2f %(currency)s</b>" % {
             "sum"       : abs(content_item.data["sum"]),
             "currency"  : content_item.data["currency"],
         }
 
     def parse_reason(self, content_item):
-        import re
+        import re                
+        import urllib2
+        import simplejson
+
+        from config import config
+        from utils import urlencode
+        from kv import storage as kv_storage
         
-        atm = re.search("ATM (.+) ([0-9]+)$", content_item.data["reason"])
-        if atm:
-            return {
-                "title" : u"%(action)s %(sum)s в банкомате <b>%(atm)s</b>" % {
+        for prefix, formatter in [
+            ("ATM", lambda atm: {
+                "title"     : u"%(action)s %(sum)s в банкомате <b>%(atm)s</b>" % {
                     "action"    : u"снял" if content_item.data["sum"] < 0 else u"положил",
                     "sum"       : self.parse_sum(content_item),
-                    "atm"       : atm.group(1),
-                }
-            }
+                    "atm"       : atm,
+                },
+                "location"  : kv_storage["vtb24_atm_location"].get_or_store(atm, lambda: simplejson.loads(
+                    urllib2.urlopen("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + urlencode(
+                        re.sub("([\W])[A-Z]\.", r"\1", re.sub("^RUS ", "", atm))
+                    ) + "&key=").read()
+                )["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].replace(" ", ","))
+            }),
 
-        retail = re.search("Retail (.+) ([0-9]+)$", content_item.data["reason"])
-        if retail:
-            return {
+            ("Balance Enquire", lambda atm: {
+                "title" : u"Проверил баланс за %(sum)s в банкомате <b>%(atm)s</b>" % {
+                    "sum"       : self.parse_sum(content_item),
+                    "atm"       : atm,
+                }
+            }),
+
+            ("Retail", lambda retail: {
                 "title" : u"Совершил покупку на сумму %(sum)s в магазине <b>%(retail)s</b>" % {
                     "sum"       : self.parse_sum(content_item),
-                    "atm"       : retail.group(1),                
+                    "retail"    : retail,
                 }
-            }
+            }),
+
+            ("Credit", lambda credit: {
+                "title" : u"%(action)s %(sum)s %(office)s" % ({
+                    "action"    : u"Потратил" if content_item.data["sum"] < 0 else u"Получил",
+                    "sum"       : self.parse_sum(content_item),
+                    "office"    : u"через систему <b>«Телебанк»</b>"
+                } if "MOSCOW TELEBANK" in credit else {
+                    "action"    : u"Снял" if content_item.data["sum"] < 0 else u"Положил",
+                    "sum"       : self.parse_sum(content_item),
+                    "office"    : u"в отделении <b>%(office)s<b>" % {
+                        "office"    : credit
+                    }
+                })
+            }),
+
+            ("Unique", lambda unique: {
+                "title" : u"%(action)s %(sum)s %(office)s" % ({
+                    "action"    : u"Потратил" if content_item.data["sum"] < 0 else u"Получил",
+                    "sum"       : self.parse_sum(content_item),
+                    "office"    : u"через систему <b>«Телебанк»</b>"
+                } if "MOSCOW TELEBANK" in unique else {
+                    "action"    : u"Снял" if content_item.data["sum"] < 0 else u"Положил",
+                    "sum"       : self.parse_sum(content_item),
+                    "office"    : u"в отделении <b>%(office)s<b>" % {
+                        "office"    : unique
+                    }
+                })
+            }),
+        ]:
+            occurrence = re.search(prefix + " (.+)$", content_item.data["reason"])
+            if occurrence:
+                return formatter(re.sub(" [0-9]+$", "", occurrence.group(1)))
+
 
         return {
             "title" : content_item.data["reason"]

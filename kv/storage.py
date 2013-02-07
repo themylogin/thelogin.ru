@@ -25,3 +25,10 @@ class Directory(dict):
     def __iter__(self):
         for (k, v) in self.engine.all(self.name):
             yield (k, v)
+
+    def get_or_store(self, key, f):
+        try:
+            return self[key]
+        except KeyError:
+            self[key] = f()
+            return self[key]
