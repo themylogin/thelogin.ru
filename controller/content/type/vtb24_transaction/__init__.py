@@ -48,10 +48,12 @@ class Provider(abstract.Provider):
             import re
             data = re.search("([0-9.]+) v ([0-9:]+) po Vashey bankovskoy karte VTB24 .+ proizvedena tranzaktsiya po oplate na summu ([0-9.]+) (.+?)\. .+ Detali platezha: (.+?)\.", raw_email)
             if data:
+                import datetime
                 import dateutil.parser
+                from config import config
                 yield self.provider_item(
                     id          =   uid,
-                    created_at  =   dateutil.parser.parse(data.group(1) + " " + data.group(2), dayfirst=True),
+                    created_at  =   dateutil.parser.parse(data.group(1) + " " + data.group(2), dayfirst=True) - datetime.timedelta(hours=4) + config.timezone,
                     data        =   {
                         "sum"       : float(data.group(3)),
                         "currency"  : data.group(4),
@@ -59,6 +61,9 @@ class Provider(abstract.Provider):
                     },
                     kv          =   {}
                 )
+
+    def is_not_actual_item(self, content_item):
+        return False
 
 class Formatter(abstract.Formatter):
     def __init__(self, username):
