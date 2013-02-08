@@ -34,7 +34,31 @@ class Provider(abstract.Provider):
         self.imap_password = imap_password
 
     def provide(self):
-        pass
+        import imaplib
+        mail = imaplib.IMAP4_SSL(self.imap_server)
+        mail.login(self.imap_login, self.imap_password)
+        mail.list()
+        mail.select("inbox")
+
+        result, data = mail.uid("search", None, "(FROM \"notify@vtb24.ru\")")
+        for uid in data[0].split():
+            result, data = mail.uid("fetch", uid, "(RFC822)")
+            raw_email = data[0][1]
+
+            import re
+            data = re.search("([0-9.]+) v ([0-9:]+) po Vashey bankovskoy karte VTB24 .+ proizvedena tranzaktsiya po oplate na summu ([0-9.]+) (.+?)\. .+ Detali platezha: (.+?)\.", raw_email)
+            if data:
+                import dateutil.parser
+                yield self.provider_item(
+                    id          =   uid,
+                    created_at  =   dateutil.parser.parse(data.group(1) + " " + data.group(2), dayfirst=True),
+                    data        =   {
+                        "sum"       : float(data.group(3)),
+                        "currency"  : data.group(4),
+                        "reason"    : "Retail " + data.group(5),
+                    },
+                    kv          =   {}
+                )
 
 class Formatter(abstract.Formatter):
     def __init__(self, username):
