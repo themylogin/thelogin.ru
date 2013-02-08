@@ -67,7 +67,7 @@ class Provider(abstract.Provider):
                 id          =   status["id"],
                 created_at  =   status_created_at,
                 data        =   status,
-                kv          =   { "vk owner" : vk_owner(status) } if "copy_owner_id" in status else {},
+                kv          =   { "vk owner" : lambda: vk_owner(status) } if "copy_owner_id" in status else {},
             )
 
 import re

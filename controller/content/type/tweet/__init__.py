@@ -60,9 +60,9 @@ class Provider(abstract.Provider):
                                     "twitpic"       : [(url.expanded_url, url.expanded_url.replace("http://twitpic.com", "http://twitpic.com/show/iphone"))
                                                        for url in urls if url.expanded_url.startswith("http://twitpic.com")],
 
-                                    "4sq"           : [(url.expanded_url, foursquare_ll(url.expanded_url))
+                                    "4sq"           : [(url.expanded_url, lambda: foursquare_ll(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://4sq.com")],
-                                    "instagr.am"    : [(url.expanded_url, instagram_src(url.expanded_url))
+                                    "instagr.am"    : [(url.expanded_url, lambda: instagram_src(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://instagr.am")],
                                 }
             )
