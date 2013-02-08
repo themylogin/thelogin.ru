@@ -43,24 +43,19 @@ class Provider(abstract.Provider):
         result, data = mail.uid("search", None, "(FROM \"notify@vtb24.ru\")")
         for uid in data[0].split():
             result, data = mail.uid("fetch", uid, "(RFC822)")
-            raw_email = data[0][1]
+            raw_email = data[0][1].decode("utf-8")
 
             import re
-            data = re.search("([0-9.]+) v ([0-9:]+) po Vashey bankovskoy karte VTB24 .+ proizvedena tranzaktsiya po oplate na summu ([0-9.]+) (.+?)\. .+ Detali platezha: (.+?)\.", raw_email)
-            if data:
-                import datetime
-                import dateutil.parser
-                from config import config
-                yield self.provider_item(
-                    id          =   uid,
-                    created_at  =   dateutil.parser.parse(data.group(1) + " " + data.group(2), dayfirst=True) - datetime.timedelta(hours=4) + config.timezone,
-                    data        =   {
-                        "sum"       : float(data.group(3)),
-                        "currency"  : data.group(4),
-                        "reason"    : "Retail " + data.group(5),
-                    },
-                    kv          =   {}
-                )
+            import datetime
+            import dateutil.parser
+            from config import config
+            data = re.search(u"([0-9.]+) в ([0-9:]+)", raw_email)
+            yield self.provider_item(
+                id          =   uid,
+                created_at  =   dateutil.parser.parse(data.group(1) + " " + data.group(2), dayfirst=True) - datetime.timedelta(hours=4) + config.timezone,
+                data        =   { "notification" : raw_email },
+                kv          =   {}
+            )
 
     def is_not_actual_item(self, content_item):
         return False
@@ -93,18 +88,21 @@ class Formatter(abstract.Formatter):
         return {}
 
     def parse_sum(self, content_item):
+        return self.format_sum(content_item.data["sum"], content_item.data["currency"])
+
+    def format_sum(self, sum, currency):
         decline = lambda number, *args: args[0].format(number) if number % 10 == 1 and number % 100 != 11 else args[1].format(number) if number % 10 in [2, 3, 4] and (number % 100 < 10 or number % 100 > 20) else args[2].format(number)
-        
-        if content_item.data["currency"] == "RUR":
+
+        if currency == "RUR":
             import re
             return u"<b>%(sum)s %(currency)s</b>" % {
-                "sum"       : re.sub("(\d)(?=(\d{3})+(?!\d))", r"\1 ", "%d" % int(abs(content_item.data["sum"]))),
-                "currency"  : decline(int(abs(content_item.data["sum"])), u"рубль", u"рубля", u"рублей"),
+                "sum"       : re.sub("(\d)(?=(\d{3})+(?!\d))", r"\1 ", "%d" % int(abs(sum))),
+                "currency"  : decline(int(abs(sum)), u"рубль", u"рубля", u"рублей"),
             }
 
         return u"<b>%(sum).2f %(currency)s</b>" % {
-            "sum"       : abs(content_item.data["sum"]),
-            "currency"  : content_item.data["currency"],
+            "sum"       : abs(sum),
+            "currency"  : currency,
         }
 
     def parse_reason(self, content_item):
@@ -115,7 +113,23 @@ class Formatter(abstract.Formatter):
         from config import config
         from utils import urlencode
         from kv import storage as kv_storage
-        
+
+        if "notification" in content_item.data:
+            m = re.search(re.compile(u"произведена транзакция по (.+) на сумму ([0-9.]+) (.+?)\..+Детали платежа: (.+)\. Код авторизации", re.DOTALL), content_item.data["notification"])
+            return {
+                u"зачислению средств"   : lambda **kwargs: {
+                    "title"     : u"Положил %(sum)s в отделении <b>%(details)s</b>" % kwargs if "TELEBANK" not in kwargs["details"] else u"Получил %(sum)s через систему <b>«Телебанк»</b>" % kwargs,
+                },
+                    
+                u"покупке"              : lambda **kwargs: {
+                    "title"     : u"Совершил покупку на сумму %(sum)s в магазине <b>%(details)s</b>" % kwargs,
+                },
+            }[m.group(1)](**{
+                "sum"       : self.format_sum(float(m.group(2)), m.group(3)),
+                "details"   : m.group(4),
+            })
+
+        # support old transactions parsed from monthly cardman@plcmail.vtb24.ru statements
         for prefix, formatter in [
             ("ATM", lambda atm: {
                 "title"     : u"%(action)s %(sum)s в банкомате <b>%(atm)s</b>" % {
