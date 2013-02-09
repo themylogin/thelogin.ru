@@ -45,6 +45,9 @@ class Provider(abstract.Provider):
             result, data = mail.uid("fetch", uid, "(RFC822)")
             raw_email = data[0][1].decode("utf-8")
 
+            if u"произведена транзакция" not in raw_email:
+                continue
+
             import re
             import datetime
             import dateutil.parser

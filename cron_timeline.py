@@ -29,7 +29,8 @@ if __name__ == "__main__":
                 content_item.data = item.data
 
                 for kv_directory in item.kv:
-                    for k, v in item.kv[kv_directory]:
+                    kv = item.kv[kv_directory]
+                    for k, v in kv() if callable(kv) else kv:
                         if k not in kv_storage[kv_directory]:
                             kv_storage[kv_directory][k] = v() if callable(v) else v
 
