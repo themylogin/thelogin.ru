@@ -124,7 +124,7 @@ class Formatter(abstract.Formatter):
                     "title"     : u"Положил %(sum)s в отделении <b>%(details)s</b>" % kwargs if "TELEBANK" not in kwargs["details"] else u"Получил %(sum)s через систему <b>«Телебанк»</b>" % kwargs,
                 },
                     
-                u"покупке"              : lambda **kwargs: {
+                u"оплате"               : lambda **kwargs: {
                     "title"     : u"Совершил покупку на сумму %(sum)s в магазине <b>%(details)s</b>" % kwargs,
                 },
             }[m.group(1)](**{
