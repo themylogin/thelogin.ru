@@ -43,20 +43,32 @@ class Provider(abstract.Provider):
         result, data = mail.uid("search", None, "(FROM \"notify@vtb24.ru\")")
         for uid in data[0].split():
             result, data = mail.uid("fetch", uid, "(RFC822)")
-            raw_email = data[0][1].decode("utf-8")
+            raw_email = data[0][1]
 
-            if u"произведена транзакция" not in raw_email:
+            import email
+            email_message = email.message_from_string(raw_email)
+            maintype = email_message.get_content_maintype()
+            if maintype == "multipart":
+                text = ""
+                for part in email_message.get_payload():
+                    if part.get_content_maintype() == "text":
+                        text += part.get_payload(decode=True)
+            elif maintype == "text":
+                text = email_message.get_payload(decode=True)
+            text = text.decode("utf-8")
+
+            if u"произведена транзакция" not in text:
                 continue
 
             import re
             import datetime
             import dateutil.parser
             from config import config
-            data = re.search(u"([0-9.]+) в ([0-9:]+)", raw_email)
+            data = re.search(u"([0-9.]+) в ([0-9:]+)", text)
             yield self.provider_item(
                 id          =   uid,
                 created_at  =   dateutil.parser.parse(data.group(1) + " " + data.group(2), dayfirst=True) - datetime.timedelta(hours=4) + config.timezone,
-                data        =   { "notification" : raw_email },
+                data        =   { "notification" : text },
                 kv          =   {}
             )
 
@@ -122,6 +134,13 @@ class Formatter(abstract.Formatter):
             return {
                 u"зачислению средств"   : lambda **kwargs: {
                     "title"     : u"Положил %(sum)s в отделении <b>%(details)s</b>" % kwargs if "TELEBANK" not in kwargs["details"] else u"Получил %(sum)s через систему <b>«Телебанк»</b>" % kwargs,
+                },
+
+                u"снятию наличных"      : lambda **kwargs: {
+                    "title"     : u"Снял %(sum)s в банкомате <b>%(details)s</b>" % kwargs,
+                    "location"  : kv_storage["vtb24_atm_location"].get_or_store(kwargs["details"], lambda: simplejson.loads(
+                        urllib2.urlopen("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + urlencode("NOVOSIBIRSK " + kwargs["details"]) + "&key=").read()
+                    )["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].replace(" ", ",")),
                 },
                     
                 u"оплате"               : lambda **kwargs: {
