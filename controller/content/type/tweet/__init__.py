@@ -125,9 +125,8 @@ class Formatter(abstract.Formatter):
             try:
                 ll = kv_storage["4sq"][url]
 
-                text += '<a href="http://maps.yandex.ru/?ll=%(ll)s&amp;pt=%(ll)s,pm2rdl&amp;l=map&amp;size=640,240&amp;z=14" style="display: block; background: url(http://static-maps.yandex.ru/1.x/?ll=%(ll)s&amp;pt=%(ll)s,pm2rdl&amp;l=map&amp;size=640,280&amp;z=14) center no-repeat; width: 100%%; height: 240px; margin: 4px 0;"></a>' % {
-                    "ll"    : ll,
-                }
+                from controller.content.utils import timeline_map
+                text += timeline_map(ll)
             except KeyError:
                 logger.warning(u"kv_storage[\"4sq\"][\"%s\"] not found", url)
 

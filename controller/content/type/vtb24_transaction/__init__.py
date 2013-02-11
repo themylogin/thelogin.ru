@@ -90,9 +90,8 @@ class Formatter(abstract.Formatter):
     def get_description(self, content_item, url):
         reason = self.parse_reason(content_item)
         if "location" in reason:
-            return '<a href="http://maps.yandex.ru/?ll=%(ll)s&amp;pt=%(ll)s,pm2rdl&amp;l=map&amp;size=640,240&amp;z=14" style="display: block; background: url(http://static-maps.yandex.ru/1.x/?ll=%(ll)s&amp;pt=%(ll)s,pm2rdl&amp;l=map&amp;size=640,280&amp;z=14) center no-repeat; width: 100%%; height: 240px; margin: 4px 0;"></a>' % {
-                "ll"    : reason["location"],
-            }
+            from controller.content.utils import timeline_map
+            return timeline_map(reason["location"])
 
         return ""
 
