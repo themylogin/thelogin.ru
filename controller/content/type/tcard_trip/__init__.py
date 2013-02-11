@@ -62,6 +62,7 @@ class Formatter(abstract.Formatter):
             u"метро"            : lambda: u"зашёл в метро на станции «" + {
                 "MARKS"             : u"Площадь Маркса",
                 "STUD"              : u"Студенческая",
+                "LENIN"             : u"Площадь Ленина",
                 "GAGAR"             : u"Гагаринская",
                 "ZAELC"             : u"Заельцовская",
             }[content_item.data["RouteNum"]] + u"»",
