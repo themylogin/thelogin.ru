@@ -58,7 +58,7 @@ class Controller(Abstract):
 
             if not os.path.exists(path) and "/" in filename and self.allow_internet:
                 [proto, etc] = filename.split("/", 1)
-                url = proto + "://" + etc
+                url = proto + "://" + etc + "?" + request.query_string
 
                 if is_forbidden_internet_image(url):
                     from werkzeug.exceptions import Forbidden
