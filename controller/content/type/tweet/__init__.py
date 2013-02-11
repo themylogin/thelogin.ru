@@ -61,7 +61,7 @@ class Provider(abstract.Provider):
                                                        for url in urls if url.expanded_url.startswith("http://twitpic.com")],
 
                                     "4sq"           : [(url.expanded_url, lambda: foursquare_ll(url.expanded_url))
-                                                       for url in urls if url.expanded_url.startswith("http://4sq.com")],
+                                                       for url in urls if url.expanded_url.startswith("http://4sq.com") and tweet.text.startswith("I'm at")],
                                     "instagr.am"    : [(url.expanded_url, lambda: instagram_src(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://instagr.am")],
                                 }
