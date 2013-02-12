@@ -63,6 +63,7 @@ class Formatter(abstract.Formatter):
                 "MARKS"             : u"Площадь Маркса",
                 "STUD"              : u"Студенческая",
                 "LENIN"             : u"Площадь Ленина",
+                "KR-PR"             : u"Красный проспект",
                 "GAGAR"             : u"Гагаринская",
                 "ZAELC"             : u"Заельцовская",
             }[content_item.data["RouteNum"]] + u"»",
