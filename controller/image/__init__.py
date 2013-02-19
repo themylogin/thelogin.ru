@@ -65,7 +65,11 @@ class Controller(Abstract):
                     raise Forbidden()
 
                 import urllib2
-                data = urllib2.urlopen(urllib2.Request(url.encode("utf-8"))).read()
+                try:
+                    data = urllib2.urlopen(urllib2.Request(url.encode("utf-8"))).read()
+                except:
+                    from werkzeug.exceptions import NotFound
+                    raise NotFound()
 
                 if not os.path.isdir(os.path.dirname(path)):
                     os.makedirs(os.path.dirname(path))
