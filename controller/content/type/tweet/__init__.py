@@ -40,7 +40,10 @@ class Provider(abstract.Provider):
 
             def foursquare_ll(_4sq_url):
                 import urllib2, re
-                html = urllib2.urlopen(urllib2.Request(_4sq_url)).read()
+                redirect = urllib2.urlopen(urllib2.Request(_4sq_url))
+                if "/checkin/" not in redirect.geturl():
+                    return ""
+                html = redirect.read()
                 html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("[vV]enue: {\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
                 return ",".join(reversed(re.search("\?daddr=([0-9\.,]+)", html).group(1).split(",")))
 
@@ -61,7 +64,7 @@ class Provider(abstract.Provider):
                                                        for url in urls if url.expanded_url.startswith("http://twitpic.com")],
 
                                     "4sq"           : [(url.expanded_url, lambda: foursquare_ll(url.expanded_url))
-                                                       for url in urls if url.expanded_url.startswith("http://4sq.com") and tweet.text.startswith("I'm at")],
+                                                       for url in urls if url.expanded_url.startswith("http://4sq.com")],
                                     "instagr.am"    : [(url.expanded_url, lambda: instagram_src(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://instagr.am")],
                                 }
@@ -124,9 +127,9 @@ class Formatter(abstract.Formatter):
         for (url, _) in re.findall('(http://4sq\.com/([0-9A-Za-z]+))', text):
             try:
                 ll = kv_storage["4sq"][url]
-
-                from controller.content.utils import timeline_map
-                text += timeline_map(ll)
+                if ll:
+                    from controller.content.utils import timeline_map
+                    text += timeline_map(ll)
             except KeyError:
                 logger.warning(u"kv_storage[\"4sq\"][\"%s\"] not found", url)
 
