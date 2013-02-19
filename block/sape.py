@@ -4,8 +4,6 @@
 def block(request, limit=None):
     from cache import cache
 
-    cache.get_cache("sape", expire=3600).get(key="links", createfunc=load_links)
-
     try:
         links = cache.get_cache("sape", expire=3600).get(key="links", createfunc=load_links)
     except:
