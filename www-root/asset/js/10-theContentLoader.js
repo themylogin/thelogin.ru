@@ -63,7 +63,7 @@
 
             $contentArea.addClass("loading");
             $.ajax({
-                url     :   (settings["feed"] == "index" ? "" : "/" + settings["feed"]) + "/json/",
+                url     :   (settings["feed"] ? "/" + settings["feed"] : "") + "/json/",
                 data    :   query,
                 dataType:   "json",
                 success :   function(contentItems)

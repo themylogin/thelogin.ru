@@ -85,7 +85,7 @@ class Controller(Abstract):
         feed = self.feeds[kwargs["feed"]]
         format = kwargs.get("format", "html")
 
-        f = kwargs["feed"]
+        f = self.feeds[kwargs["feed"]]["url"]
         q = db.query(ContentItem).filter(ContentItem.type.in_(feed["types"]), ContentItem.permissions_for(request.user)).options(subqueryload("comments"), subqueryload("tags"))
         t = []
 
@@ -216,7 +216,7 @@ class Controller(Abstract):
                 "rss_title"         :   rss_title,
                 "body_class"        :   "feed " + kwargs["feed"],
                 "feed"              :   kwargs["feed"],
-                "feed_url"          :   f,
+                "feed_url"          :   f.lstrip("/"),
                 "items"             :   "".join(items_formatted),
                 "items_skipped"     :   items_skipped,
                 "pagination"        :   {
