@@ -66,6 +66,8 @@ class Formatter(abstract.Formatter):
                 "KR-PR"             : u"Красный проспект",
                 "GAGAR"             : u"Гагаринская",
                 "ZAELC"             : u"Заельцовская",
+
+                "G-M"               : u"Площадь Гарина-Михайловского",
             }[content_item.data["RouteNum"]] + u"»",
 
             u"мун. троллейбус"  : lambda: u"ехал на троллейбусе №" + content_item.data["RouteNum"],
