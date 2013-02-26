@@ -127,7 +127,7 @@ class Controller(Abstract):
             new_height = image_height
 
         from PIL import Image
-        return im.resize((new_width, new_height), Image.ANTIALIAS)
+        return im.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
 
     @image_handler
     def execute_min_size_image(self, im, **kwargs):
@@ -148,7 +148,7 @@ class Controller(Abstract):
             new_height = image_height
 
         from PIL import Image
-        return im.resize((new_width, new_height), Image.ANTIALIAS)
+        return im.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
 
     @image_handler
     def execute_crop_image(self, im, **kwargs):
@@ -165,7 +165,7 @@ class Controller(Abstract):
             new_uncropped_width = requested_width
             new_uncropped_height = new_uncropped_width / image_width * image_height
         from PIL import Image
-        im_uncropped = im.resize((new_uncropped_width, new_uncropped_height), Image.ANTIALIAS)
+        im_uncropped = im.resize((int(new_uncropped_width), int(new_uncropped_height)), Image.ANTIALIAS)
 
         if "gravity" in kwargs:
             requested_gravity = kwargs["gravity"]
@@ -189,9 +189,7 @@ class Controller(Abstract):
         else:
             crop = (0, 0, requested_width, requested_height)
 
-        crop = (int(crop[0]), int(crop[1]), int(crop[2]), int(crop[3]))
-            
-        return im_uncropped.crop(crop)
+        return im_uncropped.crop((int(crop[0]), int(crop[1]), int(crop[2]), int(crop[3])))
 
     @image_handler
     def execute_pad_image(self, im, **kwargs):
@@ -218,8 +216,8 @@ class Controller(Abstract):
             requested_color = "black"
 
         from PIL import Image
-        im_with_fields = Image.new("RGBA", (requested_width, requested_height), requested_color)
-        im_with_fields.paste(im.resize((new_width, new_height), Image.ANTIALIAS), ((requested_width - new_width) / 2.0, (requested_height - new_height) / 2.0))
+        im_with_fields = Image.new("RGBA", (int(requested_width), int(requested_height)), requested_color)
+        im_with_fields.paste(im.resize((int(new_width), int(new_height)), Image.ANTIALIAS), (int((requested_width - new_width) / 2.0), int((requested_height - new_height) / 2.0)))
 
         return im_with_fields
 
@@ -243,7 +241,7 @@ class Controller(Abstract):
             new_width = new_height / image_height * image_width
 
         from PIL import Image
-        return im.resize((new_width, new_height), Image.ANTIALIAS)
+        return im.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
 
     @image_handler
     def execute_pass_image(self, im, **kwargs):
