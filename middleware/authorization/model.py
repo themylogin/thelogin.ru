@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import Column, Index, ForeignKey
-from sqlalchemy import DateTime, Integer, PickleType, String
+from sqlalchemy import DateTime, Integer, PickleType, String, Text
 
 from sqlalchemy.orm import relationship
 
@@ -36,3 +36,14 @@ class User(Base):
 
     identities          = relationship("Identity", primaryjoin="Identity.user_id == User.id", backref="user")
     default_identity    = relationship("Identity", foreign_keys=default_identity_id, primaryjoin="Identity.id == User.default_identity_id")
+
+class UserPresenceLog(Base):
+    __tablename__       = "user_presence_log"
+
+    id                  = Column(Integer, primary_key=True)
+    user_id             = Column(Integer, ForeignKey("user.id"))
+    start               = Column(DateTime())
+    start_reason        = Column(Text)
+    end                 = Column(DateTime())
+    end_reason          = Column(Text, nullable=True)
+

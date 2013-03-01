@@ -134,7 +134,22 @@ class MacAddress(TextField):
                 });
             </script>
         """
-        # мой мак-адрес 90-84-0D-9F-AD-3B!!!
+
+class DoCheckin(Checkbox):
+    @classmethod
+    def is_available(cls, user):
+        for identity in user.identities:
+            if identity.service == "foursquare":
+                return True
+        return False
+
+    @classmethod
+    def get_title(cls):
+        return u"Чекиниться"
+
+    @classmethod
+    def get_help(cls):
+        return u"Чекиниться каждый раз, когда вы приходите в гости в умный дом"
 
 class RunScrobbler(Checkbox):
     @classmethod
@@ -154,5 +169,6 @@ class RunScrobbler(Checkbox):
 
 all = [
     MacAddress,
+    DoCheckin,
     RunScrobbler,
 ] 
