@@ -47,13 +47,13 @@ class Formatter(abstract.Formatter):
         pass
 
     def get_title(self, content_item):
-        return re.search(r"""<div class="title">(.+?)[^<>]+</div>""", content_item.data["subtitle"], re.DOTALL).group(1)
+        return re.search(r"""<div class="title">(.+?)[^<>]+</div>""", self.summary(content_item), re.DOTALL).group(1)
 
     def get_image(self, content_item):
         return "/asset/img/social_service/github/48x48.png"
 
     def get_description(self, content_item, url):        
-        text = content_item.data["subtitle"]
+        text = self.summary(content_item)
         text = re.compile(r"""<a[^<>]+class="gravatar"(.+?)</a>""", re.DOTALL).sub(r"", text)
         text = re.compile(r"""<div class="title">(.+?)[^<>]+</div>""", re.DOTALL).sub(r"", text)
         text = re.compile(r"""<a [^<>]+ class="committer">.+</a> committed """).sub(r"", text)
@@ -66,3 +66,6 @@ class Formatter(abstract.Formatter):
 
     def get_dict(self, content_item, url):
         return {}
+
+    def summary(self, content_item):
+        return content_item.data.get("summary", content_item.data.get("subtitle"))
