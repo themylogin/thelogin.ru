@@ -21,6 +21,8 @@ class Controller(Abstract):
             Rule("/authorization/identities/",              endpoint="identities"),
             Rule("/authorization/set-default-identity/",    endpoint="set_default_identity"),
 
+            Rule("/authorization/save-settings/",           endpoint="save_settings"),
+
             Rule("/authorization/logout-others/",   endpoint="logout_others"),
             Rule("/authorization/logout/",          endpoint="logout"),
         ]
@@ -87,10 +89,15 @@ class Controller(Abstract):
             if not identity_is_attached:
                 available_services.append(service)
 
+        from jinja2 import Markup
+        from controller.authorization.settings import all as all_settings
+        settings = filter(None, [Markup(setting.render(request.user)) for setting in all_settings if setting.is_available(request.user)])
+
         return self.render_to_response(request, "authorization/identities.html", **{
             "default_identity"      : default_identity,
             "attached_identities"   : attached_identities,
             "available_services"    : available_services,
+            "settings"              : settings,
             "breadcrumbs"           : [u"Подключенные сервисы"],
         })
 
@@ -102,6 +109,24 @@ class Controller(Abstract):
                 from db import db
                 db.flush()
                 break
+        from werkzeug.utils import redirect
+        return redirect("/authorization/identities/")
+
+    def execute_save_settings(self, request):
+        if request.user.settings is None:
+            request.user.settings = {}
+        from controller.authorization.settings import all as all_settings
+        for setting in all_settings:
+            if setting.is_available(request.user):
+                request.user.settings[setting.get_id()] = setting.accept_value(request.form)
+
+        from db import db
+        s = request.user.settings
+        request.user.settings = None
+        db.flush()
+        request.user.settings = s
+        db.flush()
+
         from werkzeug.utils import redirect
         return redirect("/authorization/identities/")
 
