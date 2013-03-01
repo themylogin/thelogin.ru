@@ -48,7 +48,7 @@ class Setting:
         raise NotImplementedError
 
     @classmethod
-    def get_extra(cls, user):
+    def get_extra(cls):
         return ""
 
     @classmethod
@@ -58,6 +58,26 @@ class Setting:
     @classmethod
     def accept_value(cls, form):
         raise NotImplementedError
+
+class Checkbox(Setting):
+    @classmethod
+    def get_input(cls, user):
+        return """
+            <input type="checkbox" name="%(id)s" value="1" %(chk)s />
+            <div>%(help)s</div>
+        """ % {
+            "id"    : cls.get_id(),
+            "chk"   : """checked="checked" """ if cls.get_value(user) else "",
+            "help"  : cls.get_help(),
+        }
+
+    @classmethod
+    def get_default_value(cls):
+        return False
+
+    @classmethod
+    def accept_value(cls, form):
+        return cls.get_id() in form
 
 class TextField(Setting):
     @classmethod
@@ -76,6 +96,8 @@ class TextField(Setting):
     @classmethod
     def accept_value(cls, form):
         return form.get(cls.get_id())
+
+###
 
 class MacAddress(TextField):
     @classmethod
@@ -114,6 +136,23 @@ class MacAddress(TextField):
         """
         # мой мак-адрес 90-84-0D-9F-AD-3B!!!
 
+class RunScrobbler(Checkbox):
+    @classmethod
+    def is_available(cls, user):
+        for identity in user.identities:
+            if identity.service == "last.fm":
+                return True
+        return False
+
+    @classmethod
+    def get_title(cls):
+        return u"Запускать скробблер"
+
+    @classmethod
+    def get_help(cls):
+        return u"Скробблить в ваш last.fm-аккаунт, когда вы приходите в гости в умный дом"
+
 all = [
     MacAddress,
+    RunScrobbler,
 ] 

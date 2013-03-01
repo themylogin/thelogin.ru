@@ -57,8 +57,8 @@
         <h2>Настройки</h2>
         <form action="/authorization/save-settings/" class="user-settings" method="post">
             {% for setting in settings %}
-                <div class="setting">
-                    {{ setting }}
+                <div class="setting {{ setting.class }}">
+                    {{ setting.html }}
                 </div>
             {% endfor %}
             <input type="submit" value="Сохранить" />

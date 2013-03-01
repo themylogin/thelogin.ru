@@ -91,7 +91,10 @@ class Controller(Abstract):
 
         from jinja2 import Markup
         from controller.authorization.settings import all as all_settings
-        settings = filter(None, [Markup(setting.render(request.user)) for setting in all_settings if setting.is_available(request.user)])
+        settings = [{
+            "class" :   " ".join([cl.__name__ for cl in setting.__bases__]),
+            "html"  :   Markup(setting.render(request.user)),
+        } for setting in all_settings if setting.is_available(request.user)]
 
         return self.render_to_response(request, "authorization/identities.html", **{
             "default_identity"      : default_identity,

@@ -65,10 +65,22 @@
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
+        .user-settings .setting input[type=checkbox]
+        {
+            float: left;
+            cursor: pointer;
+            margin-top: 1px;
+            margin-right: 4px;
+        }
+
         .user-settings .setting .help
         {
             color: #999;
             width: 310px;
+        }
+        .user-settings .setting.Checkbox .help
+        {
+            display: none;
         }
 
     .user-settings input[type=submit]
