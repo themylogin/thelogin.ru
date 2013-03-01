@@ -71,6 +71,7 @@ class Formatter(abstract.Formatter):
 
                 "G-M"               : u"Площадь Гарина-Михайловского",
                 "POKR"              : u"Маршала Покрышкина",
+                "BEREZ"             : u"Берёзовая роща",
                 "NIVA"              : u"Золотая Нива",
             }[content_item.data["RouteNum"]] + u"»",
 
