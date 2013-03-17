@@ -49,11 +49,13 @@ def html_tags(text):
     from lxml.etree import tostring
     text = tostring(fromstring(text), pretty_print=True, encoding="utf-8")
 
-    from BeautifulSoup import BeautifulSoup, Tag
+    from bs4 import BeautifulSoup
     soup = BeautifulSoup(text)
-    for tag in soup.findAll():
-        if tag.name not in ["html", "br", "b", "i", "s", "u", "var", "a", "img", "source", "pre", "blockquote"]:
+    for tag in soup.find_all():
+        if tag.name not in ["html", "body", "p", "br", "b", "i", "s", "u", "var", "a", "img", "source", "pre", "blockquote"]:
             tag.extract()
+        if tag.name == "p":
+            tag.unwrap()
 
         new_attrs = []
         if tag.name == "a":
@@ -78,14 +80,11 @@ def html_tags(text):
                 from pygments import highlight
                 from pygments.lexers import get_lexer_by_name
                 from pygments.formatters import HtmlFormatter
-                pre = Tag(soup, "div")
-                pre.insert(0, highlight(u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents]), get_lexer_by_name(tag["lang"], stripall=True, startinline=True), HtmlFormatter(cssclass="syntax")))
-                tag.replaceWith(pre)
+                tag.replace_with(BeautifulSoup(highlight(u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents]), get_lexer_by_name(tag["lang"], stripall=True, startinline=True), HtmlFormatter(cssclass="syntax"))))
             except:
-                from werkzeug.utils import escape
-                pre = Tag(soup, "pre")
-                pre.insert(0, escape(u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents])))
-                tag.replaceWith(pre)
+                pre = soup.Tag("pre")
+                pre.string = u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents])
+                tag.replace_with(pre)
         tag.attrs = new_attrs
     text = str(soup).decode("utf-8")
 
