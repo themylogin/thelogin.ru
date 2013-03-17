@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from config import config
+from urlparse import urlparse
 
 # WSGI application
 class Application:
@@ -43,7 +44,7 @@ class Application:
         for middleware in all_middleware:
             request = middleware(request)
 
-        endpoint, values = self.url_map.bind_to_environ(request.environ).match()
+        endpoint, values = self.url_map.bind_to_environ(request.environ, server_name=urlparse(config.url).netloc.split(":")[0]).match()
         controller, controller_endpoint = endpoint.split("/", 1)
 
         controller = self.controllers[int(controller)]
