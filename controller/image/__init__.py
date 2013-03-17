@@ -84,7 +84,7 @@ class Controller(Abstract):
 
             requested_path = request.path[1:]
             if self.path and requested_path.startswith(self.path):
-                requested_path = requested_path.replace(self.path, "")
+                requested_path = requested_path.replace(self.path, "").strip("/")
             processed_path = os.path.join(config.path, self.path, requested_path.encode("utf-8"))
             if not os.path.exists(processed_path):
                 from PIL import Image
