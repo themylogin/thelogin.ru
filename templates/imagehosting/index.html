@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block base_title %}
+    {{ host }}
+{% endblock %}
+
+{% block base_header %}
+{% endblock %}
+
+{% block base_content %}        
+    <style type="text/css">
+    body
+    {
+        background: #c4c4c4;
+    }
+
+    #wrapper
+    {
+        min-width: auto;
+        margin: 30px auto;
+        text-align: center;
+    }
+
+    #results
+    {
+        margin: 30px 0;
+    }
+    #results a
+    {
+        color: #444444;
+        font: 12px Arial, Helvetica, sans-serif;
+        text-decoration: underline;
+    }
+    </style>
+
+    <script type="text/javascript">
+    $(function(){
+        $("#file").uploadify({
+            "uploader"  :   "/asset/js/uploadify.swf",
+            "cancelImg" :   "/asset/img/uploadify/cancel.png",
+            "auto"      :   true,
+            "multi"     :   true,
+
+            "script"    :   "/",
+            "onComplete":   function(event, ID, fileObj, response, data)
+                            {
+                                if (response == "")
+                                {
+                                    return false;
+                                }
+                                
+                                var img = "http://{{ host }}/" + response;
+                                var imgReasonableSize = "http://{{ host }}/1280/" + response;
+                                $("#results").append($("<div/>").append($("<a/>").attr("href", img).html(img)));
+
+                                if (document.location.toString().indexOf("from={{ parent_host }}") != -1)
+                                {
+                                    document.domain = "{{ parent_host }}";
+                                    window.opener.$(".comments-form textarea").insertAtCaret("\n<a href=\"" + img + "\"><img src=\"" + imgReasonableSize + "\" /></a>\n");
+                                }
+                            }
+        });
+    });
+    </script>
+        
+    <input id="file" name="file" type="file" />        
+    <div id="results"></div>
+{% endblock %}

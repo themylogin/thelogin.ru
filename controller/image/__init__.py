@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from werkzeug.routing import Rule, Submount
+
 from config import config
 from controller.abstract import Controller as Abstract
 
@@ -22,32 +24,33 @@ class Controller(Abstract):
             self.export_function(globals(), "internet_image", internet_image)
 
     def get_routes(self):
-        from werkzeug.routing import Rule
         return [
-            Rule("/" + self.path + "/<int(max=1920):width>/<path:filename>",                                    endpoint="fit_image"),
-            Rule("/" + self.path + "/<int(max=1920):width>/_/<path:filename>",                                  endpoint="fit_image"),
-            Rule("/" + self.path + "/_/<int(max=1920):height>/<path:filename>",                                 endpoint="fit_image"),
-            Rule("/" + self.path + "/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",             endpoint="fit_image"),
-            Rule("/" + self.path + "/fit/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",         endpoint="fit_image"),
-            
-            Rule("/" + self.path + "/min-size/<int(max=1920):size>/<filename>",                                 endpoint="min_size_image"),
-            
-            Rule("/" + self.path + "/crop/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",        endpoint="crop_image"),
-            Rule("/" + self.path + "/crop/<any(   'top-left',  'top',      'top-right', "
-                                              "       'left', 'center',        'right', "
-                                              "'bottom-left', 'bottom', 'bottom-right'):gravity>"
-                                   "/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",             endpoint="crop_image"),
-            
-            Rule("/" + self.path + "/pad/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",         endpoint="pad_image"),
-            Rule("/" + self.path + "/pad/<color>/<int(max=1920):width>/<int(max=1920):height>/<path:filename>", endpoint="pad_image"),
-            
-            Rule("/" + self.path + "/stretch/<int(max=1920):width>/<path:filename>",                            endpoint="stretch_image"),
-            Rule("/" + self.path + "/stretch/<int(max=1920):width>/_/<path:filename>",                          endpoint="stretch_image"),
-            Rule("/" + self.path + "/stretch/_/<int(max=1920):height>/<path:filename>",                         endpoint="stretch_image"),
-            Rule("/" + self.path + "/stretch/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",     endpoint="stretch_image"),
+            Submount("/" + self.path if self.path else "", [
+                Rule("/<int(max=1920):width>/<path:filename>",                                    endpoint="fit_image"),
+                Rule("/<int(max=1920):width>/_/<path:filename>",                                  endpoint="fit_image"),
+                Rule("/_/<int(max=1920):height>/<path:filename>",                                 endpoint="fit_image"),
+                Rule("/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",             endpoint="fit_image"),
+                Rule("/fit/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",         endpoint="fit_image"),
+                
+                Rule("/min-size/<int(max=1920):size>/<filename>",                                 endpoint="min_size_image"),
+                
+                Rule("/crop/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",        endpoint="crop_image"),
+                Rule("/crop/<any(   'top-left',  'top',      'top-right', "
+                                "       'left', 'center',        'right', "
+                                "'bottom-left', 'bottom', 'bottom-right'):gravity>"
+                     "/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",             endpoint="crop_image"),
+                
+                Rule("/pad/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",         endpoint="pad_image"),
+                Rule("/pad/<color>/<int(max=1920):width>/<int(max=1920):height>/<path:filename>", endpoint="pad_image"),
+                
+                Rule("/stretch/<int(max=1920):width>/<path:filename>",                            endpoint="stretch_image"),
+                Rule("/stretch/<int(max=1920):width>/_/<path:filename>",                          endpoint="stretch_image"),
+                Rule("/stretch/_/<int(max=1920):height>/<path:filename>",                         endpoint="stretch_image"),
+                Rule("/stretch/<int(max=1920):width>/<int(max=1920):height>/<path:filename>",     endpoint="stretch_image"),
 
-            # will just download from internet if allow_internet is enabled
-            Rule("/" + self.path + "/<path:filename>",                                                          endpoint="pass_image"),
+                # will just download from internet if allow_internet is enabled
+                Rule("/<path:filename>",                                                          endpoint="pass_image"),
+            ])
         ]
 
     def image_handler(image_handler):
@@ -79,7 +82,10 @@ class Controller(Abstract):
                 from werkzeug.exceptions import NotFound
                 raise NotFound()
 
-            processed_path = os.path.join(config.path, request.path[1:].encode("utf-8"))
+            requested_path = request.path[1:]
+            if self.path and requested_path.startswith(self.path):
+                requested_path = requested_path.replace(self.path, "")
+            processed_path = os.path.join(config.path, self.path, requested_path.encode("utf-8"))
             if not os.path.exists(processed_path):
                 from PIL import Image
                 im = Image.open(path)

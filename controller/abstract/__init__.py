@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-class Controller:
+class Controller(object):
     def export_function(self, globals, function_name, function):        
         import sys
         setattr(sys.modules[globals["__name__"]], function_name, function)
