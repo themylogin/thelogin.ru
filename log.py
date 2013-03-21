@@ -1,12 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from config import config
-import logging, os.path
+import logging
+import os.path
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "loggy"))
+from cloggy.werkzeug_client import WerkzeugLoggingHandler
+
+from local import local
 
 logger = logging.getLogger("thelogin")
 logger.setLevel(logging.DEBUG)
 
-handler = config.log
-handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s: %(message)s", "%b %d %H:%M:%S"))
-logger.addHandler(handler) 
+logger.addHandler(WerkzeugLoggingHandler())
