@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from config import config
 from urlparse import urlparse
+
+from config import config
+from local import local
 
 # WSGI application
 class Application:
@@ -18,7 +20,9 @@ class Application:
             from werkzeug.wrappers import Request
             request = Request(environ)
 
-            if config.debug:
+            local.request = request
+
+            if config.debug and False:
                 response = self.process_request(request)
             else:
                 from werkzeug.exceptions import HTTPException
