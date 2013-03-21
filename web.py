@@ -53,6 +53,8 @@ class Application:
 
         controller = self.controllers[int(controller)]
         controller_method = "execute_{0}".format(controller_endpoint)
+
+        1 / 0
         
         response = getattr(controller, controller_method)(request, **values)
         return response
