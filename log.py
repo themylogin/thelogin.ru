@@ -13,4 +13,4 @@ from local import local
 logger = logging.getLogger("thelogin")
 logger.setLevel(logging.DEBUG)
 
-logger.addHandler(WerkzeugLoggingHandler())
+logger.addHandler(WerkzeugLoggingHandler(request_provider=lambda: getattr(local, "request", None)))

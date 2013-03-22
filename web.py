@@ -22,7 +22,7 @@ class Application:
 
             local.request = request
 
-            if config.debug and False:
+            if config.debug:
                 response = self.process_request(request)
             else:
                 from werkzeug.exceptions import HTTPException
@@ -53,6 +53,6 @@ class Application:
 
         controller = self.controllers[int(controller)]
         controller_method = "execute_{0}".format(controller_endpoint)
-   
+
         response = getattr(controller, controller_method)(request, **values)
         return response
