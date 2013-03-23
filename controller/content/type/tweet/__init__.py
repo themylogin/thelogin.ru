@@ -66,7 +66,7 @@ class Provider(abstract.Provider):
                                     "4sq"           : [(url.expanded_url, lambda: foursquare_ll(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://4sq.com")],
                                     "instagr.am"    : [(url.expanded_url, lambda: instagram_src(url.expanded_url))
-                                                       for url in urls if url.expanded_url.startswith("http://instagr.am")],
+                                                       for url in urls if url.expanded_url.startswith("http://instagr.am") or url.expanded_url.startswith("http://instagram.com")],
                                 }
             )
 
@@ -145,7 +145,7 @@ class Formatter(abstract.Formatter):
                 logger.warning(u"kv_storage[\"twitpic\"][\"%s\"] not found", url)
 
         # instagram
-        for (url, _) in re.findall('(http://instagr\.am/p/([0-9A-Za-z\-_]+)/)', text):
+        for (url, _, __) in re.findall('(http://(instagr\.am|instagram\.com)/p/([0-9A-Za-z\-_]+)/)', text):
             try:
                 instagram = kv_storage["instagr.am"][url]
                 
