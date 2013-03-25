@@ -54,3 +54,12 @@ p
 {
     clear: both;
 }
+
+
+.dropdown-handle
+{
+    width: 7px;
+    height: 4px;
+    background: url(/asset/img/dropdown-handle.png) center no-repeat;
+    cursor: pointer;
+}

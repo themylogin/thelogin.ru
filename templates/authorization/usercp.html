@@ -65,6 +65,46 @@
         </form>
     {% endif %}
 
+    {% if present_hardware %}
+        <ul class="present-hardware">
+            {% for hardware in present_hardware %}
+                <li data-mac="{{ hardware.mac }}">
+                    <span class="mac">{{ hardware.mac }}</span>
+                    {% if hardware.hostname %}
+                        ({{ hardware.hostname }})
+                    {% endif %}
+                    с {{ hardware.start|datetime }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <script type="text/javascript">
+            $(function(){
+                var $pageContent = $(".page-content");
+                var $macInput = $("#MacAddress input");
+                var $presentHardware = $(".present-hardware");
+                var $dropdownHandle = $("<div/>").addClass("dropdown-handle")
+                                                 .css("paddingTop", "10px")
+                                                 .css("paddingBottom", "10px")
+                                                 .css("paddingLeft", "5px")
+                                                 .css("paddingRight", "5px")
+                                                 .appendTo($("body"));
+
+                $dropdownHandle.css("position", "absolute")
+                               .css("top", $pageContent.position().top + $macInput.position().top + 4)
+                               .css("left", $macInput.position().left + $macInput.width())
+                               .click(function(){ $presentHardware.fadeToggle(200); });
+
+                $presentHardware.css("position", "absolute")
+                                .css("top", $pageContent.position().top + $macInput.position().top + $macInput.height() + 2)
+                                .hide();
+                $presentHardware.find("li").click(function(){
+                    $macInput.val($(this).data("mac"));
+                });
+            });
+        </script>
+    {% endif %}
+
     {% if visit_history %}
         <h1 style="margin: 10px 0;">История посещений умного дома</h1>
         <div class="content_item"><div class="content"><ul>

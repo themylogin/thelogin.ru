@@ -36,6 +36,8 @@ class Config:
 
         "forbid_internet_image"         : ["thelogin.ru", "debug.thelogin.ru"],
 
+        "owner_hardware"                : lambda ip, mac: int(ip.split(".")[3]) < 10 or mac in ["90:84:0d:9f:ad:3b"],
+
         "twitter_oauth_consumer_key"    : "https://dev.twitter.com/apps"
         "twitter_oauth_consumer_secret" : "https://dev.twitter.com/apps"
         "twitter_access_token_key"      : "https://dev.twitter.com/apps"
