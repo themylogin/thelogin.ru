@@ -18,9 +18,9 @@ class Controller(Abstract):
             Rule("/authorization/<any('" + "','".join(self.services.keys()) +"'):service>/initiate/",   endpoint="initiate"),            
             Rule("/authorization/<any('" + "','".join(self.services.keys()) +"'):service>/callback/",   endpoint="callback"),
 
-            Rule("/authorization/identities/",              endpoint="identities"),
-            Rule("/authorization/set-default-identity/",    endpoint="set_default_identity"),
+            Rule("/authorization/usercp/",                  endpoint="usercp"),
 
+            Rule("/authorization/set-default-identity/",    endpoint="set_default_identity"),
             Rule("/authorization/save-settings/",           endpoint="save_settings"),
 
             Rule("/authorization/logout-others/",   endpoint="logout_others"),
@@ -72,7 +72,7 @@ class Controller(Abstract):
             from werkzeug.exceptions import Unauthorized
             raise Unauthorized()
 
-    def execute_identities(self, request):
+    def execute_usercp(self, request):
         default_identity = None
         attached_identities = []
         available_services = []
@@ -96,7 +96,7 @@ class Controller(Abstract):
             "html"  :   Markup(setting.render(request.user)),
         } for setting in all_settings if setting.is_available(request.user)]
 
-        return self.render_to_response(request, "authorization/identities.html", **{
+        return self.render_to_response(request, "authorization/usercp.html", **{
             "default_identity"      : default_identity,
             "attached_identities"   : attached_identities,
             "available_services"    : available_services,

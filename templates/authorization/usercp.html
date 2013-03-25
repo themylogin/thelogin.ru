@@ -1,7 +1,7 @@
 {% extends "base.html" %} 
 
 {% block base_content %}
-    <h1>Мои сервисы</h1>
+    <h1>Сервисы</h1>
     <p>Вы можете входить в свой аккаунт, используя различные социальные сервисы.</p>
 
     <h2>Основной сервис</h2>
@@ -54,7 +54,7 @@
     {% endif %}
 
     {% if settings %}
-        <h2>Настройки</h2>
+        <h1>Настройки</h1>
         <form action="/authorization/save-settings/" class="user-settings" method="post">
             {% for setting in settings %}
                 <div class="setting {{ setting.class }}">
