@@ -65,6 +65,7 @@ class Controller(Abstract):
                     "username"      : all_social_services[user.default_identity.service].get_user_name(user.default_identity.service_data),
                     "avatar"        : all_social_services[user.default_identity.service].get_user_avatar(user.default_identity.service_data),
                     "identities"    : dict([(identity.service, identity.service_data) for identity in user.identities]),
+                    "settings"      : user.settings,
                 }))
         return map(operator.itemgetter(1), sorted(guests, key=operator.itemgetter(0)))
 
