@@ -60,8 +60,6 @@ class Config:
         "lastfm_api_secret"             : "http://www.lastfm.ru/api/accounts"
         "lastfm_username"               : "themylogin",
         "lastfm_thelogin_path"          : "/home/themylogin/www/apps/last.fm",
-        "lastfm_mpdscribble_sk_path"    : "/home/themylogin/www/apps/mpdscribble-sk",
-        "lastfm_mpd_host"               : "192.168.0.4",
 
         "foursquare_client_id"          : "https://ru.foursquare.com/developers/apps"
         "foursquare_client_secret"      : "https://ru.foursquare.com/developers/apps"
