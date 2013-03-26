@@ -3,6 +3,7 @@
 
 from datetime import datetime
 import operator
+import pika
 import simplejson
 import time
 from werkzeug.exceptions import Forbidden, NotFound
@@ -19,7 +20,7 @@ from social_service import all as all_social_services
 
 class Controller(Abstract):
     def __init__(self):
-        mq_channel.exchange_declare(exchange="thelogin_smarthome_api", type="fanout")
+        pass
 
     def get_routes(self):
         return [
@@ -79,7 +80,6 @@ class Controller(Abstract):
             return False
 
         self.create_guest_record("guest_in", user)
-        mq_channel.basic_publish(exchange="thelogin_smarthome_api", routing_key="", body="guests_updated")
         return True
 
     @decorate
@@ -92,7 +92,6 @@ class Controller(Abstract):
             return False
 
         self.create_guest_record("guest_out", user)
-        mq_channel.basic_publish(exchange="thelogin_smarthome_api", routing_key="", body="guests_updated")
         return True
 
     def is_in(self, type, filter=True):
@@ -119,11 +118,18 @@ class Controller(Abstract):
         return record
 
     def create_guest_record(self, type, user):
-        return self.create_record(
+        record = self.create_record(
             type=type,
             type_key="user=%d, timestamp=%d" % (user.id, time.time()),
             data={"identity" : user.default_identity.id}
         )
+
+        mq_connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
+        mq_channel = mq_connection.channel()
+        mq_channel.exchange_declare(exchange="thelogin_smarthome_api", type="fanout")
+        mq_channel.basic_publish(exchange="thelogin_smarthome_api", routing_key="", body="guests_updated")
+
+        return record
 
     def find_guest(self, **kwargs):
         if "id" in kwargs:
