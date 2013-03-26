@@ -5,6 +5,7 @@ from controller.authorization import Controller as Authorization
 from controller.content import Controller as Content
 from controller.image import Controller as Image
 from controller.imagehosting import Controller as ImageHosting
+from controller.smarthome_api import Controller as SmarthomeApi
 
 from controller.content.type import all as all_content_types
 from controller.content.feed import all as all_content_feeds
@@ -23,4 +24,5 @@ all = [
     Image("data/shop"),
     Image("data/video/preview"),
     ImageHosting("data/i", "i"),
+    SmarthomeApi(),
 ]

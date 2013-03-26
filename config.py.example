@@ -1,10 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from utils import ReadonlyPropertiesMetaclass
-import russian_datetime
 import datetime
-import logging, os
+import logging
+import os
+import pika
+
+import russian_datetime
+from utils import ReadonlyPropertiesMetaclass
 
 class Config:
     __metaclass__ = ReadonlyPropertiesMetaclass
@@ -37,6 +40,7 @@ class Config:
         "forbid_internet_image"         : ["thelogin.ru", "debug.thelogin.ru"],
 
         "owner_hardware"                : lambda ip, mac: int(ip.split(".")[3]) < 10 or mac in ["90:84:0d:9f:ad:3b"],
+        "smarthome_api_addresses"       : ["127.0.0.1", "192.168.0.1", "192.168.0.3", "37.193.98.32"],
 
         "twitter_oauth_consumer_key"    : "https://dev.twitter.com/apps"
         "twitter_oauth_consumer_secret" : "https://dev.twitter.com/apps"
