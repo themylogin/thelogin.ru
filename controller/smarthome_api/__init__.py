@@ -61,14 +61,8 @@ class Controller(Abstract):
         for user in db.query(User):
             is_in = self.guest_is_in(user)
             if is_in:
-                guests.append((is_in.created_at, {
-                    "id"            : user.id,
-                    "username"      : all_social_services[user.default_identity.service].get_user_name(user.default_identity.service_data),
-                    "avatar"        : all_social_services[user.default_identity.service].get_user_avatar(user.default_identity.service_data),
-                    "identities"    : dict([(identity.service, identity.service_data) for identity in user.identities]),
-                    "settings"      : user.settings,
-                }))
-        return map(operator.itemgetter(1), sorted(guests, key=operator.itemgetter(0)))
+                guests.append(dict(self.format_guest(user), "came_at"=is_in.created_at.isoformat())
+        return sorted(guests, key=operator.itemgetter("came_at"))
 
     @decorate
     def execute_guest_in(self, request, **kwargs):
@@ -80,7 +74,7 @@ class Controller(Abstract):
             return False
 
         self.create_guest_record("guest_in", user)
-        return True
+        return self.format_guest(user)
 
     @decorate
     def execute_guest_out(self, request, **kwargs):
@@ -92,7 +86,7 @@ class Controller(Abstract):
             return False
 
         self.create_guest_record("guest_out", user)
-        return True
+        return self.format_guest(user)
 
     def is_in(self, type, filter=True):
         last_in_or_out = db.query(ContentItem).filter(ContentItem.type.startswith(type) & filter).order_by(-ContentItem.created_at).first()
@@ -139,3 +133,12 @@ class Controller(Abstract):
                 if user.settings and user.settings.get("MacAddress") == kwargs["mac"]:
                     return user
         return None
+
+    def format_guest(self, user):
+        return {
+            "id"            : user.id,
+            "username"      : all_social_services[user.default_identity.service].get_user_name(user.default_identity.service_data),
+            "avatar"        : all_social_services[user.default_identity.service].get_user_avatar(user.default_identity.service_data),
+            "identities"    : dict([(identity.service, identity.service_data) for identity in user.identities]),
+            "settings"      : user.settings,
+        }
