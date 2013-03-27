@@ -25,7 +25,7 @@ class Setting:
 
     @classmethod
     def get_value(cls, user):
-        if user.settings and cls.get_id() in user.settings:
+        if cls.get_id() in user.settings:
             return user.settings[cls.get_id()]
         else:
             return cls.get_default_value()
