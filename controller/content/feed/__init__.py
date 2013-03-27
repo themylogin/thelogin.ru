@@ -5,7 +5,7 @@ all = {
     "index"     : {
         "title"     : u"Лента",
         "url"       : "",
-        "types"     : ["blog_post", "gallery_image", "video", "chatlog"],
+        "types"     : ["blog_post", "gallery_image", "video", "chatlog", "book"],
     },
     "blog"      : {
         "title"     : u"Блог",
@@ -27,6 +27,11 @@ all = {
         "title"     : u"Логи",
         "url"       : "chatlogs",
         "types"     : ["chatlog"],
+    },
+    "library"   : {
+        "title"     : u"Библиотека",
+        "url"       : "library",
+        "types"     : ["book"],
     },
 
     "timeline"  : {

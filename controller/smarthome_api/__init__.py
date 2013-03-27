@@ -61,7 +61,7 @@ class Controller(Abstract):
         for user in db.query(User):
             is_in = self.guest_is_in(user)
             if is_in:
-                guests.append(dict(self.format_guest(user), "came_at"=is_in.created_at.isoformat())
+                guests.append(dict(self.format_guest(user), came_at=is_in.created_at.isoformat()))
         return sorted(guests, key=operator.itemgetter("came_at"))
 
     @decorate

@@ -39,6 +39,10 @@ all = {
         "type"      :   Chatlog(),
         "view_url"  :   "chatlogs/view/<url>",
     },
+    "book"      : {
+        "type"      :   Post(),
+        "view_url"  :   "library/book/<url>",
+    },
 
     "movie"                 : {
         "type"              :   ContentConsume(
