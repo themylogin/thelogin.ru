@@ -1,0 +1,15 @@
+{% extends "content/type/abstract/view.html" %}
+
+{% block title %}
+    {% if item.sold %}
+        <h1><a href="{{ item.url }}"><span style="color: #bd362f;">[ПРОДАНО]</span> {{ item.title }}</a></h1>
+    {% else %}
+        <h1><a href="{{ item.url }}">{{ item.title }}</a></h1>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <a href="{{ item.image }}"><img src="{{ item.image_template % "1280" }}" /></a>
+
+    {{ item.text|safe }}
+{% endblock %}

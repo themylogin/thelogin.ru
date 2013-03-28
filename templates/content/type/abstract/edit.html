@@ -24,6 +24,18 @@
     </div>
 {% endmacro %}
 
+{% macro checkbox_input(title, name, value) %}
+    {% call small_input(title) %}
+        <input type="checkbox" name="{{ name }}" {% if value %}checked="checked"{% endif %} />
+    {% endcall %}
+{% endmacro %}
+
+{% macro file_input(title, name) %}
+    {% call small_input(title) %}
+        <input type="file" name="{{ name }}" />
+    {% endcall %}
+{% endmacro %}
+
 {% macro small_text_input(title, name, value) %}
     {% call small_input(title) %}
         <input type="text" name="{{ name }}" value="{{ value }}" style="border: 1px solid #999; width: 600px;" />

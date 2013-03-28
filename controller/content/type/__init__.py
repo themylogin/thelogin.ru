@@ -7,6 +7,7 @@ from controller.content.type.post import Type as Post
 from controller.content.type.image import Type as Image
 from controller.content.type.video import Type as Video
 from controller.content.type.chatlog import Type as Chatlog
+from controller.content.type.product import Type as Product
 
 from controller.content.type.content_consume import Type as ContentConsume
 from controller.content.type.fitness_activity import Type as FitnessActivity
@@ -39,9 +40,10 @@ all = {
         "type"      :   Chatlog(),
         "view_url"  :   "chatlogs/view/<url>",
     },
-    "book"      : {
-        "type"      :   Post(),
-        "view_url"  :   "library/book/<url>",
+
+    "shop_product" : {
+        "type"      :   Product(),
+        "view_url"  :   "shop/view/<url>",
     },
 
     "movie"                 : {

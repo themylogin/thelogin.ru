@@ -302,7 +302,7 @@ class Controller(Abstract):
                 "content/type/%s/edit.html" % (c.type,),
                 "content/type/%s/edit.html" % (self._base_type(c.type),),
             ], **{
-                "breadcrumbs"       :   [u"Редактировние %s" % self.types[c.type]["type"].item_cases[1]],
+                "breadcrumbs"       :   [u"Редактирование %s" % self.types[c.type]["type"].item_cases[1]],
 
                 "form"              :   form,
                 "content_item"      :   c,
