@@ -286,6 +286,7 @@ class Controller(Abstract):
         if request.method == "POST":
             c.type_key = request.form["type_key"]
             c.created_at = dateutil.parser.parse(request.form["created_at"])
+            c.permissions = ContentItem.permissions_PUBLIC if "public" in request.form else ContentItem.permissions_NOT_READY
 
             c.tags = []
             for tag in request.form["tags"].split(","):
