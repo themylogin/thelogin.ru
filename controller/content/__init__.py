@@ -286,6 +286,18 @@ class Controller(Abstract):
         if request.method == "POST":
             c.type_key = request.form["type_key"]
 
+            c.tags = []
+            for tag in request.form["tags"].split(","):
+                tag = tag.strip()
+                db_tag = db.query(Tag).filter(Tag.title == tag).first()
+                if db_tag is None:
+                    db_tag = Tag()
+                    db_tag.url = tag.split(":", 2)[0] if ":" in tag else tag
+                    db_tag.title = tag.split(":", 2)[1] if ":" in tag else tag
+                    db.add(db_tag)
+                    db.flush
+                c.tags.append(db_tag)
+
             data = editor.form_to_db(request, c.data)
             c.data = None
             db.flush()
@@ -306,6 +318,7 @@ class Controller(Abstract):
 
                 "form"              :   form,
                 "content_item"      :   c,
+                "tags"              :   u",".join([t.title for t in c.tags]),
             })
 
     def _base_type(self, type):

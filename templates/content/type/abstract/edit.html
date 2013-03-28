@@ -59,6 +59,8 @@
 
         {% block fields %}{% endblock %}
 
+        {{ big_text_input("Теги", "tags", tags) }}
+
         <div>
             <input type="submit" value="Сохранить (Ctrl+Shift+S)" style="border: 1px solid #aaa; border-radius: 5px; background: #eee; padding: 5px 10px;" />
         </div>
