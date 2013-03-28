@@ -1,0 +1,21 @@
+{% extends "content/type/abstract/preview.html" %}
+
+{% block title %}
+    {% if item.sold %}
+        <h1><a href="{{ item.url }}"><span style="color: #bd362f;">[ПРОДАНО]</span> {{ item.title }}</a></h1>
+    {% else %}
+        <h1><a href="{{ item.url }}">{{ item.title }}</a></h1>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="image thumb left" style="margin-top: 2px; margin-bottom: 2px;">
+        <a href="{{ item.url }}">
+            <img src="{{ item.image_template % "194" }}" />
+        </a>
+    </div>
+
+    {{ item.text|safe }}
+
+    <div class="clear"></div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "content/type/abstract/edit.html" %}
+
+{% block fields %}
+    {{ big_text_input("Название", "data[title]", form.title) }}
+
+    {{ file_input("Обложка", "image") }}
+
+    {{ file_input("Книга", "book") }}
+
+    {{ textarea("data[text]", form.text, 521) }}
+{% endblock %}

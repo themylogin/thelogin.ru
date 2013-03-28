@@ -1,0 +1,19 @@
+{% extends "content/type/abstract/view.html" %}
+
+{% block content %}
+    <div class="image thumb left" style="margin-top: 2px; margin-bottom: 2px;">
+        <a href="{{ item.url }}">
+            <img src="{{ item.image_template % "194" }}" />
+        </a>
+    </div>
+
+    {{ item.text|safe }}
+
+    <div class="clear"></div>
+
+    <div class="title">
+        <h1>Как скачать книгу?</h1>
+
+        <p>Копируем URL обложки, убираем из него <var>194</var> и заменяем расширение изображения на расширение формата книги (<b>{{ item.book_type }}</b>)</p>
+    </div>
+{% endblock %}

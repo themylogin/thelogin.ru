@@ -285,6 +285,7 @@ class Controller(Abstract):
 
         if request.method == "POST":
             c.type_key = request.form["type_key"]
+            c.created_at = dateutil.parser.parse(request.form["created_at"])
 
             c.tags = []
             for tag in request.form["tags"].split(","):

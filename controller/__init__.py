@@ -18,6 +18,7 @@ all = [
     Image("data/gallery/images"),
     Image("data/games"),
     Image("data/internet", allow_internet=True),
+    Image("data/library"),
     Image("data/movies"),
     Image("data/music"),
     Image("data/runkeeper"),
