@@ -22,6 +22,9 @@ class Type(abstract.Type):
     def get_formatter(self):
         return Formatter(self.cut_format)
 
+    def get_editor(self):
+        return Editor()
+
 class Formatter(abstract.Formatter):
     def __init__(self, cut_format):
         self.cut_format = cut_format
@@ -77,3 +80,25 @@ class Formatter(abstract.Formatter):
             text = text_processor(text, url)
 
         return text
+
+class Editor(abstract.Editor):
+    def db_to_form(self, db_data):
+        return db_data
+
+    def form_to_db(self, request, db_data):
+        db_data["ipaddress"] = db_data.get("ipaddress", request.remote_addr)
+        db_data["useragent"] = db_data.get("useragent", request.user_agent.string)
+
+        for k in ["title",
+                  "title_html",
+                  "music",
+                  "text"]:
+            db_data[k] = request.form["data[" + k + "]"]
+
+        if "began" in db_data:
+            del db_data["began"]
+        if request.form["data[began][datetime]"] != "":
+            for k in ["datetime", "music"]:
+                db_data["began"][k] = request.form["data[began][" + k + "]"]
+
+        return db_data

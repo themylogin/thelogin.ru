@@ -1,0 +1,25 @@
+{% extends "content/type/abstract/edit.html" %}
+
+{% block fields %}
+    <div style="margin-bottom: 10px;">
+        <div><label for="title">Заголовок:</label></div>
+        <input type="text" name="data[title]" value="{{ form.title }}" style="color: #333; font-family: Verdana, sans-serif; font-size: 22px; line-height: 26px; width: 100%; border: 1px solid #999;" />
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <div><label for="title">HTML-заголовок:</label></div>
+        <input type="text" name="data[title_html]" value="{{ form.title_html }}" style="color: #333; font-family: Courier; font-size: 22px; line-height: 26px; width: 100%; border: 1px solid #999;" />
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <div style="color: #aaa; font-size: 13px;"><div style="display: inline-block; width: 100px;">Начато</div> <input type="text" name="data[began][datetime]" value="{% if form.began %}{{ form.began.datetime }}{% endif %}" style="border: 1px solid #999;" /> под <input type="text" name="data[began][music]" value="{% if form.began %}{{ form.began.music }}{% endif %}" style="border: 1px solid #999; width: 662px;" /></div>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        Написано под <input type="text" name="data[music]" value="{{ form.music }}" style="border: 1px solid #999; width: 662px;" />
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        <textarea name="data[text]" style="border: 1px solid #999; width: 100%; height: 523px; font: 14px Verdana;">{{ form.text }}</textarea>
+    </div>
+{% endblock %}

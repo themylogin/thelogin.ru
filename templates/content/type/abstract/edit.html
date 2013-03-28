@@ -1,0 +1,20 @@
+{% extends "base.html" %} 
+
+{% block base_content %}
+    <form action="{{ request.path }}" method="post" enctype="multipart/form-data">    
+        <div style="margin-bottom: 10px;">
+            <div><label for="title">URL:</label></div>
+            <input type="text" name="type_key" value="{{ content_item.type_key }}" style="color: #333; font-family: Verdana, sans-serif; font-size: 22px; line-height: 26px; width: 100%; border: 1px solid #999;" />
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <div style="color: #aaa; font-size: 13px;"><div style="display: inline-block; width: 100px;">Опубликовано</div> <input type="text" name="created_at" value="{{ content_item.created_at }}" style="border: 1px solid #999;" /> <input type="checkbox" name="public" value="1" {% if content_item.permissions == 0 %}checked="checked"{% endif %} style="position: relative; top: 1px;" /> </div>
+        </div>
+
+        {% block fields %}{% endblock %}
+
+        <div>
+            <input type="submit" value="Сохранить (Ctrl+Shift+S)" style="border: 1px solid #aaa; border-radius: 5px; background: #eee; padding: 5px 10px;" />
+        </div>
+    </form>
+{% endblock %}

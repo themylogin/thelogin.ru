@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-class Type:
+from collections import namedtuple
+
+class Type(object):
     def __init__(
         self,
 
@@ -17,8 +19,10 @@ class Type:
     def get_formatter(self):
         return Formatter()
 
-from collections import namedtuple
-class Provider:
+    def get_editor(self):
+        return Editor()
+
+class Provider(object):
     provider_item = namedtuple("provider_item", ["id", "created_at", "data", "kv"])
 
     def available(self):
@@ -34,7 +38,7 @@ class Provider:
     def on_item_inserted(self, content_item):
         pass
 
-class Formatter:
+class Formatter(object):
     def get_title(self, content_item):
         raise NotImplemented
 
@@ -48,4 +52,11 @@ class Formatter:
         raise NotImplemented
 
     def get_dict(self, content_item, url):
+        raise NotImplemented
+
+class Editor(object):
+    def db_to_form(self, db_data):
+        raise NotImplemented
+
+    def form_to_db(self, request, db_data):
         raise NotImplemented

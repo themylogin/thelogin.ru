@@ -1,16 +1,27 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from config import config
-from controller.abstract import Controller as Abstract
-
-from werkzeug.exceptions import NotFound
-
-from db import db
+from datetime import datetime
+import dateutil.parser
+from math import ceil
+import PyRSS2Gen
+import re
+import simplejson
+import StringIO
 from sqlalchemy.orm import subqueryload
-from controller.content.model import *
+import time
+from werkzeug.exceptions import Forbidden, NotFound
+from werkzeug.routing import Rule
+from werkzeug.utils import redirect
+from werkzeug.wrappers import Response
 
 from cache import cache
+from config import config
+from controller.abstract import Controller as Abstract
+from controller.content.comment_text_processor import all as all_comment_text_processor
+from controller.content.model import ContentItem, Tag, Comment
+from db import db
+from middleware.authorization import admin_action
 
 class Controller(Abstract):
     def __init__(self, types, feeds):
@@ -33,8 +44,6 @@ class Controller(Abstract):
         self.export_function(globals(), "process_comment_text", self._process_comment_text)
 
     def get_routes(self):
-        from werkzeug.routing import Rule
-
         rules = []
         # view single content item
         for type in self.types:
@@ -58,6 +67,9 @@ class Controller(Abstract):
         # post comment
         rules.append(Rule("/content/post-comment/<int:id>/", endpoint="post_comment"))
         rules.append(Rule("/content/edit-comment/<int:id>/", endpoint="edit_comment"))
+        # admin
+        rules.append(Rule("/admin/content/new/<type>/",     endpoint="admin_new"))
+        rules.append(Rule("/admin/content/edit/<int:id>/",  endpoint="admin_edit"))
         return rules
 
     def execute_view(self, request, **kwargs):
@@ -102,9 +114,6 @@ class Controller(Abstract):
             rss_title = config.build_title(feed["title"])
 
             if format == "rss":
-                import PyRSS2Gen, StringIO
-                from datetime import datetime
-
                 items = q.order_by(-ContentItem.created_at)[:feed["rss_items"]]
                 rss = PyRSS2Gen.RSS2(
                     title           =   rss_title,
@@ -125,8 +134,6 @@ class Controller(Abstract):
                 )
                 rss_string = StringIO.StringIO()
                 rss.write_xml(rss_string, "utf-8")
-
-                from werkzeug.wrappers import Response
                 return Response(rss_string.getvalue(), mimetype="application/rss+xml")
         else:
             rss_url = None
@@ -135,10 +142,8 @@ class Controller(Abstract):
         if format == "json":
             count = int(request.args.get("count", "100"))
             if "before" in request.args:
-                import dateutil.parser
                 q = q.filter(ContentItem.created_at < dateutil.parser.parse(request.args["before"])).order_by(-ContentItem.created_at)
             elif "after" in request.args:
-                import dateutil.parser
                 q = q.filter(ContentItem.created_at > dateutil.parser.parse(request.args["after"])).order_by(ContentItem.created_at)
             else:
                 q = q.order_by(-ContentItem.created_at)
@@ -157,7 +162,6 @@ class Controller(Abstract):
                 items = q.order_by(-ContentItem.created_at)[:feed["per_page"]]
                 items_skipped = 0
 
-            from math import ceil
             dates = [created_at for (created_at,) in q.order_by(ContentItem.created_at).values(ContentItem.created_at)]
             pages = list(reversed([
                 (
@@ -202,11 +206,8 @@ class Controller(Abstract):
             for (item_dict,) in [(self._item_dict(item),) for item in items]
         ]
         if format == "json":
-            import simplejson
-            from werkzeug.wrappers import Response
             return Response(simplejson.dumps(items_formatted), mimetype="application/json")
         else:
-            import re
             return self.render_to_response(request, [
                 "content/feed/%s/feed.html" % (kwargs["feed"],),
                 "content/feed/feed.html",
@@ -231,7 +232,6 @@ class Controller(Abstract):
     def execute_post_comment(self, request, **kwargs):
         content_item = db.query(ContentItem).get(kwargs["id"])
         if request.form["email"] == "" and request.form["text"].strip() != "":
-            from datetime import datetime
             comment = Comment()
             if request.user:
                 comment.identity_id = request.user.default_identity.id
@@ -242,7 +242,6 @@ class Controller(Abstract):
             content_item.comments.append(comment)
             db.flush()
 
-        from werkzeug.utils import redirect
         return redirect(self._item_dict(content_item)["url"] + "#last-comment")
 
     def execute_edit_comment(self, request, **kwargs):
@@ -259,15 +258,61 @@ class Controller(Abstract):
                     response = {"text" : self._process_comment_text(comment.text)}
                 db.flush()
 
-            import simplejson
-            from werkzeug.wrappers import Response
             return Response(simplejson.dumps(response), mimetype="application/json")
 
-        from werkzeug.exceptions import Forbidden
         raise Forbidden()
 
+    @admin_action
+    def execute_admin_new(self, request, type):
+        c = ContentItem()
+        c.type = type
+        c.type_key = str(int(time.time()))
+        c.created_at = datetime.now()
+        c.permissions = ContentItem.permissions_NOT_READY
+        c.data = {}
+        db.add(c)
+        db.flush()
+
+        return redirect("/admin/content/edit/%d/" % c.id)
+
+    @admin_action
+    def execute_admin_edit(self, request, id):
+        c = db.query(ContentItem).get(id)
+        if c is None:
+            raise NotFound()
+
+        editor = self.types[c.type]["type"].get_editor()
+
+        if request.method == "POST":
+            c.type_key = request.form["type_key"]
+
+            data = editor.form_to_db(request, c.data)
+            c.data = None
+            db.flush()
+            c.data = data
+            db.flush()
+
+            cache.get_cache("content_item_%d" % c.id).remove_value(key="formatter_output")
+
+            return redirect(request.path)
+        else:
+            form = editor.db_to_form(c.data)
+
+            return self.render_to_response(request, [
+                "content/type/%s/edit.html" % (c.type,),
+                "content/type/%s/edit.html" % (self._base_type(c.type),),
+            ], **{
+                "breadcrumbs"       :   [u"Редактировние %s" % self.types[c.type]["type"].item_cases[1]],
+
+                "form"              :   form,
+                "content_item"      :   c,
+            })
+
+    def _base_type(self, type):
+        return self.types[type]["type"].__class__.__module__.split(".")[-1]
+
     def _item_dict(self, content_item):
-        base_type = self.types[content_item.type]["type"].__class__.__module__.split(".")[-1]
+        base_type = self._base_type(content_item.type)
         url = config.url + "/" + self.types[content_item.type]["view_url"].replace("<url>", content_item.type_key) + "/" if "view_url" in self.types[content_item.type] else None
 
         formatter = self.types[content_item.type]["type"].get_formatter()
@@ -290,9 +335,7 @@ class Controller(Abstract):
             "url"           : url,
         }, **formatter_output)
 
-    def _process_comment_text(self, comment_text):
-        from controller.content.comment_text_processor import all as all_comment_text_processor
-
+    def _process_comment_text(self, comment_text):        
         try:
             for comment_text_processor in all_comment_text_processor:
                 comment_text = comment_text_processor(comment_text)
