@@ -27,6 +27,9 @@ class Type(abstract.Type):
     def get_formatter(self):
         return Formatter(self.username)
 
+    def get_editor(self):
+        return None
+
 class Provider(abstract.Provider):
     def __init__(self, imap_server, imap_login, imap_password):
         self.imap_server = imap_server

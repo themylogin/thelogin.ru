@@ -26,6 +26,9 @@ class Type(abstract.Type):
     def get_formatter(self):
         return Formatter(self.username, self.image_directory)
 
+    def get_editor(self):
+        return None
+
 class Provider(abstract.Provider):
     def __init__(self, bearer, image_directory):
         self.bearer = bearer

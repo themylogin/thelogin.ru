@@ -10,8 +10,8 @@ class Type(abstract.Type):
         client_id, client_secret,
         user_id, user_name, user_avatar,
         
-        item_cases      = (u"пост",     u"поста",       u"посту",       u"пост",        u"постом",      u"посте"),
-        item_mcases     = (u"посты",    u"постов",      u"постам",      u"посты",       u"постами",     u"постах"),
+        item_cases      = (u"пост вконтакте",   u"поста вконтакте",     u"посту вконтакте",     u"пост вконтакте",  u"постом вконтакте",    u"посте вконтакте"),
+        item_mcases     = (u"посты вконтакте",  u"постов вконтакте",    u"постам вконтакте",    u"посты вконтакте", u"постами вконтакте",   u"постах вконтакте"),
     ):
         abstract.Type.__init__(self, item_cases, item_mcases)
 
@@ -27,6 +27,9 @@ class Type(abstract.Type):
 
     def get_formatter(self):
         return Formatter(self.user_id, self.user_name, self.user_avatar)
+
+    def get_editor(self):
+        return None
 
 class Provider(abstract.Provider):
     def __init__(self, user_id):

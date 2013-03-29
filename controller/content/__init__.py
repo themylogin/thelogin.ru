@@ -4,6 +4,7 @@
 from datetime import datetime
 import dateutil.parser
 from math import ceil
+import operator
 import PyRSS2Gen
 import re
 import simplejson
@@ -68,6 +69,7 @@ class Controller(Abstract):
         rules.append(Rule("/content/post-comment/<int:id>/", endpoint="post_comment"))
         rules.append(Rule("/content/edit-comment/<int:id>/", endpoint="edit_comment"))
         # admin
+        rules.append(Rule("/admin/content/",                endpoint="admin"))
         rules.append(Rule("/admin/content/new/<type>/",     endpoint="admin_new"))
         rules.append(Rule("/admin/content/edit/<int:id>/",  endpoint="admin_edit"))
         return rules
@@ -261,6 +263,41 @@ class Controller(Abstract):
             return Response(simplejson.dumps(response), mimetype="application/json")
 
         raise Forbidden()
+
+    @admin_action
+    def execute_admin(self, request):
+        filter_types = [("", u"все")] + sorted([(k, v["type"].item_cases[0]) for k, v in self.types.items()], key=operator.itemgetter(1))
+        create_types = sorted([("/admin/content/new/%s/" % k, v["type"].item_cases[3]) for k, v in self.types.items() if v["type"].get_editor() is not None], key=operator.itemgetter(1))
+
+        q = db.query(ContentItem).filter(ContentItem.type.in_(self.types.keys())).order_by(-ContentItem.created_at)
+        if request.args.get("type", ""):
+            filter_type = request.args["type"]
+            q = q.filter(ContentItem.type == filter_type)
+        else:
+            filter_type = ""
+
+        total_pages = int(ceil(q.count() / 100.0))
+        page = request.args.get("page", 1, type=int)
+        
+        content_items = [(
+            self.types[content_item.type]["type"].item_cases[0],
+            "/admin/content/edit/%d/" % content_item.id if self.types[content_item.type]["type"].get_editor() else None,
+            self._item_dict(content_item),
+        ) for content_item in q[(page - 1) * 100 : page * 100]]
+
+        return self.render_to_response(request, "content/admin.html", **{
+            "breadcrumbs"       :   [u"Управление контентом"],
+
+            "filter_types"      :   filter_types,
+            "create_types"      :   create_types,
+
+            "filter_type"       :   filter_type,
+
+            "total_pages"       :   total_pages,
+            "page"              :   page,
+
+            "content_items"     :   content_items,
+        })
 
     @admin_action
     def execute_admin_new(self, request, type):

@@ -22,6 +22,9 @@ class Type(abstract.Type):
     def get_formatter(self):
         return Formatter(self.service)
 
+    def get_editor(self):
+        return None
+
 class Provider(abstract.Provider):
     def __init__(self, service):
         self.service = service

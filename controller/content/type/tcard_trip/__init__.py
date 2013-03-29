@@ -26,6 +26,9 @@ class Type(abstract.Type):
     def get_formatter(self):
         return Formatter(self.username)
 
+    def get_editor(self):
+        return None
+
 class Provider(abstract.Provider):
     def __init__(self, session_id, card_number):
         self.session_id = session_id

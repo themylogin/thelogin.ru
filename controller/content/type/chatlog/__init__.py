@@ -20,6 +20,9 @@ class Type(abstract.Type):
     def get_formatter(self):
         return Formatter()
 
+    def get_editor(self):
+        return None
+
 class Formatter(abstract.Formatter):
     def get_title(self, content_item):
         return u"Лог №%s" % (content_item.type_key,)
