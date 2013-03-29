@@ -211,7 +211,7 @@
         {
             float: left;
         }
-.content_item.invisible, .content_item.invisible a
+.content_item.permissions_NOT_READY
 {
     color: #888;
 }

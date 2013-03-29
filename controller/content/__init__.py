@@ -195,7 +195,7 @@ class Controller(Abstract):
             seasons = list(reversed(seasons))
 
         items_formatted = [
-            "<div class=\"content_item " + item_dict["base_type"] + " " + item_dict["type"] + "\" data-created-at=\"" + item_dict["created_at"].isoformat() + "\">" +
+            "<div class=\"content_item " + item_dict["base_type"] + " " + item_dict["type"] + " " + " ".join(item_dict["permissions"]) + "\" data-created-at=\"" + item_dict["created_at"].isoformat() + "\">" +
             self.render_template(request, [
                 "content/type/%(type)s/preview_in_%(feed)s.html"        % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : kwargs["feed"] },
                 "content/type/%(type)s/preview.html"                    % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : kwargs["feed"] },
@@ -345,6 +345,7 @@ class Controller(Abstract):
             "created_at"    : content_item.created_at,            
             "comments"      : content_item.comments,
             "tags"          : content_item.tags,
+            "permissions"   : [k for k in ContentItem.__dict__.keys() if k.startswith("permissions_") and isinstance(getattr(ContentItem, k), int) and content_item.permissions & getattr(ContentItem, k)],
 
             "base_type"     : base_type,
             "url"           : url,
