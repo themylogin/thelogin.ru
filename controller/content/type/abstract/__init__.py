@@ -29,7 +29,7 @@ class Provider(object):
         return True
 
     def provide(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def is_not_actual_item(self, content_item):
         # Will be called if item is not present in feed
@@ -40,23 +40,23 @@ class Provider(object):
 
 class Formatter(object):
     def get_title(self, content_item):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_image(self, content_item):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_description(self, content_item, url):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_text(self, content_item, url):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_dict(self, content_item, url):
-        raise NotImplemented
+        raise NotImplementedError
 
 class Editor(object):
     def db_to_form(self, db_data):
-        raise NotImplemented
+        raise NotImplementedError
 
     def form_to_db(self, request, db_data):
-        raise NotImplemented
+        raise NotImplementedError
