@@ -10,7 +10,7 @@ from controller.content.type.chatlog import Type as Chatlog
 from controller.content.type.product import Type as Product
 from controller.content.type.book import Type as Book
 
-from controller.content.type.content_consume import Type as ContentConsume
+from controller.content.type.content_consume import Type as ContentConsume, create_title_renderer as create_content_consume_title_renderer
 from controller.content.type.fitness_activity import Type as FitnessActivity
 from controller.content.type.github_action import Type as GithubAction
 from controller.content.type.lastfm_like import Type as LastFM_Like
@@ -55,7 +55,7 @@ all = {
         "type"              :   ContentConsume(
                                     item_cases      = (u"фильм",    u"фильма",  u"фильму",  u"фильм",   u"фильмом",     u"фильме"),
                                     item_mcases     = (u"фильмы",   u"фильмов", u"фильмам", u"фильмы",  u"фильмами",    u"фильмах"),
-                                    title_renderer  = lambda **kwargs: u"<b>%(user)s</b> посмотрел <b>%(content)s</b>" % kwargs,
+                                    title_renderer  = create_content_consume_title_renderer(u"%(consumer)s посмотрел <b>%(content)s</b>", u"%(consumers)s посмотрели <b>%(content)s</b>"),
                                     image_directory = "data/movies"
                                 )
     },
@@ -63,7 +63,7 @@ all = {
         "type"              :   ContentConsume(
                                     item_cases      = (u"сеанс игры",   u"сеанса игры",     u"сеансу игры",     u"сеанс игры",  u"сеансом игры",    u"сеансе игры"),
                                     item_mcases     = (u"сеансы игры",  u"сеансов игры",    u"сеансам игры",    u"сеансы игры", u"сеансами игры",   u"сеансах игры"),
-                                    title_renderer  = lambda **kwargs: u"<b>%(user)s</b> играл в <b>%(content)s</b>" % kwargs,
+                                    title_renderer  = create_content_consume_title_renderer(u"%(consumer)s играл в <b>%(content)s</b>", u"%(consumers)s играли в <b>%(content)s</b>"),
                                     image_directory = "data/games"
                                 )
     },
