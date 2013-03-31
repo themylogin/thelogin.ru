@@ -98,6 +98,7 @@ class Editor(abstract.Editor):
         if "began" in db_data:
             del db_data["began"]
         if request.form["data[began][datetime]"] != "":
+            db_data["began"] = {}
             for k in ["datetime", "music"]:
                 db_data["began"][k] = request.form["data[began][" + k + "]"]
 

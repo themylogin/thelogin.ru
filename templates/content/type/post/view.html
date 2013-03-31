@@ -19,3 +19,15 @@
 {% block content %}
     {{ item.text|safe }}
 {% endblock %}
+
+{% block right_col %}
+    {{ block("content_item_next_prev", item=item, feed="index") }}
+    {{ block("last_comments") }}
+    {{ block("tagcloud", feed="index") }}
+    {{ block("timeline", item=item) }}
+    {% if item.began %}
+        {{ block("lastfm", from_=item.began.at, to=item.created_at) }}
+    {% else %}
+        {{ block("lastfm", to=item.created_at) }}
+    {% endif %}
+{% endblock %}
