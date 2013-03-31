@@ -39,6 +39,9 @@ class Provider(object):
         pass
 
 class Formatter(object):
+    def is_context_dependent(self, content_item):
+        return False
+
     def get_title(self, content_item):
         raise NotImplementedError
 

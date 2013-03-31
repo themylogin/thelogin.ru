@@ -368,12 +368,16 @@ class Controller(Abstract):
         url = config.url + "/" + self.types[content_item.type]["view_url"].replace("<url>", content_item.type_key) + "/" if "view_url" in self.types[content_item.type] else None
 
         formatter = self.types[content_item.type]["type"].get_formatter()
-        formatter_output = cache.get_cache("content_item_%d" % content_item.id).get(key="formatter_output", createfunc=lambda: dict({
+        format = lambda: dict({
             "title"         : formatter.get_title(content_item),
             "image"         : formatter.get_image(content_item),
             "description"   : formatter.get_description(content_item, url),
             "text"          : formatter.get_text(content_item, url),
-        }, **formatter.get_dict(content_item, url)))
+        }, **formatter.get_dict(content_item, url))
+        if formatter.is_context_dependent(content_item):
+            formatter_output = format()
+        else:
+            formatter_output = cache.get_cache("content_item_%d" % content_item.id).get(key="formatter_output", createfunc=format)
 
         return dict({
             "id"            : content_item.id,
