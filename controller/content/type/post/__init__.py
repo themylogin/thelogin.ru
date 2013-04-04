@@ -82,6 +82,17 @@ class Formatter(abstract.Formatter):
         return text
 
 class Editor(abstract.Editor):
+    def new_db(self):
+        return {
+            "title"         : "",
+            "title_html"    : "",
+            "music"         : "",
+            "text"          : "",
+            
+            "ipaddress"     : "",
+            "useragent"     : "",
+        }
+
     def db_to_form(self, db_data):
         return db_data
 

@@ -58,6 +58,9 @@ class Formatter(object):
         raise NotImplementedError
 
 class Editor(object):
+    def new_db(self):
+        raise NotImplementedError
+
     def db_to_form(self, db_data):
         raise NotImplementedError
 

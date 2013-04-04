@@ -54,6 +54,14 @@ class Editor(abstract.Editor):
     def __init__(self, image_dir):
         self.image_dir = image_dir
 
+    def new_db(self):
+        return {
+            "title"         : "",
+            "text"          : "",
+            "image_type"    : "",
+            "sold"          : False,
+        }
+
     def db_to_form(self, db_data):
         return db_data
 

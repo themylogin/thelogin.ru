@@ -306,7 +306,7 @@ class Controller(Abstract):
         c.type_key = str(int(time.time()))
         c.created_at = datetime.now()
         c.permissions = ContentItem.permissions_NOT_READY
-        c.data = {}
+        c.data = self.types[c.type]["type"].get_editor().new_db()
         db.add(c)
         db.flush()
 
