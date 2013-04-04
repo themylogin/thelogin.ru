@@ -15,7 +15,7 @@ all = [
     Authorization(all_social_services),
     Content(all_content_types, all_content_feeds),
     Image("data/blog/images"),
-    Image("data/gallery/images"),
+    Image("data/gallery"),
     Image("data/games"),
     Image("data/internet", allow_internet=True),
     Image("data/library"),

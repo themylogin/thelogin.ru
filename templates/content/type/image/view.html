@@ -1,5 +1,24 @@
 {% extends "content/type/abstract/view.html" %}
 
+{% block subtitle %} 
+   {% if item.taken_at %}
+        <div class="began">
+            Снято {{ item.taken_at|datetime }}
+            {% if item.taken_with %}
+                на {{ item.taken_with }}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="began">
+            {% if item.taken_with %}
+                Снято на {{ item.taken_with }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    Опубликовано {{ item.created_at|datetime }}
+{% endblock %}
+
 {% block content %}
     <img src="/{{ item.directory }}/1280/960/{{ item.filename }}" style="display: block; margin: 0 auto; max-width: 100%;" />
     
