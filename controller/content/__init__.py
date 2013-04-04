@@ -9,6 +9,7 @@ import PyRSS2Gen
 import re
 import simplejson
 import StringIO
+from sqlalchemy import distinct, func
 from sqlalchemy.orm import subqueryload
 import time
 from werkzeug.exceptions import Forbidden, NotFound
@@ -23,6 +24,8 @@ from controller.content.comment_text_processor import all as all_comment_text_pr
 from controller.content.model import ContentItem, Tag, Comment
 from db import db
 from middleware.authorization import admin_action
+from middleware.authorization.model import User
+from social_service import all as all_social_service
 
 class Controller(Abstract):
     def __init__(self, types, feeds):
@@ -68,6 +71,8 @@ class Controller(Abstract):
         # post comment
         rules.append(Rule("/content/post-comment/<int:id>/", endpoint="post_comment"))
         rules.append(Rule("/content/edit-comment/<int:id>/", endpoint="edit_comment"))
+        # user comments
+        rules.append(Rule("/user/<int:id>/comments-for/rss/", endpoint="comments_for_user_rss"))
         # admin
         rules.append(Rule("/admin/content/",                endpoint="admin"))
         rules.append(Rule("/admin/content/new/<type>/",     endpoint="admin_new"))
@@ -263,6 +268,41 @@ class Controller(Abstract):
             return Response(simplejson.dumps(response), mimetype="application/json")
 
         raise Forbidden()
+
+    def execute_comments_for_user_rss(self, request, **kwargs):
+        user = db.query(User).get(kwargs["id"])
+        content_item_ids_user_commented = db.query(distinct(Comment.content_item_id)).filter(Comment.identity_id.in_([identity.id for identity in user.identities]))
+        
+        rss = PyRSS2Gen.RSS2(
+            title           =   config.build_title(u"Новые комментарии для %s" % (all_social_service[user.default_identity.service].get_user_name(user.default_identity.service_data))),
+            link            =   config.url + request.path,
+            description     =   "",
+            lastBuildDate   =   datetime.now(),
+
+            items           =   [
+                                    PyRSS2Gen.RSSItem(
+                                        title       = u"%(username)s - %(title)s" % {
+                                            "username"  : all_social_service[comment.identity.user.default_identity.service].get_user_name(comment.identity.user.default_identity.service_data),
+                                            "title"     : self._item_dict(comment.content_item)["title"],
+                                        },
+                                        link        = self._item_dict(comment.content_item)["url"] + "#comment-%d" % (
+                                            db.query(func.count(Comment)).filter(Comment.content_item == comment.content_item, Comment.created_at < comment.created_at).scalar() + 1
+                                        ),
+                                        description = self._process_comment_text(comment.text),
+                                        guid        = PyRSS2Gen.Guid(self._item_dict(comment.content_item)["url"] + "#comment-%d" % (
+                                            db.query(func.count(Comment)).filter(Comment.content_item == comment.content_item, Comment.created_at < comment.created_at).scalar() + 1
+                                        )),
+                                        pubDate     = comment.created_at
+                                    )
+                                    for comment in db.query(Comment).filter(
+                                        Comment.content_item_id.in_(content_item_ids_user_commented),
+                                        ~Comment.identity_id.in_([identity.id for identity in user.identities])
+                                    ).order_by(-Comment.created_at)[:50]
+                                ]
+        )
+        rss_string = StringIO.StringIO()
+        rss.write_xml(rss_string, "utf-8")
+        return Response(rss_string.getvalue(), mimetype="application/rss+xml")
 
     @admin_action
     def execute_admin(self, request):
