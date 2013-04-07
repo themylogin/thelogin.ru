@@ -47,7 +47,7 @@ class Provider(abstract.Provider):
                 if "/checkin/" not in redirect.geturl():
                     return ""
                 html = redirect.read()
-                html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("[vV]enue: {\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
+                html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("\"?[vV]enue\"?:\s*{\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
                 return ",".join(reversed(re.search("\?daddr=([0-9\.,]+)", html).group(1).split(",")))
 
             def instagram_src(instagr_am_url):
