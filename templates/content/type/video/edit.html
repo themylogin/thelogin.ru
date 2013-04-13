@@ -1,0 +1,15 @@
+{% extends "content/type/abstract/edit.html" %}
+
+{% block fields %}
+    {{ big_text_input("Название", "data[title]", form.title) }}
+
+    {{ textarea("data[text]", form.text, 521) }}
+
+    {{ file_input("Превью", "image") }}
+
+    {{ file_input("Видео", "video") }}
+
+    {% if form.pre %}
+        <pre style="overflow: scroll; padding: 5px; border: 1px solid #aaa;">{{ form.pre }}</pre>
+    {% endif %}
+{% endblock %}
