@@ -15,7 +15,6 @@ from controller.abstract import Controller as Abstract
 from controller.content.model import ContentItem
 from db import db
 from middleware.authorization.model import User
-from mq import mq_channel
 from social_service import all as all_social_services
 
 class Controller(Abstract):

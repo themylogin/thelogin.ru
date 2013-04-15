@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import dateutil.parser
+
 from controller.content.type import abstract
 
 class Type(abstract.Type):
@@ -48,13 +50,12 @@ class Formatter(abstract.Formatter):
         return self._full_text(content_item, url)
 
     def get_dict(self, content_item, url):
-        import dateutil.parser
         return {
             "title_html"    :   content_item.data.get("title_html", None),
             "preview"       :   self._preview_text(content_item, url),
             "music"         :   content_item.data.get("music", None),
             "began"         :   {
-                                    "at"    : dateutil.parser.parse(content_item.data["began"]["datetime"]),
+                                    "at"    : content_item.started_at,
                                     "music" : content_item.data["began"].get("music", None),
                                 }
                                 if "began" in content_item.data
@@ -106,11 +107,6 @@ class Editor(abstract.Editor):
                   "text"]:
             db_data[k] = request.form["data[" + k + "]"]
 
-        if "began" in db_data:
-            del db_data["began"]
-        if request.form["data[began][datetime]"] != "":
-            db_data["began"] = {}
-            for k in ["datetime", "music"]:
-                db_data["began"][k] = request.form["data[began][" + k + "]"]
+        db_data["began"] = {"music" : request.form["data[started_at_music]"]}
 
         return db_data

@@ -6,8 +6,8 @@
     {{ big_text_input("HTML-заголовок", "data[title_html]", form.title_html) }}
 
     {% call small_input("Начато") %}
-        <input type="text" name="data[began][datetime]" value="{% if form.began %}{{ form.began.datetime }}{% endif %}" style="border: 1px solid #999;" />
-        под <input type="text" name="data[began][music]" value="{% if form.began %}{{ form.began.music }}{% endif %}" style="border: 1px solid #999; width: 600px;" />
+        <input type="text" name="started_at" value="{% if content_item.started_at %}{{ content_item.started_at }}{% endif %}" style="border: 1px solid #999;" />
+        под <input type="text" name="data[started_at_music]" value="{% if form.began %}{{ form.began.music }}{% endif %}" style="border: 1px solid #999; width: 600px;" />
     {% endcall %}
 
     {{ small_text_input("Написано под", "data[music]", form.music) }}

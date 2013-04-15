@@ -23,6 +23,7 @@ class ContentItem(Base):
     id                  = Column(Integer, primary_key=True)
     type                = Column(String(length=32))
     type_key            = Column(String(length=255))
+    started_at          = Column(DateTime())
     created_at          = Column(DateTime())
     permissions         = Column(Integer)
     data                = Column(PickleType(pickler=simplejson))

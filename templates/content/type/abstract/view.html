@@ -105,5 +105,5 @@
     {{ block("last_comments") }}
     {{ block("tagcloud", feed="index") }}
     {{ block("timeline", item=item) }}
-    {{ block("lastfm", to=item.created_at) }}
+    {{ block("lastfm", from_=item.started_at, to=item.created_at) }}
 {% endblock %}

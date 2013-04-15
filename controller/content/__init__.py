@@ -362,6 +362,7 @@ class Controller(Abstract):
 
         if request.method == "POST":
             c.type_key = request.form["type_key"]
+            c.started_at = dateutil.parser.parse(request.form["started_at"]) if request.form.get("started_at", "").strip() else None
             c.created_at = dateutil.parser.parse(request.form["created_at"])
             c.permissions = ContentItem.permissions_PUBLIC if "public" in request.form else ContentItem.permissions_NOT_READY
 
@@ -423,7 +424,8 @@ class Controller(Abstract):
             "id"            : content_item.id,
             "type"          : content_item.type,
             "type_key"      : content_item.type_key,
-            "created_at"    : content_item.created_at,            
+            "started_at"    : content_item.started_at,
+            "created_at"    : content_item.created_at,
             "comments"      : content_item.comments,
             "tags"          : content_item.tags,
             "permissions"   : [k for k in ContentItem.__dict__.keys() if k.startswith("permissions_") and isinstance(getattr(ContentItem, k), int) and content_item.permissions & getattr(ContentItem, k)],

@@ -17,13 +17,13 @@
 {% endblock %}
 
 {% block footer %}
-    {% if item.start %}
-        {{ item.start|datetime }} &mdash; {{ item.created_at|datetime }}
+    {% if item.started_at %}
+        {{ item.started_at|datetime }} &mdash; {{ item.created_at|datetime }}
     {% else %}
         {{ item.created_at|datetime }}
     {% endif %}
     
-    {% if item.download %}
-        <div>Скачано {{ item.download|datetime }}</div>
+    {% if item.downloaded_at %}
+        <div>Скачано {{ item.downloaded_at|datetime }}</div>
     {% endif %}
 {% endblock %}

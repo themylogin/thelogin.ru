@@ -46,6 +46,7 @@ class Provider(abstract.Provider):
 
             yield self.provider_item(
                 id          =   int(activity["uri"].split("/")[2]),
+                started_at  =   dateutil.parser.parse(data["start_time"]).replace(tzinfo=None),
                 created_at  =   dateutil.parser.parse(data["start_time"]).replace(tzinfo=None) + timedelta(seconds=int(float(data["duration"]))),
                 data        =   data,
                 kv          =   {},
@@ -109,8 +110,6 @@ class Formatter(abstract.Formatter):
     def get_dict(self, content_item, url):
         import dateutil.parser
         return {
-            "start"     : dateutil.parser.parse(content_item.data["start_time"]),
-
             "images"    : content_item.data["images"],
             "notes"     : content_item.data.get("notes", ""),
         }

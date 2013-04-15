@@ -23,7 +23,9 @@ class Type(object):
         return Editor()
 
 class Provider(object):
-    provider_item = namedtuple("provider_item", ["id", "created_at", "data", "kv"])
+    _provider_item = namedtuple("provider_item", ["id", "started_at", "created_at", "data", "kv"])
+    def provider_item(self, **kwargs):
+        return self._provider_item(kwargs["id"], kwargs.get("started_at", None), kwargs["created_at"], kwargs["data"], kwargs.get("kv", {}))
 
     def available(self):
         return True

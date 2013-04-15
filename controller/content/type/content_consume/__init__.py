@@ -92,8 +92,7 @@ class Formatter(abstract.Formatter):
 
     def get_dict(self, content_item, url):
         return {
-            "download"          :   datetime.fromtimestamp(content_item.data["download"]) if "download" in content_item.data else None,
-            "start"             :   datetime.fromtimestamp(content_item.data["start"]) if "start" in content_item.data else None,
+            "downloaded_at"     :   datetime.fromtimestamp(content_item.data["download"]) if "download" in content_item.data else None,
             "image_directory"   :   self.image_directory,
             "images"            :   map(urlencode, content_item.data.get("screenshots", [content_item.data["title"] + "." + str(i) + ".jpg" for i in range(1, 5)]))
         }
