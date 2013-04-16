@@ -4,7 +4,7 @@
 from sqlalchemy import Column, Index, ForeignKey, Table
 from sqlalchemy import Boolean, DateTime, Integer, PickleType, String, Text
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 import datetime
 import simplejson
@@ -21,6 +21,7 @@ class ContentItem(Base):
     __tablename__       = "content_item"
 
     id                  = Column(Integer, primary_key=True)
+    parent_id           = Column(Integer, ForeignKey("content_item.id"))
     type                = Column(String(length=32))
     type_key            = Column(String(length=255))
     started_at          = Column(DateTime())
@@ -30,6 +31,8 @@ class ContentItem(Base):
 
     type__type_key      = Index(type, type_key, unique=True)
     type__created_at    = Index(type, created_at)
+
+    children            = relationship("ContentItem", backref=backref("parent", remote_side="ContentItem.id"))
 
     tags                = relationship("Tag", secondary=ContentItemTag)
     comments            = relationship("Comment", primaryjoin="Comment.content_item_id == ContentItem.id", order_by="Comment.created_at", backref="content_item")
