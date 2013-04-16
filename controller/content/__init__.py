@@ -105,7 +105,7 @@ class Controller(Abstract):
         format = kwargs.get("format", "html")
 
         f = self.feeds[kwargs["feed"]]["url"]
-        q = db.query(ContentItem).filter(ContentItem.type.in_(feed["types"]), ContentItem.permissions_for(request.user)).options(subqueryload("comments"), subqueryload("tags"))
+        q = db.query(ContentItem).filter(ContentItem.parent_id == None, ContentItem.type.in_(feed["types"]), ContentItem.permissions_for(request.user)).options(subqueryload("children"), subqueryload("comments"), subqueryload("tags"))
         t = []
 
         if "tag" in kwargs:
@@ -201,17 +201,7 @@ class Controller(Abstract):
                     seasons[-1] = (seasons[-1][0], seasons[-1][1] + 1)
             seasons = list(reversed(seasons))
 
-        items_formatted = [
-            "<div class=\"content_item " + item_dict["base_type"] + " " + item_dict["type"] + " " + " ".join(item_dict["permissions"]) + "\" data-created-at=\"" + item_dict["created_at"].isoformat() + "\">" +
-            self.render_template(request, [
-                "content/type/%(type)s/preview_in_%(feed)s.html"        % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : kwargs["feed"] },
-                "content/type/%(type)s/preview.html"                    % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : kwargs["feed"] },
-                "content/type/%(base_type)s/preview_in_%(feed)s.html"   % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : kwargs["feed"] },
-                "content/type/%(base_type)s/preview.html"               % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : kwargs["feed"] },
-            ], item=item_dict) +
-            "</div>"
-            for (item_dict,) in [(self._item_dict(item),) for item in items]
-        ]
+        items_formatted = [self._render_item_preview(request, kwargs["feed"], "DESC", item) for item in items]
         if format == "json":
             return Response(simplejson.dumps(items_formatted), mimetype="application/json")
         else:
@@ -433,6 +423,28 @@ class Controller(Abstract):
             "base_type"     : base_type,
             "url"           : url,
         }, **formatter_output)
+
+    def _render_item_preview(self, request, feed, feed_direction, content_item):
+        item_dict = self._item_dict(content_item)
+
+        children = sorted(content_item.children, key=lambda c: c.created_at)
+        if feed_direction != "ASC":
+            children = reversed(children)
+        item_dict["children"] = [
+            self._render_item_preview(request, feed, feed_direction, child)
+            for child in children
+            if child.type in self.feeds[feed]["types"] and
+                (child.permissions == 0 or child.permissions & (request.user.permissions if request.user else 0))
+        ]
+        
+        return ("<div class=\"content_item " + item_dict["base_type"] + " " + item_dict["type"] + " " + " ".join(item_dict["permissions"]) + "\" data-created-at=\"" + item_dict["created_at"].isoformat() + "\">" +
+            self.render_template(request, [
+                "content/type/%(type)s/preview_in_%(feed)s.html"        % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : feed },
+                "content/type/%(type)s/preview.html"                    % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : feed },
+                "content/type/%(base_type)s/preview_in_%(feed)s.html"   % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : feed },
+                "content/type/%(base_type)s/preview.html"               % { "type" : item_dict["type"], "base_type" : item_dict["base_type"], "feed" : feed },
+            ], item=item_dict) +
+            "</div>")
 
     def _process_comment_text(self, comment_text):        
         try:

@@ -29,8 +29,9 @@ class ContentItem(Base):
     permissions         = Column(Integer)
     data                = Column(PickleType(pickler=simplejson))
 
-    type__type_key      = Index(type, type_key, unique=True)
-    type__created_at    = Index(type, created_at)
+    p_t_ca              = Index(parent_id, type, created_at)
+    t_tk                = Index(type, type_key, unique=True)
+    t_ca                = Index(type, created_at)
 
     children            = relationship("ContentItem", backref=backref("parent", remote_side="ContentItem.id"))
 

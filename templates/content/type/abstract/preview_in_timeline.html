@@ -16,6 +16,13 @@
             <div class="text">
                 {% block text %}{{ item.description|safe }}{% endblock %}
             </div>
+            {% if item.children %}
+                <div class="children">
+                    {% for child in item.children %}
+                        {{ child|safe }}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="footer">
                 {% block footer %}
                     {% if item.url %}

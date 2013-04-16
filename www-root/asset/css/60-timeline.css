@@ -122,6 +122,13 @@
                         max-width: 100%;
                     }
 
+                .timeline .events .content_item .right .children
+                {
+                    border: 1px solid #ebebeb;
+                    border-radius: 15px;
+                    margin: 5px 0;
+                }
+
             .timeline .events .content_item .footer
             {
                 margin: 0px;
