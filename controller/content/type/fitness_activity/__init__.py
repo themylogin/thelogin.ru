@@ -52,22 +52,17 @@ class Provider(abstract.Provider):
                 kv          =   {},
             )
 
-    def on_event_inserted(self, content_item):
+    def on_item_inserted(self, content_item):
         from config import config
         import subprocess, time, os, os.path
 
-        filename = os.path.join(config.path, self.image_directory, "runkeeper", str(content_item.type_key) + ".png")
+        filename = os.path.join(config.path, self.image_directory, str(content_item.type_key) + ".png")
 
-        #subprocess.Popen(["rm", "-rf",
-        #    "/home/themylogin/.config/chromium/Local State",
-        #    "/home/themylogin/.config/chromium/SingletonLock",
-        #    "/home/themylogin/.config/chromium/SingletonSocket",
-        #    "/home/themylogin/.config/chromium/Default"]).communicate()
-        xvfb = subprocess.Popen(["Xvfb", ":10", "-screen", "0", "1024x1024x24", "-fbdir", "/tmp"])
+        xvfb = subprocess.Popen(["Xvfb", ":20", "-screen", "0", "1024x1024x24", "-fbdir", "/tmp"])
         time.sleep(5)
-        chromium = subprocess.Popen(["chromium-browser", content_item.data["activity"]], env={"DISPLAY" : ":10"})
+        chromium = subprocess.Popen(["chromium-browser", "--kiosk", content_item.data["activity"]], env={"DISPLAY" : ":20"})
         time.sleep(20)
-        subprocess.Popen(["import", "-window", "root", filename], env={"DISPLAY" : ":10"}).communicate()
+        subprocess.Popen(["import", "-window", "root", filename], env={"DISPLAY" : ":20"}).communicate()
         chromium.terminate()
         chromium.wait()
         xvfb.terminate()
@@ -75,7 +70,7 @@ class Provider(abstract.Provider):
 
         from PIL import Image
         im = Image.open(filename)
-        im.crop((259, 342, 259 + 720, 342 + 590)).save(filename)
+        im.crop((260, 280, 260 + 720, 280 + 590)).save(filename)
 
 import re
 class Formatter(abstract.Formatter):

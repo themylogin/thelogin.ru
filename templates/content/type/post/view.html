@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block subtitle %}
-    {% if item.began %}
+    {% if item.started_at %}
         <div class="began">Начато {{ item.began.at|datetime }} {% if item.began.music %}под {{ item.began.music }}{% endif %}</div>
     {% endif %}
 
