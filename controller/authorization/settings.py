@@ -120,6 +120,10 @@ class MacAddress(TextField):
                     var $input = $(".user-settings #MacAddress input");
                     $input.on("keyup", function(){
                         var mac = $input.val().toLowerCase().replace(/-/g, ":").replace(/[^0-9a-f:]/g, "");
+                        if (mac.match(/^[0-9a-f]{12}$/))
+                        {
+                            mac = mac.replace(/(..)/g, "$1:").substring(0, 17);
+                        }
                         if (mac != $input.val())
                         {
                             $input.val(mac);
