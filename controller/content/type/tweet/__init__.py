@@ -48,7 +48,7 @@ class Provider(abstract.Provider):
                     return ""
                 html = redirect.read()
                 html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("\"?[vV]enue\"?:\s*{\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
-                return ",".join(reversed(re.search("\?daddr=([0-9\.,]+)", html).group(1).split(",")))
+                return re.findall("\"lng\":([0-9.]+)", html)[-1] + "," + re.findall("\"lat\":([0-9.]+)", html)[-1]
 
             def instagram_src(instagr_am_url):
                 import urllib2, re
