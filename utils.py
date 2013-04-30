@@ -25,6 +25,9 @@ class ReadonlyPropertiesMetaclass(type):
         return type.__new__(cls, classname, bases, classdict)
 
 # PHP-style
+def ucfirst(s):
+    return s[0].upper() + s[1:]
+
 def urlencode(s):
     import urllib
     return urllib.quote(s.encode("utf-8"), "")
