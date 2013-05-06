@@ -58,7 +58,11 @@ class Provider(abstract.Provider):
                 html = redirect.read()
                 if "og:image" not in html:
                     return ""
-                return re.search("content=\"([^\"]+)\" property=\"og:image\"", html).group(1).replace("600x600", "original")
+                url = re.search("content=\"([^\"]+)\" property=\"og:image\"", html).group(1)
+                if "600x600" in url:
+                    return url.replace("600x600", "original")
+                else:
+                    return ""
 
             def instagram_src(instagr_am_url):
                 import urllib2, re
