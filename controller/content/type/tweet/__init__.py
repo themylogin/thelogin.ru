@@ -158,9 +158,10 @@ class Formatter(abstract.Formatter):
             try:
                 pic = kv_storage["foursquare pic"][url]
 
-                text += '<a class="block" href="/data/internet/%(pic)s"><img class="block" src="/data/internet/480/%(pic)s" /></a>' % {
-                    "pic" : pic.replace("://", "/"),
-                }
+                if pic:
+                    text += '<a class="block" href="/data/internet/%(pic)s"><img class="block" src="/data/internet/480/%(pic)s" /></a>' % {
+                        "pic" : pic.replace("://", "/"),
+                    }
             except KeyError:
                 logger.warning(u"kv_storage[\"foursquare pic\"][\"%s\"] not found", url)
 
