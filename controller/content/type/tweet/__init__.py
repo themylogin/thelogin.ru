@@ -50,6 +50,16 @@ class Provider(abstract.Provider):
                 html = urllib2.urlopen(urllib2.Request("http://foursquare.com/v/" + re.search("\"?[vV]enue\"?:\s*{\"id\":\"([a-f0-9]+)\"", html).group(1))).read()
                 return re.findall("\"lng\":([0-9.]+)", html)[-1] + "," + re.findall("\"lat\":([0-9.]+)", html)[-1]
 
+            def foursquare_pic(_4sq_url):
+                import urllib2, re
+                redirect = urllib2.urlopen(urllib2.Request(_4sq_url))
+                if "/checkin/" not in redirect.geturl():
+                    return ""
+                html = redirect.read()
+                if "og:image" not in html:
+                    return ""
+                return re.search("content=\"([^\"]+)\" property=\"og:image\"", html).group(1).replace("600x600", "original")
+
             def instagram_src(instagr_am_url):
                 import urllib2, re
                 html = urllib2.urlopen(urllib2.Request(instagr_am_url)).read()
@@ -68,6 +78,9 @@ class Provider(abstract.Provider):
 
                                     "4sq"           : [(url.expanded_url, lambda: foursquare_ll(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://4sq.com")],
+                                    "foursquare pic": [(url.expanded_url, lambda: foursquare_pic(url.expanded_url))
+                                                       for url in urls if url.expanded_url.startswith("http://4sq.com")],
+
                                     "instagr.am"    : [(url.expanded_url, lambda: instagram_src(url.expanded_url))
                                                        for url in urls if url.expanded_url.startswith("http://instagr.am") or url.expanded_url.startswith("http://instagram.com")],
                                 }
@@ -135,6 +148,17 @@ class Formatter(abstract.Formatter):
                     text += timeline_map(ll)
             except KeyError:
                 logger.warning(u"kv_storage[\"4sq\"][\"%s\"] not found", url)
+
+        # foursquare pic
+        for (url, _) in re.findall('(http://4sq\.com/([0-9A-Za-z]+))', text):
+            try:
+                pic = kv_storage["foursquare pic"][url]
+
+                text += '<a class="block" href="/data/internet/%(pic)s"><img class="block" src="/data/internet/480/%(pic)s" /></a>' % {
+                    "pic" : pic.replace("://", "/"),
+                }
+            except KeyError:
+                logger.warning(u"kv_storage[\"foursquare pic\"][\"%s\"] not found", url)
 
         # twitpic
         for (url, _) in re.findall('(http://twitpic\.com/([0-9A-Za-z\-_]+))', text):
