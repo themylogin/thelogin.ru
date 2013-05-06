@@ -103,8 +103,8 @@ class Formatter(abstract.Formatter):
 
         text = self.prefer_retweet(content_item.data)["text"]
 
-        text = re.sub(r"(\A|\s)@(\w+)", r'\1<a href="http://twitter.com/#!/\2">@\2</a>', text)
-        text = re.sub(r'(\A|\s)#(\w+)', r'\1<a href="http://search.twitter.com/search?q=%23\2">#\2</a>', text)
+        text = re.sub(r"(\A|\s)@(\w{2,})", r'\1<a href="http://twitter.com/#!/\2">@\2</a>', text)
+        text = re.sub(r'(\A|\s)#(\w{2,})', r'\1<a href="http://search.twitter.com/search?q=%23\2">#\2</a>', text)
 
         for (url, _) in re.findall('(https?://t\.co/([0-9A-Za-z]+))', text):
             # t.co
