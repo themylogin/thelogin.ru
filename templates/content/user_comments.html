@@ -1,0 +1,20 @@
+{% extends "base_two_columns.html" %} 
+{% from "content/comments.html" import render_comment %}
+
+{% block main_col %}
+    <div class="comments-title" style="margin-top: 0;">Комментарии {{ target_user.default_identity|identity_name }} ({{ comments|length }})</div>
+    <div class="comments-list">
+        {% for comment in comments %}
+            {% call render_comment(comment) %}
+                <div class="datetime">&nbsp;к <a href="{{ (comment.content_item|process_content_item).url }}" style="text-decoration: underline;">{{ (comment.content_item|process_content_item).title }}</a></div>
+            {% endcall %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block right_col %}
+    {{ block("last_comments") }}
+    {{ block("tagcloud", feed="index") }}
+    {{ block("timeline") }}
+{% endblock %}
+ 

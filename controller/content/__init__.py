@@ -72,6 +72,7 @@ class Controller(Abstract):
         rules.append(Rule("/content/post-comment/<int:id>/", endpoint="post_comment"))
         rules.append(Rule("/content/edit-comment/<int:id>/", endpoint="edit_comment"))
         # user comments
+        rules.append(Rule("/user/<int:id>/comments/", endpoint="user_comments"))
         rules.append(Rule("/user/<int:id>/comments-for/rss/", endpoint="comments_for_user_rss"))
         # admin
         rules.append(Rule("/admin/content/",                endpoint="admin"))
@@ -258,6 +259,15 @@ class Controller(Abstract):
             return Response(simplejson.dumps(response), mimetype="application/json")
 
         raise Forbidden()
+
+    def execute_user_comments(self, request, **kwargs):
+        user = db.query(User).get(kwargs["id"])
+        comments = db.query(Comment).filter(Comment.identity_id.in_([identity.id for identity in user.identities])).order_by(Comment.created_at.desc()).all()
+
+        return self.render_to_response(request, "content/user_comments.html", **{
+            "target_user"   : user,
+            "comments"      : comments,
+        })
 
     def execute_comments_for_user_rss(self, request, **kwargs):
         user = db.query(User).get(kwargs["id"])
