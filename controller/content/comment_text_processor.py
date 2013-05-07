@@ -82,9 +82,7 @@ def html_tags(text):
                 from pygments.formatters import HtmlFormatter
                 tag.replace_with(BeautifulSoup(highlight(u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents]), get_lexer_by_name(tag["lang"], stripall=True, startinline=True), HtmlFormatter(cssclass="syntax"))))
             except:
-                pre = soup.Tag("pre")
-                pre.string = u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents])
-                tag.replace_with(pre)
+                tag.replace_with(BeautifulSoup(u'<pre>' + u''.join([unicode(i).replace("&lt;", "<").replace("&gt;", ">") for i in tag.contents]) + u'</pre>'))
         tag.attrs = new_attrs
     text = str(soup).decode("utf-8")
 
