@@ -132,7 +132,7 @@ class Controller(Abstract):
 
         visit_history = []
         for user_in in db.query(ContentItem).filter(ContentItem.type == "guest_in",
-                                                    ContentItem.type_key.startswith("user=%d," % (request.user.id,))).order_by(-ContentItem.created_at):
+                                                    ContentItem.type_key.startswith("user=%d," % (request.user.id,))).order_by(ContentItem.created_at.desc()):
             user_out = db.query(ContentItem).filter(ContentItem.type == "guest_out",
                                                     ContentItem.type_key.startswith("user=%d," % (request.user.id,)),
                                                     ContentItem.created_at >= user_in.created_at).order_by(ContentItem.created_at).first()

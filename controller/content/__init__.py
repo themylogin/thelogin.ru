@@ -123,7 +123,7 @@ class Controller(Abstract):
             rss_title = config.build_title(feed["title"])
 
             if format == "rss":
-                items = q.order_by(-ContentItem.created_at)[:feed["rss_items"]]
+                items = q.order_by(ContentItem.created_at.desc())[:feed["rss_items"]]
                 rss = PyRSS2Gen.RSS2(
                     title           =   rss_title,
                     link            =   rss_url,
@@ -151,11 +151,11 @@ class Controller(Abstract):
         if format == "json":
             count = int(request.args.get("count", "100"))
             if "before" in request.args:
-                q = q.filter(ContentItem.created_at < dateutil.parser.parse(request.args["before"])).order_by(-ContentItem.created_at)
+                q = q.filter(ContentItem.created_at < dateutil.parser.parse(request.args["before"])).order_by(ContentItem.created_at.desc())
             elif "after" in request.args:
                 q = q.filter(ContentItem.created_at > dateutil.parser.parse(request.args["after"])).order_by(ContentItem.created_at)
             else:
-                q = q.order_by(-ContentItem.created_at)
+                q = q.order_by(ContentItem.created_at.desc())
             items = q[:count]
         else:
             title = [feed["title"]] + t
@@ -168,7 +168,7 @@ class Controller(Abstract):
                 items_skipped = q.filter(ContentItem.created_at > items[0].created_at).count()
             else:
                 page = None
-                items = q.order_by(-ContentItem.created_at)[:feed["per_page"]]
+                items = q.order_by(ContentItem.created_at.desc())[:feed["per_page"]]
                 items_skipped = 0
 
             dates = [created_at for (created_at,) in q.order_by(ContentItem.created_at).values(ContentItem.created_at)]
@@ -300,7 +300,7 @@ class Controller(Abstract):
                                     for comment in db.query(Comment).filter(
                                         Comment.content_item_id.in_(content_item_ids_user_commented),
                                         ~Comment.identity_id.in_([identity.id for identity in user.identities])
-                                    ).order_by(-Comment.created_at)[:50]
+                                    ).order_by(Comment.created_at.desc())[:50]
                                 ]
         )
         rss_string = StringIO.StringIO()
@@ -312,7 +312,7 @@ class Controller(Abstract):
         filter_types = [("", u"все")] + sorted([(k, v["type"].item_cases[0]) for k, v in self.types.items()], key=operator.itemgetter(1))
         create_types = sorted([("/admin/content/new/%s/" % k, v["type"].item_cases[3]) for k, v in self.types.items() if v["type"].get_editor() is not None], key=operator.itemgetter(1))
 
-        q = db.query(ContentItem).filter(ContentItem.type.in_(self.types.keys())).order_by(-ContentItem.created_at)
+        q = db.query(ContentItem).filter(ContentItem.type.in_(self.types.keys())).order_by(ContentItem.created_at.desc())
         if request.args.get("type", ""):
             filter_type = request.args["type"]
             q = q.filter(ContentItem.type == filter_type)

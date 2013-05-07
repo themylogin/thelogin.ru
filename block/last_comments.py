@@ -11,7 +11,7 @@ def block(request, limit=10):
     return {
         "last_comments" : [
             {
-                "comment"       : db.query(Comment).options(joinedload("content_item")).filter(Comment.content_item == comment.content_item).order_by(-Comment.created_at).first(),
+                "comment"       : db.query(Comment).options(joinedload("content_item")).filter(Comment.content_item == comment.content_item).order_by(Comment.created_at.desc()).first(),
                 "content_item"  : process_content_item(comment.content_item),
 
                 "count_new"     : db.query(func.count(Comment)).filter(Comment.content_item == comment.content_item, Comment.created_at > request.user.last_visit).scalar() if request.user else 0,

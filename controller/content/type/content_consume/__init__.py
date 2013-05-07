@@ -53,7 +53,7 @@ class Formatter(abstract.Formatter):
                     ContentItem.type.startswith("guest_"),
                     ContentItem.type_key.startswith("user=%d," % local.request.user.id),
                     ContentItem.created_at < content_item.created_at
-                ).order_by(-ContentItem.created_at).first()
+                ).order_by(ContentItem.created_at.desc()).first()
                 if in_or_out is not None and in_or_out.type == "guest_in":
                     i_was_there = True
 
@@ -63,7 +63,7 @@ class Formatter(abstract.Formatter):
             for in_ in db.query(ContentItem).filter(
                 ContentItem.type == "guest_in",
                 ContentItem.created_at < content_item.created_at
-            ).order_by(-ContentItem.created_at):
+            ).order_by(ContentItem.created_at.desc()):
                 user_id = int(in_.type_key.split(",")[0].replace("user=", ""))
                 if user_id in processed_users:
                     continue

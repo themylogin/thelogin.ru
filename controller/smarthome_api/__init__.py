@@ -88,7 +88,7 @@ class Controller(Abstract):
         return self.format_guest(user)
 
     def is_in(self, type, filter=True):
-        last_in_or_out = db.query(ContentItem).filter(ContentItem.type.startswith(type) & filter).order_by(-ContentItem.created_at).first()
+        last_in_or_out = db.query(ContentItem).filter(ContentItem.type.startswith(type) & filter).order_by(ContentItem.created_at.desc()).first()
         if last_in_or_out is None:
             return None
         if not last_in_or_out.type.endswith("_in"):
