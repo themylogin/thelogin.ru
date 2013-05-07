@@ -266,6 +266,8 @@ class Controller(Abstract):
         comments = db.query(Comment).filter(Comment.identity_id.in_([identity.id for identity in user.identities])).order_by(Comment.created_at.desc()).all()
 
         return self.render_to_response(request, "content/user_comments.html", **{
+            "breadcrumbs"   : [u"Комментарии пользователя %s" % all_social_service[user.default_identity.service].get_user_name(user.default_identity.service_data)],
+
             "target_user"   : user,
             "comments"      : comments,
         })
