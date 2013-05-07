@@ -1,0 +1,27 @@
+{% macro render_comment(comment, is_quotable=False, number=-1, is_editable=False) -%}
+    <div class="comment" data-id="{{ comment.id }}">
+        <div class="headline">
+            {% if comment.identity %}
+                <a href="#" class="avatar"><img src="{{ comment.identity.user.default_identity|identity_avatar|internet_image("_/24") }}" /></a>
+
+                <a href="/user/{{ comment.identity.user.id }}/comments/" class="username">{{ comment.identity.user.default_identity|identity_name }}</a>
+            {% else %}
+                <span class="username anonymous">anonymous</span>
+            {% endif %}
+
+            <div class="datetime">{{ comment.created_at|datetime }}</div>
+
+            {% if is_editable %}<a class="button edit-comment" href="#" title="Редактировать комментарий">E</a>{% endif %}
+            {% if is_quotable %}
+                <a class="button quote-selected" href="#" title="Цитировать выделенное (Ctrl+Enter)">S</a>
+                <a class="button quote-comment" href="#" title="Цитировать комментарий">Q</a>
+                <a class="i" href="#comment-{{ number }}">#{{ number }}</a>                
+            {% endif %}
+
+            <div class="clear"></div>
+        </div>
+
+        <div class="text">{{ comment.text|process_comment_text|safe }}</div>
+        <div class="plaintext">{{ comment.text }}</div>
+    </div>
+{%- endmacro %} 

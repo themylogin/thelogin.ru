@@ -1,4 +1,5 @@
 {% extends "base_two_columns.html" %} 
+{% from "content/comments.html" import render_comment %}
 
 {% block main_col %}
     <div class="view content_item {{ item.base_type }} {{ item.type }}">
@@ -48,29 +49,7 @@
             {% if loop.last %}
                 <a name="last-comment"></a>
             {% endif %}
-            <div class="comment" data-id="{{ comment.id }}">
-                <div class="headline">
-                    {% if comment.identity %}
-                        <a href="#" class="avatar"><img src="{{ comment.identity.user.default_identity|identity_avatar|internet_image("_/24") }}" /></a>
-
-                        <a href="/user/{{ comment.identity.user.id }}/comments/" class="username">{{ comment.identity.user.default_identity|identity_name }}</a>
-                    {% else %}
-                        <span class="username anonymous">anonymous</span>
-                    {% endif %}
-
-                    <div class="datetime">{{ comment.created_at|datetime }}</div>
-
-                    {% if request.user and comment.identity and request.user.id == comment.identity.user.id and loop.last %}<a class="button edit-comment" href="#" title="Редактировать комментарий">E</a>{% endif %}
-                    <a class="button quote-selected" href="#" title="Цитировать выделенное (Ctrl+Enter)">S</a>
-                    <a class="button quote-comment" href="#" title="Цитировать комментарий">Q</a>
-                    <a class="i" href="#comment-{{ loop.index }}">#{{ loop.index }}</a>
-
-                    <div class="clear"></div>
-                </div>
-
-                <div class="text">{{ comment.text|process_comment_text|safe }}</div>
-                <div class="plaintext">{{ comment.text }}</div>
-            </div>
+            {{ render_comment(comment, is_quotable=True, number=loop.index, is_editable=request.user and comment.identity and request.user.id == comment.identity.user.id and loop.last) }}
         {% endfor %}
     </div>
 
