@@ -14,7 +14,7 @@ from sqlalchemy.orm import subqueryload
 import time
 from werkzeug.exceptions import Forbidden, NotFound
 from werkzeug.routing import Rule
-from werkzeug.utils import redirect
+from werkzeug.utils import escape, redirect
 from werkzeug.wrappers import Response
 
 from cache import cache
@@ -23,6 +23,7 @@ from controller.abstract import Controller as Abstract
 from controller.content.comment_text_processor import all as all_comment_text_processor
 from controller.content.model import ContentItem, Tag, Comment
 from db import db
+from log import logger
 from middleware.authorization import admin_action
 from middleware.authorization.model import User
 from social_service import all as all_social_service
@@ -462,5 +463,5 @@ class Controller(Abstract):
                 comment_text = comment_text_processor(comment_text)
             return comment_text
         except:
-            from werkzeug.utils import escape
+            logger.exception("Error processing comment_text: '%s'" % comment_text)
             return escape(comment_text)
