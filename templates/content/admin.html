@@ -25,7 +25,7 @@
 
     <div style="margin-bottom: 20px;">
         {% for i in range(1, total_pages) %}
-            {% if i != page %}<a href="?filter={{ filter_type }}&amp;page={{ i }}" style="text-decoration: underline;">{% else %}<b>{% endif %}{{ i }}{% if i != page %}</a>{% else %}</b>{% endif %}
+            {% if i != page %}<a href="?type={{ filter_type }}&amp;page={{ i }}" style="text-decoration: underline;">{% else %}<b>{% endif %}{{ i }}{% if i != page %}</a>{% else %}</b>{% endif %}
         {% endfor %}
     </div>
 
