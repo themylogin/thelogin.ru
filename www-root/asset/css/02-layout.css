@@ -224,6 +224,10 @@ body
                 line-height: 13px;
                 font-family: 'Lucida Grande', Arial, Helvetica, Verdana, sans-serif;
                 margin-top: 2px;
+
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .page-content .lastfm .artist a:hover div.title
             {
