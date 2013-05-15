@@ -27,6 +27,18 @@ class Provider(object):
     def provider_item(self, **kwargs):
         return self._provider_item(kwargs["id"], kwargs.get("started_at", None), kwargs["created_at"], kwargs["data"], kwargs.get("kv", {}))
 
+    def lazy_provider_item(self, id, function):
+        function_result = [None]
+        class LazyProviderItem(object):
+            def __getattr__(self, attr):
+                if attr == "id":
+                    return id
+                else:
+                    if function_result[0] is None:
+                        function_result[0] = function()
+                    return function_result[0][attr]
+        return LazyProviderItem()
+
     def available(self):
         return True
 
