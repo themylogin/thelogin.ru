@@ -1,7 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
+import dateutil.parser
+import os
+from PIL import Image
+import re
+import subprocess
+import time
+
+from config import config
 from controller.content.type import abstract
+from social_service.runkeeper import HealthGraphClient
 
 class Type(abstract.Type):
     def __init__(
@@ -35,27 +45,24 @@ class Provider(abstract.Provider):
         self.image_directory = image_directory
 
     def provide(self):
-        from social_service.runkeeper import HealthGraphClient
         client = HealthGraphClient(self.bearer)
 
-        import dateutil.parser
-        from datetime import timedelta
-
         for activity in client.make_request("/fitnessActivities", media_type="application/vnd.com.runkeeper.FitnessActivityFeed+json")["items"]:
-            data = client.make_request(activity["uri"], media_type="application/vnd.com.runkeeper.FitnessActivity+json")
+            def create_function(activity):
+                def function():
+                    data = client.make_request(activity["uri"], media_type="application/vnd.com.runkeeper.FitnessActivity+json")
+                    return {
+                        "started_at"    : dateutil.parser.parse(data["start_time"]).replace(tzinfo=None),
+                        "created_at"    : dateutil.parser.parse(data["start_time"]).replace(tzinfo=None) + timedelta(seconds=int(float(data["duration"]))),
+                        "data"          : data,
+                        "kv"            : {},
+                    }
 
-            yield self.provider_item(
-                id          =   int(activity["uri"].split("/")[2]),
-                started_at  =   dateutil.parser.parse(data["start_time"]).replace(tzinfo=None),
-                created_at  =   dateutil.parser.parse(data["start_time"]).replace(tzinfo=None) + timedelta(seconds=int(float(data["duration"]))),
-                data        =   data,
-                kv          =   {},
-            )
+                return function
+
+            yield self.lazy_provider_item(int(activity["uri"].split("/")[2]), create_function(activity))
 
     def on_item_inserted(self, content_item):
-        from config import config
-        import subprocess, time, os, os.path
-
         filename = os.path.join(config.path, self.image_directory, str(content_item.type_key) + ".png")
 
         xvfb = subprocess.Popen(["Xvfb", ":20", "-screen", "0", "1600x1200x24", "-fbdir", "/tmp"])
@@ -72,11 +79,9 @@ class Provider(abstract.Provider):
         xvfb.terminate()
         xvfb.wait()
 
-        from PIL import Image
         im = Image.open(filename)
         im.crop((573, 229, 573 + 699, 229 + 759)).save(filename)
 
-import re
 class Formatter(abstract.Formatter):
     def __init__(self, username, image_directory):
         self.username = username
@@ -107,7 +112,6 @@ class Formatter(abstract.Formatter):
         return ""
 
     def get_dict(self, content_item, url):
-        import dateutil.parser
         return {
             "images"    : content_item.data["images"],
             "notes"     : content_item.data.get("notes", ""),
