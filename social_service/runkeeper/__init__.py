@@ -62,7 +62,7 @@ class HealthGraphClient(object):
     pass
   
   def _http_error(self, code, message, url):
-    logging.error('Client request error. Code: %s - Reason: %s // %s - URL: %s' % (str(code), message['message'], message['detail'], url))
+    logging.error('Client request error. Code: %s - Reason: %s - URL: %s' % (str(code), message, url))
   
   def _prepare_response(self, code, data):
     if data:

@@ -58,19 +58,23 @@ class Provider(abstract.Provider):
 
         filename = os.path.join(config.path, self.image_directory, str(content_item.type_key) + ".png")
 
-        xvfb = subprocess.Popen(["Xvfb", ":20", "-screen", "0", "1024x1024x24", "-fbdir", "/tmp"])
+        xvfb = subprocess.Popen(["Xvfb", ":20", "-screen", "0", "1600x1200x24", "-fbdir", "/tmp"])
+        time.sleep(5)
+        openbox = subprocess.Popen(["openbox"], env={"DISPLAY" : ":20"})
         time.sleep(5)
         chromium = subprocess.Popen(["chromium-browser", "--kiosk", content_item.data["activity"]], env={"DISPLAY" : ":20"})
         time.sleep(20)
         subprocess.Popen(["import", "-window", "root", filename], env={"DISPLAY" : ":20"}).communicate()
         chromium.terminate()
         chromium.wait()
+        openbox.terminate()
+        openbox.wait()
         xvfb.terminate()
         xvfb.wait()
 
         from PIL import Image
         im = Image.open(filename)
-        im.crop((260, 280, 260 + 720, 280 + 590)).save(filename)
+        im.crop((573, 229, 573 + 699, 229 + 759)).save(filename)
 
 import re
 class Formatter(abstract.Formatter):
