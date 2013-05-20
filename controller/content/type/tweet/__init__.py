@@ -193,6 +193,13 @@ class Formatter(abstract.Formatter):
                 "vas3k" : url.replace("://", "/"),
             }
 
+        # storage.thelogin.ru/screenshots
+        for url in re.findall('(http://storage\.thelogin\.ru/screenshots/[0-9A-Za-z\-_.:]+)', text):
+            text += '<a class="block" href="%(href)s"><img class="block" src="/data/internet/480/%(src)s" /></a>' % {
+                "href"  : url,
+                "src"   : url.replace("://", "/"),
+            }
+
         return text
 
     def get_text(self, content_item, url):
