@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 if __name__ == "__main__":
+    import socket    
+    socket.setdefaulttimeout(10)
+
     from db import db
     from kv import storage as kv_storage
     from controller.content.model import ContentItem
