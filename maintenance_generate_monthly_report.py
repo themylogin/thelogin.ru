@@ -219,17 +219,30 @@ def git():
 
 @report_item
 def music():
+    outs = get_outs(start, end)
+
     prev = 0
     total = 0
+    total_at_home = 0
     Scrobble = all_social_services["last.fm"].thelogin_Scrobble
     for scrobble in all_social_services["last.fm"].thelogin_db.query(Scrobble).filter(
         Scrobble.user == all_social_services["last.fm"].thelogin_user.id,
         Scrobble.uts >= time.mktime(start.timetuple()), Scrobble.uts <= time.mktime(end.timetuple())
     ).order_by(Scrobble.uts):
         if scrobble.uts - prev > 30 * 60:
-            total += 240
+            scrobble_length = 240
         else:
-            total += scrobble.uts - prev
+            scrobble_length = scrobble.uts - prev
+
+        total += scrobble_length
+
+        was_at_home = True
+        for out in outs:
+            if out[0] < datetime.fromtimestamp(scrobble.uts) and datetime.fromtimestamp(scrobble.uts) < out[1]:
+                was_at_home = False
+                break
+        if was_at_home:
+            total_at_home += scrobble_length
 
         prev = scrobble.uts
 
@@ -259,8 +272,9 @@ def music():
     im.crop((content_start_offset + 1, dotted_line_offsets[3] + 1, content_start_offset + 649, dotted_line_offsets[4] - 45)).save(os.path.join(config.path, image_path % 1))
     im.crop((content_start_offset + 1, dotted_line_offsets[4] + 1, content_start_offset + 649, dotted_line_offsets[5] - 25)).save(os.path.join(config.path, image_path % 2))
 
-    return u"%d%% времени под музыку.\n<image src=\"/%s\" alt=\"\" class=\"big left\" />\n<div style=\"height: 5px;\"></div>\n<image src=\"/%s\" alt=\"\" class=\"big left\" />" % (
+    return u"%d%% времени под музыку (%d%% дома).\n<image src=\"/%s\" alt=\"\" class=\"big left\" />\n<div style=\"height: 5px;\"></div>\n<image src=\"/%s\" alt=\"\" class=\"big left\" />" % (
         total / (end - start).total_seconds() * 100,
+        total_at_home / (end - start).total_seconds() * 100,
         image_path % 1,
         image_path % 2,
     )
