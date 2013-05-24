@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 import dateutil.parser
+import itertools
 import logging
+import operator
 import paramiko
 from PIL import Image
 import pymorphy2
@@ -248,37 +250,71 @@ def music():
 
         prev = scrobble.uts
 
-    xvfb = subprocess.Popen(["xinit", "/usr/bin/openbox-session", "--", "/usr/bin/Xvfb", ":21", "-screen", "0", "1024x4096x24", "-fbdir", "/tmp"])
-    time.sleep(5)
-    chromium = subprocess.Popen(["chromium-browser", "--kiosk", "http://last.fm/user/%s" % all_social_services["last.fm"].thelogin_user.username], env={"DISPLAY" : ":21"})
-    time.sleep(20)
-    subprocess.Popen(["import", "-window", "root", "/tmp/screenshot.png"], env={"DISPLAY" : ":21"}).communicate()
-    chromium.terminate()
-    chromium.wait()
-    xvfb.terminate()
-    xvfb.wait()
+    charts = [(u"Весь месяц", scrobbles)]
 
-    im = Image.open("/tmp/screenshot.png")
+    chart_selectors = [
+        (u"Лучшие исполнители", lambda scrobble: u"<a href=\"%s\">%s</a>" % (
+            all_social_services["last.fm"].network.get_artist(scrobble.artist).get_url(),
+            scrobble.artist
+        )),
 
-    dotted_line_offsets = []
-    content_start_offset = 15
-    for y in range(0, im.size[1]):
-        if im.getpixel((content_start_offset, y)) == (204, 204, 204) and\
-           im.getpixel((content_start_offset + 1, y)) == (204, 204, 204) and\
-           im.getpixel((content_start_offset + 2, y)) == (255, 255, 255) and\
-           im.getpixel((content_start_offset + 3, y)) == (204, 204, 204):
-            dotted_line_offsets.append(y)
+        #(u"Лучшие альбомы", lambda scrobble: u"<a href=\"%s\">%s – %s</a>" % (
+        #    all_social_services["last.fm"].network.get_album(scrobble.artist, scrobble.album).get_url(),
+        #    scrobble.artist,
+        #    scrobble.album
+        #) if scrobble.album else None),
 
-    image_path = "data/blog/images/%d%%04d.png" % time.mktime(end.timetuple())
+        (u"Лучшие композиции", lambda scrobble: u"<a href=\"%s\">%s – %s</a>" % (
+            all_social_services["last.fm"].network.get_track(scrobble.artist, scrobble.track).get_url(),
+            scrobble.artist,
+            scrobble.track
+        )),
+    ]
 
-    im.crop((content_start_offset + 1, dotted_line_offsets[3] + 1, content_start_offset + 649, dotted_line_offsets[4] - 45)).save(os.path.join(config.path, image_path % 1))
-    im.crop((content_start_offset + 1, dotted_line_offsets[4] + 1, content_start_offset + 649, dotted_line_offsets[5] - 25)).save(os.path.join(config.path, image_path % 2))
+    charts_html = u""
+    for title, selector in chart_selectors:
+        titles = u""
+        tables = u""
+        first = True
+        for chart_title, scrobbles in charts:
+            titles += u"<li%s>%s</li>\n" % (" class=\"current\"" if first else "", title)
 
-    return u"%d%% времени под музыку (%d%% дома).\n<image src=\"/%s\" alt=\"\" class=\"big left\" />\n<div style=\"height: 5px;\"></div>\n<image src=\"/%s\" alt=\"\" class=\"big left\" />" % (
+            chart = sorted([(x, len(list(y))) for x, y in itertools.groupby(sorted(filter(lambda x: x is not None, map(selector, scrobbles))))], key=lambda t: -t[1])
+            tables += u"<table%s>\n" % (" style=\"display: none;\"" if not first else "") + u"".join([
+                u"\t<tr><td class=\"position\">%d</td><td class=\"subject\">%s</td><td class=\"bar\"><div style=\"width: %d%%;\"><div>%d</div></div></td></tr>\n" % (
+                    i,
+                    subject,
+                    float(count) / chart[0][1] * 100,
+                    count,
+                )
+                for i, subject, count in itertools.izip(range(1, 11), itertools.imap(operator.itemgetter(0), chart), itertools.imap(operator.itemgetter(1), chart))
+            ]) + u"</table>"
+
+            first = False
+
+        charts_html += u"""<div class=\"lastfm-chart\">
+            <div class="title">%s</div>
+
+            <div class="tabs">
+                <ul>
+                    %s
+                </ul>
+                <div class="clear"></div>
+            </div>
+
+            <div class="charts">
+                %s
+            </div>
+        </div>""" % (
+            chart_title,
+            titles,
+            tables,
+        )
+
+    return u"%d%% времени под музыку (%d%% дома).\n%s" % (
         total / (end - start).total_seconds() * 100,
         total_at_home / (end - start).total_seconds() * 100,
-        image_path % 1,
-        image_path % 2,
+        charts_html,
     )
 
 @report_item
