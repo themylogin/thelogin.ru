@@ -71,6 +71,13 @@ def get_outs(start, end):
 
     return outs
 
+def get_bike_rides(start, end):
+    return [
+        content_item
+        for content_item in db.query(ContentItem).filter(ContentItem.type == "fitness_activity", ContentItem.created_at >= start, ContentItem.created_at <= end)
+        if content_item.data["type"] == "Cycling"
+    ]
+
 def get_swimming_pool_checkins(start, end):
     return [
         tweet.created_at
@@ -222,6 +229,7 @@ def git():
 @report_item
 def music():
     outs = get_outs(start, end)
+    bike_rides = get_bike_rides(start, end)
 
     Scrobble = all_social_services["last.fm"].thelogin_Scrobble
     scrobbles = all_social_services["last.fm"].thelogin_db.query(Scrobble).filter(
@@ -250,7 +258,17 @@ def music():
 
         prev = scrobble.uts
 
-    charts = [(u"Весь месяц", scrobbles)]
+    bike_scrobbles = []
+    for scrobble in scrobbles:
+        on_bike = False
+        for ride in bike_rides:
+            if ride.started_at < datetime.fromtimestamp(scrobble.uts) and datetime.fromtimestamp(scrobble.uts) < ride.created_at:
+                on_bike = True
+                break
+        if on_bike:
+            bike_scrobbles.append(scrobble)
+
+    charts = [(u"Все", scrobbles), (u"На велосипеде", bike_scrobbles)]
 
     chart_selectors = [
         (u"Лучшие исполнители", lambda scrobble: u"<a href=\"%s\">%s</a>" % (
@@ -277,7 +295,7 @@ def music():
         tables = u""
         first = True
         for chart_title, scrobbles in charts:
-            titles += u"<li%s>%s</li>\n" % (" class=\"current\"" if first else "", title)
+            titles += u"<li%s>%s</li>\n" % (" class=\"current\"" if first else "", chart_title)
 
             chart = sorted([(x, len(list(y))) for x, y in itertools.groupby(sorted(filter(lambda x: x is not None, map(selector, scrobbles))))], key=lambda t: -t[1])
             tables += u"<table%s>\n" % (" style=\"display: none;\"" if not first else "") + u"".join([
@@ -306,7 +324,7 @@ def music():
                 %s
             </div>
         </div>""" % (
-            chart_title,
+            title,
             titles,
             tables,
         )
@@ -408,14 +426,11 @@ def tv():
 
 @report_item
 def bike():
-    times = 0
-    m = 0
-    seconds = 0
-    for content_item in db.query(ContentItem).filter(ContentItem.type == "fitness_activity", ContentItem.created_at >= start, ContentItem.created_at <= end):
-        if content_item.data["type"] == "Cycling":
-            times += 1
-            m += content_item.data["total_distance"]
-            seconds += content_item.data["duration"]
+    bike_rides = get_bike_rides(start, end)
+
+    times = len(bike_rides)
+    m = sum([content_item.data["total_distance"] for content_item in bike_rides])
+    seconds = sum([content_item.data["duration"] for content_item in bike_rides])
 
     if times > 0:
         return u"%s ездил на велосипеде (%.2f км., средняя скорость %.2f км/ч)" % (
