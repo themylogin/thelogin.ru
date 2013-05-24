@@ -230,6 +230,7 @@ def git():
 def music():
     outs = get_outs(start, end)
     bike_rides = get_bike_rides(start, end)
+    swimming_pool_checkins = get_swimming_pool_checkins(start, end)
 
     Scrobble = all_social_services["last.fm"].thelogin_Scrobble
     scrobbles = all_social_services["last.fm"].thelogin_db.query(Scrobble).filter(
@@ -258,17 +259,31 @@ def music():
 
         prev = scrobble.uts
 
-    bike_scrobbles = []
-    for scrobble in scrobbles:
-        on_bike = False
-        for ride in bike_rides:
-            if ride.started_at < datetime.fromtimestamp(scrobble.uts) and datetime.fromtimestamp(scrobble.uts) < ride.created_at:
-                on_bike = True
-                break
-        if on_bike:
-            bike_scrobbles.append(scrobble)
+    def scrobbles_within_intervals(intervals):
+        filtered_scrobbles = []
+        for scrobble in scrobbles:
+            for start, end in intervals:
+                if start < datetime.fromtimestamp(scrobble.uts) and datetime.fromtimestamp(scrobble.uts) < end:
+                    filtered_scrobbles.append(scrobble)
+                    break
+        return filtered_scrobbles
 
-    charts = [(u"Все", scrobbles), (u"На велосипеде", bike_scrobbles)]
+    swimming_pool_trips = []
+    for checkin in swimming_pool_checkins:
+        out_found = False
+        for out in outs:
+            if out[0] < checkin and checkin < out[1]:
+                out_found = True
+                if out[1] - out[0] < timedelta(hours=3):
+                    swimming_pool_trips.append(out)
+        if not out_found:
+            logger.warning("Swimming pool checking %s created while owner was at home" % checkin.strftime("%Y-%m-%d %H:%M:%S"))
+
+    charts = [
+        (u"Все", scrobbles),
+        (u"На велосипеде", scrobbles_within_intervals([(ride.started_at, ride.created_at) for ride in bike_rides])),
+        (u"По дороге в бассейн «Нептун»", scrobbles_within_intervals(swimming_pool_trips)),
+    ]
 
     chart_selectors = [
         (u"Лучшие исполнители", lambda scrobble: u"<a href=\"%s\">%s</a>" % (
