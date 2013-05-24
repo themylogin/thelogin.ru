@@ -115,6 +115,7 @@ table.lastfm-scrobbles
                 }
                     .content .lastfm-chart .charts table tr td.bar div
                     {
+                        min-width: 8%;
                     }
                         .content .lastfm-chart .charts table tr td.bar div div
                         {
