@@ -37,21 +37,7 @@ logger.addHandler(logging.StreamHandler(sys.stderr))
 start = datetime(2013, 5, 1, 0, 0, 0)
 end = datetime(2013, 6, 1, 0, 0, 0) - timedelta(seconds=1)
 
-def get_swimming_pool_checkins(start, end):
-    return [
-        tweet.created_at
-        for tweet in db.query(ContentItem).filter(ContentItem.type == "tweet", ContentItem.created_at >= start, ContentItem.created_at <= end)
-        if u"I'm at Бассейн Нептун" in tweet.data["text"] or u"@ Бассейн Нептун" in tweet.data["text"]
-    ]
-
-report_items = []
-def report_item(callable):
-    report_items.append(callable)
-
-@report_item
-def time_at_home():
-    min_out_threshold = timedelta(minutes=5)
-
+def get_outs(start, end):
     outs = []
     owner_is_at_home = None
     last_leave_datetime = None
@@ -80,6 +66,25 @@ def time_at_home():
     # Если в конце интервала пользователь не дома, зафиксируем последний уход
     if not owner_is_at_home:
         outs.append((last_leave_datetime, end))
+
+    return outs
+
+def get_swimming_pool_checkins(start, end):
+    return [
+        tweet.created_at
+        for tweet in db.query(ContentItem).filter(ContentItem.type == "tweet", ContentItem.created_at >= start, ContentItem.created_at <= end)
+        if u"I'm at Бассейн Нептун" in tweet.data["text"] or u"@ Бассейн Нептун" in tweet.data["text"]
+    ]
+
+report_items = []
+def report_item(callable):
+    report_items.append(callable)
+
+@report_item
+def time_at_home():
+    min_out_threshold = timedelta(minutes=5)
+
+    outs = get_outs(start, end)
 
     time_out = sum([came - left for left, came in outs], timedelta())
     time_in = (end - start) - time_out
