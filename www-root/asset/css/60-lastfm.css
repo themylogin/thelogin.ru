@@ -23,3 +23,109 @@ table.lastfm-scrobbles
     {
         border-left: 1px solid #ccc;
     }
+
+.content .lastfm-chart
+{
+    font-family: 'Lucida Grande', Arial, Helvetica, Verdana, sans-serif;
+    padding: 16px 18px;
+    width: 612px;
+}
+    .content .lastfm-chart .title
+    {
+        color: #1b1b1b;
+        font-size: 18px;
+        font-weight: bold;
+        line-height: 13px;
+    }
+
+    .content .lastfm-chart .tabs
+    {
+        border-bottom: 1px solid #cccccc;
+        font-size: 10px;
+        margin: 17px 0 15px 0;
+    }
+        .content .lastfm-chart .tabs ul
+        {
+        }
+            .content .lastfm-chart .tabs ul li
+            {
+                background: none;
+                border: 1px solid transparent;
+                color: #0187c5;
+                cursor: pointer;                
+                float: left;
+                margin: 0 5px -1px 0;
+                padding: 0 5px;
+            }
+            .content .lastfm-chart .tabs ul li.current
+            {
+                border: 1px solid #cccccc;
+                border-radius: 3px 3px 0 0;
+                border-bottom: 1px solid #ffffff;
+                color: #666666;
+            }
+
+    .content .lastfm-chart .charts
+    {
+    }
+        .content .lastfm-chart .charts table
+        {
+            font-size: 11px;
+            width: 100%;
+        }
+            .content .lastfm-chart .charts table tr:nth-child(odd)
+            {
+                background: #ebebeb;
+            }
+            .content .lastfm-chart .charts table tr:hover
+            {
+                background: #d0e4f0;
+            }
+                .content .lastfm-chart .charts table tr td
+                {
+                    line-height: 16px;
+                    padding: 3px 5px;
+                }
+                .content .lastfm-chart .charts table tr td.position
+                {
+                    color: #666666;
+                    text-align: right;
+                    width: 20px;
+                }
+                .content .lastfm-chart .charts table tr td.subject
+                {
+                }
+                    .content .lastfm-chart .charts table tr td.subject a
+                    {
+                        color: #1b1b1b;
+                        text-decoration: none;
+                    }
+                    .content .lastfm-chart .charts table tr td.subject a:hover
+                    {
+                        color: #0187c5;
+                        text-decoration: underline;
+                    }
+                .content .lastfm-chart .charts table tr td.bar
+                {
+                    background: #ffffff;
+                    cursor: pointer;
+                    padding: 0;
+                    vertical-align: top;
+                    width: 33%;
+                }
+                    .content .lastfm-chart .charts table tr td.bar div
+                    {
+                    }
+                        .content .lastfm-chart .charts table tr td.bar div div
+                        {
+                            background: #71b7e6;
+                            border-radius: 0 3px 3px 0;
+                            color: #ffffff;
+                            height: 17px;
+                            padding: 3px 0.5em 0 0.5em;
+                        }
+                        .content .lastfm-chart .charts table tr td.bar div div:hover
+                        {
+                            background: #48779a;
+                        }
+}
