@@ -37,6 +37,13 @@ logger.addHandler(logging.StreamHandler(sys.stderr))
 start = datetime(2013, 5, 1, 0, 0, 0)
 end = datetime(2013, 6, 1, 0, 0, 0) - timedelta(seconds=1)
 
+def get_swimming_pool_checkins(start, end):
+    return [
+        tweet.created_at
+        for tweet in db.query(ContentItem).filter(ContentItem.type == "tweet", ContentItem.created_at >= start, ContentItem.created_at <= end)
+        if u"I'm at Бассейн Нептун" in tweet.data["text"] or u"@ Бассейн Нептун" in tweet.data["text"]
+    ]
+
 report_items = []
 def report_item(callable):
     report_items.append(callable)
@@ -364,10 +371,7 @@ def bike():
 
 @report_item
 def swimming_pool():
-    in_fact = sum([
-        1 if u"I'm at Бассейн Нептун" in tweet.data["text"] or u"@ Бассейн Нептун" in tweet.data["text"] else 0
-        for tweet in db.query(ContentItem).filter(ContentItem.type == "tweet", ContentItem.created_at >= start, ContentItem.created_at <= end)
-    ])
+    in_fact = len(get_swimming_pool_checkins(start, end))
 
     supposed = 0
     day = start
