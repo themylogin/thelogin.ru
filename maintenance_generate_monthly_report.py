@@ -221,14 +221,16 @@ def git():
 def music():
     outs = get_outs(start, end)
 
+    Scrobble = all_social_services["last.fm"].thelogin_Scrobble
+    scrobbles = all_social_services["last.fm"].thelogin_db.query(Scrobble).filter(
+        Scrobble.user == all_social_services["last.fm"].thelogin_user.id,
+        Scrobble.uts >= time.mktime(start.timetuple()), Scrobble.uts <= time.mktime(end.timetuple())
+    ).order_by(Scrobble.uts)
+
     prev = 0
     total = 0
     total_at_home = 0
-    Scrobble = all_social_services["last.fm"].thelogin_Scrobble
-    for scrobble in all_social_services["last.fm"].thelogin_db.query(Scrobble).filter(
-        Scrobble.user == all_social_services["last.fm"].thelogin_user.id,
-        Scrobble.uts >= time.mktime(start.timetuple()), Scrobble.uts <= time.mktime(end.timetuple())
-    ).order_by(Scrobble.uts):
+    for scrobble in scrobbles:
         if scrobble.uts - prev > 30 * 60:
             scrobble_length = 240
         else:
