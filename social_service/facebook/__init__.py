@@ -1,27 +1,26 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import facebook
+from werkzeug.contrib.securecookie import SecureCookie
+from werkzeug.utils import redirect
+
 class Facebook:	
     def __init__(self, client_id, client_secret):
         self.client_id = client_id
         self.client_secret = client_secret
 
-    def oauth_initiate(self, callback_url):
-        import facebook
-        from werkzeug.utils import redirect
-        from werkzeug.contrib.securecookie import SecureCookie        
+    def oauth_initiate(self, callback_url):       
         response = redirect(facebook.auth_url(self.client_id, callback_url))     
         response.set_cookie("facebook_oauth", SecureCookie({ "callback_url" : callback_url }, self.client_secret).serialize(), httponly=True)
         return response
 
     def oauth_callback(self, request):
         try:
-            from werkzeug.contrib.securecookie import SecureCookie
             callback_url = SecureCookie.unserialize(request.cookies["facebook_oauth"], self.client_secret)["callback_url"]
         except KeyError:
             return False
 
-        import facebook
         access_token = facebook.get_access_token_from_code(request.args.get("code"), callback_url, self.client_id, self.client_secret)["access_token"]
         user = facebook.GraphAPI(access_token).get_object("me")
         
