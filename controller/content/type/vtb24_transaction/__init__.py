@@ -1,7 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import datetime
+import dateutil.parser
+import email
+import imaplib
+import re
+import simplejson         
+import urllib2
+
+from config import config
 from controller.content.type import abstract
+from controller.content.utils import timeline_map
+from kv import storage as kv_storage
+from utils import urlencode
 
 class Type(abstract.Type):
     def __init__(
@@ -36,8 +48,7 @@ class Provider(abstract.Provider):
         self.imap_login = imap_login
         self.imap_password = imap_password
 
-    def provide(self):
-        import imaplib
+    def provide(self):        
         mail = imaplib.IMAP4_SSL(self.imap_server)
         mail.login(self.imap_login, self.imap_password)
         mail.list()
@@ -47,8 +58,7 @@ class Provider(abstract.Provider):
         for uid in data[0].split():
             result, data = mail.uid("fetch", uid, "(RFC822)")
             raw_email = data[0][1]
-
-            import email
+            
             email_message = email.message_from_string(raw_email)
             maintype = email_message.get_content_maintype()
             if maintype == "multipart":
@@ -63,10 +73,6 @@ class Provider(abstract.Provider):
             if u"произведена транзакция" not in text:
                 continue
 
-            import re
-            import datetime
-            import dateutil.parser
-            from config import config
             data = re.search(u"([0-9.]+) в ([0-9:]+)", text)
             yield self.provider_item(
                 id          =   uid,
@@ -92,8 +98,7 @@ class Formatter(abstract.Formatter):
 
     def get_description(self, content_item, url):
         reason = self.parse_reason(content_item)
-        if "location" in reason:
-            from controller.content.utils import timeline_map
+        if "location" in reason:            
             return timeline_map(reason["location"])
 
         return ""
@@ -111,7 +116,6 @@ class Formatter(abstract.Formatter):
         decline = lambda number, *args: args[0].format(number) if number % 10 == 1 and number % 100 != 11 else args[1].format(number) if number % 10 in [2, 3, 4] and (number % 100 < 10 or number % 100 > 20) else args[2].format(number)
 
         if currency == "RUR":
-            import re
             return u"<b>%(sum)s %(currency)s</b>" % {
                 "sum"       : re.sub("(\d)(?=(\d{3})+(?!\d))", r"\1 ", "%d" % int(abs(sum))),
                 "currency"  : decline(int(abs(sum)), u"рубль", u"рубля", u"рублей"),
@@ -123,14 +127,6 @@ class Formatter(abstract.Formatter):
         }
 
     def parse_reason(self, content_item):
-        import re                
-        import urllib2
-        import simplejson
-
-        from config import config
-        from utils import urlencode
-        from kv import storage as kv_storage
-
         if "notification" in content_item.data:
             m = re.search(re.compile(u"произведена транзакция по (.+) на сумму ([0-9.]+) (.+?)\..+Детали платежа: (.+)\. Код авторизации", re.DOTALL), content_item.data["notification"])
             return {
@@ -216,7 +212,6 @@ class Formatter(abstract.Formatter):
             occurrence = re.search(prefix + " (.+)$", content_item.data["reason"])
             if occurrence:
                 return formatter(re.sub(" [0-9]+$", "", occurrence.group(1)))
-
 
         return {
             "title" : content_item.data["reason"]
