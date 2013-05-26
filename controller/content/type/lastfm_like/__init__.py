@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from controller.content.type import abstract
 
 class Type(abstract.Type):
@@ -30,7 +32,6 @@ class Provider(abstract.Provider):
         self.service = service
 
     def provide(self):
-        from datetime import datetime
         for track in self.service.network.get_user(self.service.username).get_loved_tracks():
             yield self.provider_item(
                 id          =   int(track.timestamp),
