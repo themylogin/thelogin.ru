@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from controller.content.type import abstract
+from utils import urlencode_plus
 
 class Type(abstract.Type):
     def __init__(
@@ -48,9 +51,6 @@ class Formatter(abstract.Formatter):
         return ""
 
     def get_dict(self, content_item, url):
-        from datetime import datetime
-        from utils import urlencode_plus
-
         d = self._get_scrobble_dict(content_item.data)
         if "totally_first_scrobble" in content_item.data:
             d["totally_first_scrobble"] = self._get_scrobble_dict(dict(content_item.data["totally_first_scrobble"], artist=content_item.data["artist"]))
@@ -58,7 +58,6 @@ class Formatter(abstract.Formatter):
 
     #
     def _get_scrobble_dict(self, scrobble):
-        from datetime import datetime
         return {
             "created_at"    : datetime.fromtimestamp(scrobble["uts"]),
 
