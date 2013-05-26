@@ -1,7 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from mimetypes import guess_type
+import os
+from PIL import Image
+import urllib2
+import urlparse
+from werkzeug.exceptions import Forbidden, NotFound
 from werkzeug.routing import Rule, Submount
+from werkzeug.wrappers import BaseResponse
+from werkzeug.wsgi import wrap_file
 
 from config import config
 from controller.abstract import Controller as Abstract
@@ -55,7 +63,6 @@ class Controller(Abstract):
 
     def image_handler(image_handler):
         def request_handler(self, request, **kwargs):
-            import os, os.path
             filename = kwargs["filename"].encode("utf-8")
             path = os.path.join(config.path, self.path, filename)
 
@@ -64,14 +71,11 @@ class Controller(Abstract):
                 url = proto + "://" + etc + "?" + request.query_string
 
                 if is_forbidden_internet_image(url):
-                    from werkzeug.exceptions import Forbidden
                     raise Forbidden()
 
-                import urllib2
                 try:
                     data = urllib2.urlopen(urllib2.Request(url.encode("utf-8"))).read()
                 except:
-                    from werkzeug.exceptions import NotFound
                     raise NotFound()
 
                 if not os.path.isdir(os.path.dirname(path)):
@@ -79,7 +83,6 @@ class Controller(Abstract):
                 open(path, "w+").write(data)
 
             if not os.path.exists(path):
-                from werkzeug.exceptions import NotFound
                 raise NotFound()
 
             requested_path = request.path[1:]
@@ -87,7 +90,6 @@ class Controller(Abstract):
                 requested_path = requested_path.replace(self.path, "").strip("/")
             processed_path = os.path.join(config.path, self.path, requested_path.encode("utf-8"))
             if not os.path.exists(processed_path):
-                from PIL import Image
                 im = Image.open(path)
                 im_processed = image_handler(self, im, **kwargs)
 
@@ -95,9 +97,6 @@ class Controller(Abstract):
                     os.makedirs(os.path.dirname(processed_path))
                 im_processed.save(processed_path, format=im.format, quality=85)
 
-            from mimetypes import guess_type
-            from werkzeug.wsgi import wrap_file
-            from werkzeug.wrappers import BaseResponse
             return BaseResponse(wrap_file(request.environ, open(processed_path, "r")), mimetype=guess_type(processed_path)[0])
 
         return request_handler
@@ -132,7 +131,6 @@ class Controller(Abstract):
             new_width = image_width
             new_height = image_height
 
-        from PIL import Image
         return im.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
 
     @image_handler
@@ -153,7 +151,6 @@ class Controller(Abstract):
             new_width = image_width
             new_height = image_height
 
-        from PIL import Image
         return im.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
 
     @image_handler
@@ -170,7 +167,6 @@ class Controller(Abstract):
         else:
             new_uncropped_width = requested_width
             new_uncropped_height = new_uncropped_width / image_width * image_height
-        from PIL import Image
         im_uncropped = im.resize((int(new_uncropped_width), int(new_uncropped_height)), Image.ANTIALIAS)
 
         if "gravity" in kwargs:
@@ -221,7 +217,6 @@ class Controller(Abstract):
         else:
             requested_color = "black"
 
-        from PIL import Image
         im_with_fields = Image.new("RGBA", (int(requested_width), int(requested_height)), requested_color)
         im_with_fields.paste(im.resize((int(new_width), int(new_height)), Image.ANTIALIAS), (int((requested_width - new_width) / 2.0), int((requested_height - new_height) / 2.0)))
 
@@ -246,7 +241,6 @@ class Controller(Abstract):
             new_height = requested_height
             new_width = new_height / image_height * image_width
 
-        from PIL import Image
         return im.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
 
     @image_handler
@@ -254,5 +248,4 @@ class Controller(Abstract):
         return im
 
 def is_forbidden_internet_image(url):
-    import urlparse
     return urlparse.urlparse(url).netloc.split(":")[0].lower() in config.forbid_internet_image
