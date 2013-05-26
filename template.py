@@ -1,22 +1,28 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from config import config
-
+from datetime import datetime
+import dateutil.parser
+from jinja2 import ChoiceLoader, contextfunction, Environment, FileSystemLoader, Markup, MemcachedBytecodeCache
+import inspect
+import memcache
 import os
-from jinja2 import Environment, ChoiceLoader, FileSystemLoader, contextfunction
+import sys
+import urllib
+
+from cache import cache
+from config import config
 
 if config.debug:
     auto_reload = True
     bytecode_cache = None
 else:
-    auto_reload = False
-
-    bytecode_cache = None
+    auto_reload = False    
     if config.cache["type"] == "memcached":
-        import memcache
-        from jinja2 import MemcachedBytecodeCache
         bytecode_cache = MemcachedBytecodeCache(memcache.Client([config.cache["url"]]))
+    else:        
+        bytecode_cache = None
+
 jinja = Environment(
     loader 	        =   FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")),
     autoescape      =   True,
@@ -30,22 +36,18 @@ jinja.filters["datetime"]           = config.format_datetime
 jinja.filters["datetime_relative"]  = config.format_datetime_relative
 jinja.filters["date_period"]        = config.format_date_period
 
-import dateutil.parser
-from datetime import datetime
 jinja.filters["datetime_from_int"]          = lambda int: datetime.fromtimestamp(int)
 jinja.filters["datetime_from_str"]          = lambda str: dateutil.parser.parse(str) + config.timezone
 jinja.filters["datetime_from_str_local"]    = lambda str: dateutil.parser.parse(str)
        
 jinja.filters["decline"] = lambda number, *args: args[0].format(number) if number % 10 == 1 and number % 100 != 11 else args[1].format(number) if number % 10 in [2, 3, 4] and (number % 100 < 10 or number % 100 > 20) else args[2].format(number)
 
-import urllib
 jinja.filters["urlencode_plus"] = lambda s: urllib.quote_plus(s.encode("utf-8"))
 
 jinja.filters["time_duration"]  = lambda seconds: "%(h)2d:%(m)02d:%(s)02d" % { "h" : int(seconds / 60 / 60), "m" : int(seconds / 60 % 60), "s" : int(seconds % 60) } 
 
 @contextfunction
 def block(context, block_name, *args, **kwargs):
-    import sys, inspect
     module_name = "block.%s" % (block_name,)
     __import__(module_name)
     block_function = sys.modules[module_name].block
@@ -67,7 +69,6 @@ def block(context, block_name, *args, **kwargs):
             raise "Invalid block call"
 
     if "request" not in block_call_args:
-        from cache import cache
         @cache.cache("block_%s" % block_name)
         def cached_block_function(kwargs):
             return block_function(**kwargs)
@@ -77,7 +78,6 @@ def block(context, block_name, *args, **kwargs):
         result = block_function(**block_call_args)
     
     if result is not None:
-        from jinja2 import Markup
         return Markup(jinja.get_template("block/%s.html" % (block_name,)).render(**result))
     else:
         return ""
