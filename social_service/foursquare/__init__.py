@@ -3,27 +3,26 @@
 
 # wget http://curl.haxx.se/ca/cacert.pem -O /usr/local/lib/python2.6/dist-packages/httplib2-0.7.2-py2.6.egg/httplib2/cacerts.txt
 
+import foursquare
+from werkzeug.contrib.securecookie import SecureCookie
+from werkzeug.utils import redirect
+
 class Foursquare:	
     def __init__(self, client_id, client_secret):
         self.client_id = client_id
         self.client_secret = client_secret
 
     def oauth_initiate(self, callback_url):
-        import foursquare
-        from werkzeug.utils import redirect
-        from werkzeug.contrib.securecookie import SecureCookie        
         response = redirect(foursquare.Foursquare(client_id=self.client_id, client_secret=self.client_secret, redirect_uri=callback_url).oauth.auth_url())        
         response.set_cookie("foursquare_oauth", SecureCookie({ "callback_url" : callback_url }, self.client_secret).serialize(), httponly=True)
         return response
 
     def oauth_callback(self, request):
         try:
-            from werkzeug.contrib.securecookie import SecureCookie
             callback_url = SecureCookie.unserialize(request.cookies["foursquare_oauth"], self.client_secret)["callback_url"]
         except KeyError:
             return False
 
-        import foursquare
         client = foursquare.Foursquare(client_id=self.client_id, client_secret=self.client_secret, redirect_uri=callback_url)
         access_token = client.oauth.get_token(request.args.get("code"))
         client.set_access_token(access_token)
