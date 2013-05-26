@@ -3,12 +3,21 @@
 
 from datetime import datetime, timedelta
 import dateutil.parser
+from jinja2 import Markup
+import random
 import re
+import string
+from werkzeug.exceptions import Unauthorized
+from werkzeug.routing import Rule
+from werkzeug.utils import redirect
 
 from config import config
 from controller.abstract import Controller as Abstract
-from db import db
+from controller.authorization.settings import all as all_settings
 from controller.content.model import ContentItem
+from db import db
+from middleware.authorization.model import Identity, User
+from utils import urlencode
 
 class Controller(Abstract):
     def __init__(self, services):
@@ -19,7 +28,6 @@ class Controller(Abstract):
         self.export_function(globals(), "identity_avatar", lambda identity: self.services[identity.service].get_user_avatar(identity.service_data))
 
     def get_routes(self):
-        from werkzeug.routing import Rule
         return [
             Rule("/authorization/<any('" + "','".join(self.services.keys()) +"'):service>/initiate/",   endpoint="initiate"),            
             Rule("/authorization/<any('" + "','".join(self.services.keys()) +"'):service>/callback/",   endpoint="callback"),
@@ -34,14 +42,11 @@ class Controller(Abstract):
         ]
 
     def execute_initiate(self, request, **kwargs):
-        from utils import urlencode
         return self.services[kwargs["service"]].oauth_initiate(config.url + "/authorization/" + kwargs["service"] + "/callback/?from=" + urlencode(request.referrer or config.url))
 
     def execute_callback(self, request, **kwargs):
         result = self.services[kwargs["service"]].oauth_callback(request)
         if result:
-            from db import db
-            from middleware.authorization.model import Identity, User
             identity = db.query(Identity).filter(Identity.service == kwargs["service"], Identity.service_id == result[0]).first()
             if identity is None:
                 identity = Identity()
@@ -52,7 +57,6 @@ class Controller(Abstract):
                 db.flush()
             if identity.user is None:
                 if request.user is None:
-                    import random, string
                     identity.user = User()
                     # identity.user.default_identity = identity causes CircularDependencyError
                     identity.user.default_identity_id = identity.id
@@ -69,13 +73,10 @@ class Controller(Abstract):
                     db.delete(request.user)
                     db.flush()
 
-            from werkzeug.utils import redirect
             response = redirect(request.args.get("from", "/"))
-            from datetime import datetime, timedelta
             response.set_cookie("u", identity.user.token, expires=datetime.now() + timedelta(days=365))
             return response
         else:
-            from werkzeug.exceptions import Unauthorized
             raise Unauthorized()
 
     def execute_usercp(self, request):
@@ -95,8 +96,6 @@ class Controller(Abstract):
             if not identity_is_attached:
                 available_services.append(service)
 
-        from jinja2 import Markup
-        from controller.authorization.settings import all as all_settings
         settings = [{
             "class" :   " ".join([cl.__name__ for cl in setting.__bases__]),
             "html"  :   Markup(setting.render(request.user)),
@@ -153,44 +152,34 @@ class Controller(Abstract):
         for identity in request.user.identities:
             if identity.id == target_identity_id:
                 request.user.default_identity = identity
-                from db import db
                 db.flush()
                 break
-        from werkzeug.utils import redirect
         return redirect("/authorization/usercp/")
 
     def execute_save_settings(self, request):
         if request.user.settings is None:
             request.user.settings = {}
-        from controller.authorization.settings import all as all_settings
         for setting in all_settings:
             if setting.is_available(request.user):
                 request.user.settings[setting.get_id()] = setting.accept_value(request.form)
 
-        from db import db
         s = request.user.settings
         request.user.settings = None
         db.flush()
         request.user.settings = s
         db.flush()
 
-        from werkzeug.utils import redirect
         return redirect("/authorization/usercp/")
 
     def execute_logout_others(self, request):
-        from db import db
-        import random, string
         request.user.token = "".join(random.choice(string.letters) for i in xrange(32))
         db.flush()
 
-        from werkzeug.utils import redirect
         response = redirect(request.referrer or "/")
-        from datetime import datetime, timedelta
         response.set_cookie("u", request.user.token, expires=datetime.now() + timedelta(days=365))
         return response
 
     def execute_logout(self, request):
-        from werkzeug.utils import redirect
         response = redirect(request.referrer or "/")
         response.set_cookie("u", "")
         return response
