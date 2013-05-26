@@ -1,7 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import dateutil.parser
+import re
+import urllib2
+import urlparse
+
+from config import config
 from controller.content.type import abstract
+from kv import storage as kv_storage
+from log import logger
 
 class Type(abstract.Type):
     def __init__(
@@ -29,9 +37,7 @@ class Provider(abstract.Provider):
     def __init__(self, service):
         self.service = service
 
-    def provide(self):
-        import dateutil.parser
-        from config import config
+    def provide(self):        
         for tweet in self.service.api.GetUserTimeline(include_entities=True, include_rts=True):
             tweet_as_dict = tweet.AsDict()
 
@@ -42,7 +48,6 @@ class Provider(abstract.Provider):
                 media += tweet.retweeted_status.media
 
             def foursquare_ll(_4sq_url):
-                import urllib2, re
                 redirect = urllib2.urlopen(urllib2.Request(_4sq_url))
                 if "/checkin/" not in redirect.geturl():
                     return ""
@@ -51,7 +56,6 @@ class Provider(abstract.Provider):
                 return re.findall("\"lng\":([0-9.]+)", html)[-1] + "," + re.findall("\"lat\":([0-9.]+)", html)[-1]
 
             def foursquare_pic(_4sq_url):
-                import urllib2, re
                 redirect = urllib2.urlopen(urllib2.Request(_4sq_url))
                 if "/checkin/" not in redirect.geturl():
                     return ""
@@ -65,7 +69,6 @@ class Provider(abstract.Provider):
                     return ""
 
             def instagram_src(instagr_am_url):
-                import urllib2, re
                 html = urllib2.urlopen(urllib2.Request(instagr_am_url)).read()
                 return re.search("<img class=\"photo\" src=\"(.+?)\"", html).group(1)
 
@@ -101,10 +104,6 @@ class Formatter(abstract.Formatter):
         return self.prefer_retweet(content_item.data)["user"]["profile_image_url"]
 
     def get_description(self, content_item, url):
-        import re, urlparse
-        from log import logger
-        from kv import storage as kv_storage
-
         text = self.prefer_retweet(content_item.data)["text"]
 
         text = re.sub(r"(\A|\s)@(\w{2,})", r'\1<a href="http://twitter.com/#!/\2">@\2</a>', text)
