@@ -1,19 +1,27 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import hashlib
+from lxml import etree
+import os
+from PIL import Image
+from pygments import highlight
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters import HtmlFormatter
+import StringIO
+from subprocess import Popen, PIPE
+import re
+import urllib2
+
 from config import config
 
 def image(text, url):
     def image_cb(match):
-        from lxml import etree
         image = etree.fromstring(match.group(0))
 
-        import re
         src = image.get("src")
         original = re.sub("images/(.*?)([0-9]+)\.", "images/\\2.", src)
 
-        from PIL import Image
-        import StringIO, urllib2
         width, height = Image.open(StringIO.StringIO(urllib2.urlopen(config.url + src).read())).size
 
         if "class" in image.attrib:
@@ -26,28 +34,22 @@ def image(text, url):
             html = '<a href="' + original + '" style="width: ' + str(width) + 'px;">' + html + '</a>'
         return '<div ' + div_attrs + '>' + html + '</div>'
 
-    import re
     return re.sub(re.compile("<image.*?/>", flags=re.DOTALL), image_cb, text)
 
 def audio(text, url):
     def audio_cb(match):
         return '<a class="flowplayer audio flowplayer-audio" href="' + match.group(1) + '">' + match.group(1) + '</a>'
 
-    import re
     return re.sub(re.compile("<audio>(.*?)</audio>", flags=re.DOTALL), audio_cb, text)
 
 def video(text, url):
     def video_cb(match):
         return '<a class="flowplayer video flowplayer-video" href="' + match.group(1) + '">' + match.group(1) + '</a>'
 
-    import re
     return re.sub(re.compile("<video>(.*?)</video>", flags=re.DOTALL), video_cb, text)
 
-def math(text, url):
-    import os, re
-    from subprocess import Popen, PIPE
+def math(text, url):    
     def math_cb(match):
-        import hashlib
         hash = hashlib.md5(match.group(2))
         filename = os.path.join(config.path, "data/blog/math", hash.hexdigest() + ".png")
         if not os.path.exists(filename):
@@ -77,11 +79,7 @@ def smilie(text, url):
         text = text.replace("<smilie>" + smilie + "</smilie>", '<img class="smilie" src="' + config.url + config.smilies[smilie] + '" />')
     return text
 
-def source(text, url):
-    import re
-    from pygments import highlight
-    from pygments.lexers import get_lexer_by_name
-    from pygments.formatters import HtmlFormatter
+def source(text, url):    
     return re.sub(
         re.compile("<source lang=\"(.*?)\">(.*?)</source>", flags=re.DOTALL),
         lambda match: highlight(
@@ -93,10 +91,8 @@ def source(text, url):
     )
 
 def footnote(text, url):
-    import hashlib
     post_id = hashlib.sha256(url.encode("utf-8")).hexdigest()
 
-    import re
     footnotes = []
     def footnote_cb(match):
         footnotes.append(match.group(1))
