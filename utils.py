@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import urllib
+
 """
 Metaclass for objects with read-only properties. E.g.:
 class Config:
@@ -29,9 +31,7 @@ def ucfirst(s):
     return s[0].upper() + s[1:]
 
 def urlencode(s):
-    import urllib
     return urllib.quote(s.encode("utf-8"), "")
 
 def urlencode_plus(s):
-    import urllib
     return urllib.quote_plus(s.encode("utf-8"), "")
