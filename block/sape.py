@@ -1,9 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-def block(request, limit=None):
-    from cache import cache
+import phpserialize
+import urllib2
 
+from cache import cache
+from config import config
+
+def block(request, limit=None):
     try:
         links = cache.get_cache("sape", expire=3600).get(key="links", createfunc=load_links)
     except:
@@ -25,8 +29,6 @@ def block(request, limit=None):
     return None
 
 def load_links():
-    from config import config
-    import urllib2, phpserialize
     return dict(
         map(
             lambda path_links: (path_links[0], [link.decode("windows-1251") for link in path_links[1].values()] if isinstance(path_links[1], dict) else path_links[1]),
