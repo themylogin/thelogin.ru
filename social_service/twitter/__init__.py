@@ -1,23 +1,27 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from cgi import parse_qsl
+
+import oauth2
+import twitter
+import urllib
+from werkzeug.contrib.securecookie import SecureCookie
+from werkzeug.utils import redirect
+
 class Twitter:	
     def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.access_token_key = access_token_key
         self.access_token_secret = access_token_secret
-
-        import twitter
+        
         self.api = twitter.Api(consumer_key=self.consumer_key,
                                consumer_secret=self.consumer_secret,
                                access_token_key=self.access_token_key,
                                access_token_secret=self.access_token_secret)
 
     def oauth_initiate(self, callback_url):
-        import oauth2, twitter, urllib
-        from cgi import parse_qsl
-
         oauth_consumer  = oauth2.Consumer(key=self.consumer_key, secret=self.consumer_secret)
         oauth_client    = oauth2.Client(oauth_consumer)
 
@@ -25,9 +29,7 @@ class Twitter:
         if resp["status"] != "200":
             raise Exception("Unable to request token from Twitter: %s" % resp["status"])
         oauth_data = dict(parse_qsl(content))
-
-        from werkzeug.contrib.securecookie import SecureCookie
-        from werkzeug.utils import redirect
+        
         response = redirect(twitter.AUTHORIZATION_URL + "?oauth_token=" + oauth_data["oauth_token"])
         response.set_cookie("twitter_oauth", SecureCookie(oauth_data, self.consumer_secret).serialize(), httponly=True)
         return response
@@ -37,13 +39,9 @@ class Twitter:
             return False
 
         try:
-            from werkzeug.contrib.securecookie import SecureCookie
             oauth_data = SecureCookie.unserialize(request.cookies["twitter_oauth"], self.consumer_secret)
         except KeyError:
             return False
-        
-        import oauth2, twitter, urllib
-        from cgi import parse_qsl
 
         oauth_token = oauth2.Token(oauth_data["oauth_token"], oauth_data["oauth_token_secret"])
         oauth_token.set_verifier(request.args.get("oauth_verifier"))
