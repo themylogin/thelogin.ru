@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import dateutil.parser
+from lxml import etree
+import re
 
 from controller.content.type import abstract
+from controller.content.type.post.text_processor import all as all_text_processors
 
 class Type(abstract.Type):
     def __init__(
@@ -34,11 +37,9 @@ class Formatter(abstract.Formatter):
     def get_title(self, content_item):
         return content_item.data["title"]
 
-    def get_image(self, content_item):
-        import re
+    def get_image(self, content_item):        
         match = re.compile("<image.*?/>").match(content_item.data["text"])
         if match:
-            from lxml import etree
             return etree.fromstring(match.group(0)).get("src")
         else:
             return None
@@ -76,7 +77,6 @@ class Formatter(abstract.Formatter):
         return self._parse_text(text, url).replace("<cut>", "")
 
     def _parse_text(self, text, url):
-        from text_processor import all as all_text_processors
         for text_processor in all_text_processors:
             text = text_processor(text, url)
 
