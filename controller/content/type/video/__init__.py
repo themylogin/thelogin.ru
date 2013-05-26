@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import dateutil.parser
 import os.path
 from PIL import Image
 import re
@@ -48,7 +49,6 @@ class Formatter(abstract.Formatter):
         return content_item.data["text"]
 
     def get_dict(self, content_item, url):
-        import dateutil.parser
         return {
             "path"              : "/" + self.directory + "/hd/" + content_item.type_key + ".mp4",
             "preview_directory" : self.directory + "/preview",
