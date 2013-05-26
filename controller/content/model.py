@@ -1,13 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, Index, ForeignKey, Table
-from sqlalchemy import Boolean, DateTime, Integer, PickleType, String, Text
-
-from sqlalchemy.orm import backref, relationship
-
 import datetime
 import simplejson
+from sqlalchemy import Column, Index, ForeignKey, Table
+from sqlalchemy import Boolean, DateTime, Integer, PickleType, String, Text
+from sqlalchemy.orm import backref, relationship
 
 from db import Base
 from middleware.authorization.model import Identity
