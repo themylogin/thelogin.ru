@@ -1,16 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
+from sqlalchemy import func
+import time
+
+from social_service import all as all_social_service
+
 def block(to, from_=None, limit=6):
     if from_ is None:
-        from datetime import timedelta
         from_ = to - timedelta(days=7)
 
-    from social_service import all as all_social_service
     last_fm = all_social_service["last.fm"]
-
-    from sqlalchemy import func
-    import time
+    
     result = {
         "from"      : from_,
         "to"        : to,
