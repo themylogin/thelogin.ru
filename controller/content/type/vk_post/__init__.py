@@ -1,7 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+import re
+import simplejson
+import urllib
+import urllib2
+
 from controller.content.type import abstract
+from kv import storage as kv_storage
 
 class Type(abstract.Type):
     def __init__(
@@ -35,10 +42,7 @@ class Provider(abstract.Provider):
     def __init__(self, user_id):
         self.user_id = user_id
 
-    def provide(self):        
-        import simplejson, urllib, urllib2
-        from datetime import datetime
-
+    def provide(self):
         for status in simplejson.loads(urllib2.urlopen(urllib2.Request("https://api.vk.com/method/wall.get?owner_id=%(user_id)s&filter=owner&count=100" % {
             "user_id" : self.user_id,
         })).read())["response"][1:]:
@@ -73,7 +77,6 @@ class Provider(abstract.Provider):
                 kv          =   { "vk owner" : lambda: vk_owner(status) } if "copy_owner_id" in status else {},
             )
 
-import re
 class Formatter(abstract.Formatter):
     def __init__(self, user_id, user_name, user_avatar):
         self.user_id = user_id
@@ -99,9 +102,7 @@ class Formatter(abstract.Formatter):
             return repost["owner"]["photo"]
         return self.user_avatar
 
-    def get_description(self, content_item, url):
-        import re
-        
+    def get_description(self, content_item, url):        
         text = content_item.data["text"]
 
         repost = self.get_repost(content_item)
@@ -123,8 +124,7 @@ class Formatter(abstract.Formatter):
 
     #
     def get_repost(self, content_item):
-        if "copy_owner_id" in content_item.data:
-            from kv import storage as kv_storage
+        if "copy_owner_id" in content_item.data:            
             key_prefix = str(content_item.data["copy_owner_id"]) + "-" + content_item.created_at.strftime("%Y-%m-%d")
             return {
                 "owner" : {
