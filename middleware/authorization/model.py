@@ -1,13 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, Index, ForeignKey
-from sqlalchemy import DateTime, Integer, PickleType, String
-
-from sqlalchemy.orm import relationship
-
 import datetime
 import simplejson
+from sqlalchemy import Column, Index, ForeignKey
+from sqlalchemy import DateTime, Integer, PickleType, String
+from sqlalchemy.orm import relationship
 
 from db import Base
 
