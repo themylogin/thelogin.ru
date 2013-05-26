@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime        
+import feedparser
+import re
+from time import mktime
+
+from config import config
 from controller.content.type import abstract
 
 class Type(abstract.Type):
@@ -30,12 +36,6 @@ class Provider(abstract.Provider):
         self.username = username
 
     def provide(self):
-        from config import config
-
-        import feedparser
-        from time import mktime
-        from datetime import datetime        
-
         for item in feedparser.parse("https://github.com/" + self.username + ".atom")["entries"]:
             yield self.provider_item(
                 id          =   int(item["id"].split("/")[1]),
@@ -44,7 +44,6 @@ class Provider(abstract.Provider):
                 kv          =   {},
             )
 
-import re
 class Formatter(abstract.Formatter):
     def __init__(self):
         pass
