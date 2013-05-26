@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from sqlalchemy import Column, Index, Integer, String, Text
+
 from kv.engine.abstract import Engine as Abstract
-from db import db
+from db import Base, db
 
 class Engine(Abstract):
     def get(self, directory, key):
@@ -31,11 +33,6 @@ class Engine(Abstract):
 
     def all(self, directory):
         return db.query(KV.key, KV.value).filter_by(directory=directory).all()
-
-from sqlalchemy import Column, Index
-from sqlalchemy import Integer, String, Text
-
-from db import Base
 
 class KV(Base):
     __tablename__   = 'kv'
