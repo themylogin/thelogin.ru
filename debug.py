@@ -13,7 +13,6 @@ if __name__ == "__main__":
     config.__readonly__["debug"] = True
     config.__readonly__["url"] = config.url.replace("://", "://debug.")
     config.__readonly__["cache"] = { "type" : "memory" }
-    config.__readonly__["log"] = logging.FileHandler(os.path.join(os.path.dirname(__file__), "log_debug.txt")) 
 
     application = Application()
     application = ProfilerMiddleware(application, open("profile.txt", "w"))

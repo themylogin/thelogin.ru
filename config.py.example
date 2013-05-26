@@ -23,7 +23,6 @@ class Config:
                                               "url"     : "127.0.0.1:11211",
                                               "lock_dir": "/tmp/thelogin/lock",
                                           },
-        "log"                           : logging.FileHandler(os.path.join(os.path.dirname(__file__), "log.txt")),
 
         "format_date"                   : russian_datetime.format_date,
         "format_time"                   : russian_datetime.format_time,
