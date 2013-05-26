@@ -1,12 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-class Controller(object):
-    def export_function(self, globals, function_name, function):        
-        import sys
-        setattr(sys.modules[globals["__name__"]], function_name, function)
+import sys
+from werkzeug.wrappers import Response
 
-        from template import jinja
+from assets import assets
+from config import config
+from template import jinja
+
+class Controller(object):
+    def export_function(self, globals, function_name, function):                
+        setattr(sys.modules[globals["__name__"]], function_name, function)
         jinja.filters[function_name] = function
 
     def get_routes(self):
@@ -21,14 +25,10 @@ class Controller(object):
                 ]
         """)
 
-    def render_to_response(self, request, template_name, **context):
-        from werkzeug.wrappers import Response
+    def render_to_response(self, request, template_name, **context):        
         return Response(self.render_template(request, template_name, **context), mimetype="text/html")
 
-    def render_template(self, request, template_name, **context):
-        from config import config
-        from assets import assets
-        from template import jinja
+    def render_template(self, request, template_name, **context):        
         return jinja.get_or_select_template(template_name).render(dict({
             "config"        :   config,
             "assets"        :   assets,
