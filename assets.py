@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import cssmin
+import glob
+import jsmin
+import os
+
 from config import config
 
 assets = {}
-import glob, os, os.path, cssmin, jsmin        
 assets_dir = os.path.join(config.path, "asset")
 for asset, function in [("css", cssmin.cssmin), ("js", None)]:
     asset_dir = os.path.join(assets_dir, asset)
