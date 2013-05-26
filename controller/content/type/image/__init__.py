@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import dateutil.parser
 import os.path
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -46,8 +47,7 @@ class Formatter(abstract.Formatter):
     def get_text(self, content_item, url):
         return content_item.data["text"]
 
-    def get_dict(self, content_item, url):
-        import dateutil.parser
+    def get_dict(self, content_item, url):        
         return {
             "directory"     : self.directory,
             "filename"      : self._get_filename(content_item),
