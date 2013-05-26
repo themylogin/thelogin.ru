@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import datetime
+import dateutil.parser
+import simplejson
+import urllib2
+
 from controller.content.type import abstract
 
 class Type(abstract.Type):
@@ -35,8 +40,6 @@ class Provider(abstract.Provider):
         self.card_number = card_number
 
     def provide(self):
-        import urllib2, simplejson, datetime, dateutil.parser
-
         opener = urllib2.build_opener()
         opener.addheaders.append(("Cookie", "ASP.NET_SessionId=%(session_id)s; tcard_ek_pan=%(card_number)s" % {
             "session_id"    : self.session_id,
