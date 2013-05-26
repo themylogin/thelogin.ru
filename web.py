@@ -2,22 +2,26 @@
 # -*- coding: utf-8 -*-
 
 from urlparse import urlparse
+from werkzeug.exceptions import HTTPException, InternalServerError
+from werkzeug.routing import EndpointPrefix, Map
+from werkzeug.wrappers import Request
+from werkzeug.wsgi import ClosingIterator
 
 from config import config
-from local import local
+from controller import all as controllers
+from db import db
+from local import local, local_manager
+from log import logger
+from middleware import all as all_middleware
 
 # WSGI application
 class Application:
     def __init__(self):
-        from controller import all as controllers
         self.controllers = controllers
-
-        from werkzeug.routing import EndpointPrefix, Map
         self.url_map = Map([EndpointPrefix("{0}/".format(i), self.controllers[i].get_routes()) for i in range(0, len(self.controllers))])
 
     def __call__(self, environ, start_response):
         def app(environ, start_response):
-            from werkzeug.wrappers import Request
             request = Request(environ)
 
             local.request = request
@@ -25,26 +29,18 @@ class Application:
             if config.debug:
                 response = self.process_request(request)
             else:
-                from werkzeug.exceptions import HTTPException
                 try:
                     response = self.process_request(request)
                 except HTTPException, e:
                     response = e
                 except Exception, e:               
-                    from log import logger
                     logger.exception("An unhandled exception occurred during the execution of the current web request")
-
-                    from werkzeug.exceptions import InternalServerError
                     response = InternalServerError()
             return response(environ, start_response)
 
-        from db import db
-        from local import local_manager
-        from werkzeug.wsgi import ClosingIterator
         return ClosingIterator(local_manager.make_middleware(app)(environ, start_response), db.remove)
 
     def process_request(self, request):
-        from middleware import all as all_middleware
         for middleware in all_middleware:
             request = middleware(request)
 
