@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from werkzeug.utils import escape
+
+from config import config
 from controller.content.type import abstract
 
 class Type(abstract.Type):
@@ -34,9 +37,6 @@ class Formatter(abstract.Formatter):
         return self.get_text(content_item, url)        
 
     def get_text(self, content_item, url):
-        from werkzeug.utils import escape
-        from config import config
-
         text = content_item.data["text"]
         text = escape(text).replace("\n", "<br />\n")
         for smilie in config.smilies:
@@ -44,7 +44,6 @@ class Formatter(abstract.Formatter):
         return text
 
     def get_dict(self, content_item, url):
-        import dateutil.parser
         return {
             "rating"    : sum([vote[0] for vote in content_item.data["rating"]]),
         }
