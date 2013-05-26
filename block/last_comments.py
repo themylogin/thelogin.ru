@@ -1,13 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-def block(request, limit=10):
-    from db import db
-    from sqlalchemy.orm import joinedload
-    from controller.content.model import Comment
-    from controller.content import process_content_item
+from sqlalchemy import func
 
-    from sqlalchemy import func
+from db import db
+from sqlalchemy.orm import joinedload
+from controller.content.model import Comment
+from controller.content import process_content_item
+
+def block(request, limit=10):
     return {
         "last_comments" : [
             {
