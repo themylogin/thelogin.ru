@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime as _datetime, timedelta
+
 def russian_month(date_string):
     return date_string.replace("January",      u"января").\
                        replace("February",     u"февраля").\
@@ -26,13 +28,11 @@ def format_datetime(datetime, date_format="%e %B %Y", time_format="%H:%M"):
 
 def format_datetime_relative(datetime, relative_to=None):
     if relative_to == None:
-        from datetime import datetime as _datetime
         relative_to = _datetime.now()
 
     if datetime.date() == relative_to.date():
         return format_time(datetime)
     else:
-        from datetime import timedelta
         if datetime.date() == relative_to.date() - timedelta(days=1):
             return u"Вчера, " + format_time(datetime)
         else:
