@@ -137,13 +137,19 @@ class Formatter(abstract.Formatter):
                     "title"     : u"Снял %(sum)s в отделении <b>%(details)s</b>" % kwargs if "TELEBANK" not in kwargs["details"] else u"Снял %(sum)s через систему <b>«Телебанк»</b>" % kwargs,
                 },
 
+                u"внесению наличных"      : lambda **kwargs: {
+                    "title"     : u"Положил %(sum)s в банкомате <b>%(details)s</b>" % kwargs,
+                    "location"  : kv_storage["vtb24_atm_location"].get_or_store(kwargs["details"], lambda: simplejson.loads(
+                        urllib2.urlopen("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + urlencode("NOVOSIBIRSK " + kwargs["details"]) + "&key=").read()
+                    )["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].replace(" ", ",")),
+                },
                 u"снятию наличных"      : lambda **kwargs: {
                     "title"     : u"Снял %(sum)s в банкомате <b>%(details)s</b>" % kwargs,
                     "location"  : kv_storage["vtb24_atm_location"].get_or_store(kwargs["details"], lambda: simplejson.loads(
                         urllib2.urlopen("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + urlencode("NOVOSIBIRSK " + kwargs["details"]) + "&key=").read()
                     )["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"].replace(" ", ",")),
                 },
-                    
+
                 u"оплате"               : lambda **kwargs: {
                     "title"     : u"Совершил покупку на сумму %(sum)s в магазине <b>%(details)s</b>" % kwargs,
                 },

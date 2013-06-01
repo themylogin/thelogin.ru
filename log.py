@@ -1,12 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from cloggy.werkzeug_client import WerkzeugLoggingHandler
 import logging
 import os.path
 import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "loggy"))
-from cloggy.werkzeug_client import WerkzeugLoggingHandler
 
 from local import local
 
