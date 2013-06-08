@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import dateutil.parser
 import os
 from PIL import Image
@@ -53,7 +53,7 @@ class Provider(abstract.Provider):
                     data = client.make_request(activity["uri"], media_type="application/vnd.com.runkeeper.FitnessActivity+json")
                     return {
                         "started_at"    : dateutil.parser.parse(data["start_time"]).replace(tzinfo=None),
-                        "created_at"    : dateutil.parser.parse(data["start_time"]).replace(tzinfo=None) + timedelta(seconds=int(float(data["duration"]))),
+                        "created_at"    : datetime.now(),
                         "data"          : data,
                         "kv"            : {},
                     }
