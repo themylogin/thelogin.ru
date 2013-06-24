@@ -560,4 +560,31 @@ for f in report_items:
         report += u"<li>" + item + u"</li>\n"
 report += u"</ul>\n"
 
-print report
+if sys.argv[2] == "post":
+    title = ucfirst(pytils.dt.ru_strftime(u"%B %Y", date=start))
+
+    now_playing = all_social_services["last.fm"].network.get_user(all_social_services["last.fm"].username).get_now_playing()
+    if now_playing:
+        music = u"%s – %s" % (now_playing.get_artist().get_name(), now_playing.get_title())
+    else:
+        music = ""
+
+    post = ContentItem()
+    post.type = "blog_post"
+    post.type_key = pytils.translit.slugify(title)
+    post.created_at = datetime.now()
+    post.permissions = ContentItem.permissions_PUBLIC
+    post.data = {
+        "title"         : title,
+        "title_html"    : "",
+        "music"         : music,
+        "text"          : report,
+
+        "ipaddress"     : "127.0.0.1",
+        "useragent"     : "Monthly report generator",
+    }
+    db.add(post)
+    db.flush()
+            
+if sys.argv[2] == "print":
+    print report
