@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
+import dateutil.relativedelta
 import dateutil.parser
 import itertools
 import logging
@@ -36,8 +37,8 @@ desktop_ssh.connect("192.168.0.3", username="themylogin")
 logger.handlers = []
 logger.addHandler(logging.StreamHandler(sys.stderr))
 
-start = datetime(2013, 6, 1, 0, 0, 0)
-end = datetime(2013, 7, 1, 0, 0, 0) - timedelta(seconds=1)
+start = dateutil.parser.parse(sys.argv[1] + "-01")
+end = start + dateutil.relativedelta.relativedelta(months=1) - timedelta(seconds=1)
 
 def get_outs(start, end):
     outs = []
