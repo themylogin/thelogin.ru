@@ -109,7 +109,13 @@ def time_at_home():
                 found_out = True
                 break
         if not found_out:
-            looser_days += 1
+            entire_day_out = False
+            for left, came in outs:
+                if left < day and day < came:
+                    entire_day_out = True
+                    break
+            if not entire_day_out:
+                looser_days += 1
 
         day += timedelta(days=1)
         total_days += 1
