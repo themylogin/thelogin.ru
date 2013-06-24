@@ -36,8 +36,8 @@ desktop_ssh.connect("192.168.0.3", username="themylogin")
 logger.handlers = []
 logger.addHandler(logging.StreamHandler(sys.stderr))
 
-start = datetime(2013, 5, 1, 0, 0, 0)
-end = datetime(2013, 6, 1, 0, 0, 0) - timedelta(seconds=1)
+start = datetime(2013, 6, 1, 0, 0, 0)
+end = datetime(2013, 7, 1, 0, 0, 0) - timedelta(seconds=1)
 
 def get_outs(start, end):
     outs = []

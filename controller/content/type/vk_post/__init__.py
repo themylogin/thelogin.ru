@@ -49,11 +49,16 @@ class Provider(abstract.Provider):
             status_created_at = datetime.fromtimestamp(status["date"])
 
             def vk_owner(status):
-                key_prefix = str(status["copy_owner_id"]) + "-" + status_created_at.strftime("%Y-%m-%d")
+                if "copy_commenter_id" in status:
+                    owner_id = status["copy_commenter_id"]
+                elif "copy_owner_id" in status:
+                    owner_id = status["copy_owner_id"]
 
-                if status["copy_owner_id"] > 0:
+                key_prefix = str(owner_id) + "-" + status_created_at.strftime("%Y-%m-%d")
+
+                if owner_id > 0:
                     user = simplejson.loads(urllib2.urlopen(urllib2.Request("https://api.vk.com/method/users.get?uids=%(user_id)s&fields=uid,first_name,last_name,screen_name,photo&lang=en" % {
-                        "user_id" : status["copy_owner_id"]
+                        "user_id" : owner_id
                     })).read())["response"][0]
                     return [
                         (key_prefix + "-photo", user["photo"]),
@@ -62,7 +67,7 @@ class Provider(abstract.Provider):
                     ]
                 else:
                     group = simplejson.loads(urllib2.urlopen(urllib2.Request("https://api.vk.com/method/groups.getById?gid=%(group_id)s" % {
-                        "group_id" : -status["copy_owner_id"]
+                        "group_id" : -owner_id
                     })).read())["response"][0]
                     return [
                         (key_prefix + "-photo", group["photo"]),
@@ -74,7 +79,7 @@ class Provider(abstract.Provider):
                 id          =   status["id"],
                 created_at  =   status_created_at,
                 data        =   status,
-                kv          =   { "vk owner" : lambda: vk_owner(status) } if "copy_owner_id" in status else {},
+                kv          =   { "vk owner" : lambda: vk_owner(status) } if "copy_owner_id" in status or "copy_commenter_id" in status else {},
             )
 
 class Formatter(abstract.Formatter):
@@ -124,14 +129,20 @@ class Formatter(abstract.Formatter):
 
     #
     def get_repost(self, content_item):
-        if "copy_owner_id" in content_item.data:            
-            key_prefix = str(content_item.data["copy_owner_id"]) + "-" + content_item.created_at.strftime("%Y-%m-%d")
-            return {
-                "owner" : {
-                    "photo" : kv_storage["vk owner"][key_prefix + "-photo"], 
-                    "title" : kv_storage["vk owner"][key_prefix + "-title"],
-                    "url"   : kv_storage["vk owner"][key_prefix + "-url"],
-                },
-                "text"  : content_item.data["copy_text"] if "copy_text" in content_item.data else "",
-            }
-        return None
+        if "copy_commenter_id" in content_item.data:
+            owner_id = content_item.data["copy_commenter_id"]
+        elif "copy_owner_id" in content_item.data:            
+            owner_id = content_item.data["copy_owner_id"]
+        else:
+            return None
+
+        key_prefix = str(owner_id) + "-" + content_item.created_at.strftime("%Y-%m-%d")
+
+        return {
+            "owner" : {
+                "photo" : kv_storage["vk owner"][key_prefix + "-photo"], 
+                "title" : kv_storage["vk owner"][key_prefix + "-title"],
+                "url"   : kv_storage["vk owner"][key_prefix + "-url"],
+            },
+            "text"  : content_item.data["copy_text"] if "copy_text" in content_item.data else "",
+        }
