@@ -45,17 +45,19 @@ class Provider(abstract.Provider):
             "session_id"    : self.session_id,
             "card_number"   : self.card_number,
         }))
-        for trip in simplejson.loads(opener.open("https://t-karta.ru/ek/SitePages/TransportServicePage.aspx?functionName=GetCardTripsHistory&pan=%(pan)s&dateFrom=%(dateFrom)s&dateTo=%(dateTo)s" % {
+        trips_history = simplejson.loads(opener.open("https://t-karta.ru/ek/SitePages/TransportServicePage.aspx?functionName=GetCardTripsHistory&pan=%(pan)s&dateFrom=%(dateFrom)s&dateTo=%(dateTo)s" % {
             "pan"           : self.card_number,
             "dateFrom"      : (datetime.datetime.now() - datetime.timedelta(days=13)).strftime("%d.%m.%Y"),
             "dateTo"        : datetime.datetime.now().strftime("%d.%m.%Y"),
-        }).read())["TripsHistory"]:
-            yield self.provider_item(
-                id          =   trip["Time"],
-                created_at  =   dateutil.parser.parse(trip["Time"], dayfirst=True),
-                data        =   trip,
-                kv          =   {}
-            )
+        }).read())["TripsHistory"]
+        if trips_history:
+            for trip in trips_history:
+                yield self.provider_item(
+                    id          =   trip["Time"],
+                    created_at  =   dateutil.parser.parse(trip["Time"], dayfirst=True),
+                    data        =   trip,
+                    kv          =   {}
+                )
 
 class Formatter(abstract.Formatter):
     def __init__(self, username):
