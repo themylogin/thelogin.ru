@@ -446,7 +446,7 @@ def guests():
 
         text += u"<ul>\n"
         for username, timedeltas in sorted(guests.items(), key=lambda kv: -sum([b - a for a, b in kv[1]], timedelta()))[:5]:
-            text += u"<li>%s (%s)</li>\n" % (username, pytils.numeral.get_plural(int(sum([b - a for a, b in timedeltas], timedelta()).total_seconds() / 3600), (u"часов", u"часов", u"часов")))
+            text += u"<li>%s (%s)</li>\n" % (username, pytils.numeral.get_plural(int(sum([b - a for a, b in timedeltas], timedelta()).total_seconds() / 3600), (u"час", u"часа", u"часов")))
         text += u"</ul>\n"
 
         return text
