@@ -72,6 +72,38 @@ def get_outs(start, end):
 
     return outs
 
+def get_bathroom_usages(start, end):
+    usages = []
+    using_bathroom = None
+    last_start_datetime = None
+    for event in smarthome_db.query(SmarthomeEvent).filter(
+        SmarthomeEvent.smart == "bathroom_usage_watcher", SmarthomeEvent.attribute.in_(["started", "stopped"]),
+        SmarthomeEvent.datetime >= start, SmarthomeEvent.datetime <= end,
+    ).order_by(SmarthomeEvent.datetime):
+        if using_bathroom is None:
+            # Первое событие за интервал: узнаём, в начале интервала пользователь был в ванной или нет или нет?
+            if event.attribute == "stopped":
+                # Вышел, значит, пользовался
+                using_bathroom = True
+                last_start_datetime = start
+            else:
+                # Зашёл, значит, не был
+                using_bathroom = False
+
+        if not using_bathroom and event.attribute == "started":
+            using_bathroom = True
+            last_start_datetime = event.datetime
+        elif using_bathroom and event.attribute == "stopped":
+            usages.append((last_start_datetime, event.datetime))
+            using_bathroom = False
+        else:
+            logger.warning(u"using_bathroom = %d и в %s произошло событие %s" % (using_bathroom, event.datetime.strftime("%Y-%m-%d %H:%M:%S"), event.attribute))
+    # Если в конце интервала пользователь в ванной, зафиксируем последний вход
+    if using_bathroom:
+        usages.append((last_start_datetime, end))
+
+    return usages    
+
 def get_bike_rides(start, end):
     return [
         content_item
@@ -288,6 +320,7 @@ def music():
 
     charts = [
         (u"Все", scrobbles),
+        (u"В ванной", scrobbles_within_intervals(get_bathroom_usages(start, end))),
         (u"На велосипеде", scrobbles_within_intervals([(ride.started_at, ride.created_at) for ride in bike_rides])),
         (u"По дороге в бассейн «Нептун»", scrobbles_within_intervals(swimming_pool_trips)),
     ]
@@ -419,6 +452,12 @@ def guests():
         return text
     else:
         return None
+
+@report_item
+def bathroom():
+    return u"%(percent_time_at_the_bathroom)d%% времени в ванной." % {
+        "percent_time_at_the_bathroom"  : sum([e - s for s, e in get_bathroom_usages(start, end)], timedelta()).total_seconds() / (end - start).total_seconds() * 100,
+    }
 
 @report_item
 def im():
