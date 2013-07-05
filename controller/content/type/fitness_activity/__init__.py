@@ -96,7 +96,12 @@ class Formatter(abstract.Formatter):
                                 "total_distance"    : content_item.data["total_distance"] / 1000.0,
                                 "time_period"       : self.time_period(content_item.data["duration"]),
                                 "speed"             : content_item.data["total_distance"] * 3.6 / content_item.data["duration"],
-                            }
+                            },
+            "Running"   :   lambda: u"пробежал <b>%(total_distance).2f км</b> за %(time_period)s (<b>%(speed).2f км/ч</b>)" % {
+                                "total_distance"    : content_item.data["total_distance"] / 1000.0,
+                                "time_period"       : self.time_period(content_item.data["duration"]),
+                                "speed"             : content_item.data["total_distance"] * 3.6 / content_item.data["duration"],
+                            },
         }[content_item.data["type"]]()
 
     def get_image(self, content_item):
