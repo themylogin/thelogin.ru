@@ -34,6 +34,12 @@
             {% if attachment.type == "link" %}
                 <div><a href="{{ attachment.link.url }}">♞ {{ attachment.link.title }}</a></div>
             {% endif %}
+
+            {% if attachment.type == "doc" %}
+                {% if attachment.doc.ext == "gif" %}
+                    <a class="block" href="{{ attachment.doc.url|internet_image }}"><img class="block" src="{{ attachment.doc.url|internet_image }}" /></a>
+                {% endif %}                
+            {% endif %}
         {% endfor %}
     {% endif %}
 {% endblock %}

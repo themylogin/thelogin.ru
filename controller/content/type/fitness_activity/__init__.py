@@ -70,7 +70,7 @@ class Provider(abstract.Provider):
         openbox = subprocess.Popen(["openbox"], env={"DISPLAY" : ":20"})
         time.sleep(10)
         chromium = subprocess.Popen(["chromium-browser", "--kiosk", content_item.data["activity"]], env={"DISPLAY" : ":20"})
-        time.sleep(60)
+        time.sleep(120)
         subprocess.Popen(["import", "-window", "root", filename], env={"DISPLAY" : ":20"}).communicate()
         chromium.terminate()
         chromium.wait()
