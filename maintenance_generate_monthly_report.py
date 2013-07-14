@@ -442,10 +442,10 @@ def guests():
             time_with_guests += datetime - last_party_start
 
     if time_with_guests:        
-        text = u"%d%% времени с гостями. Топ гостей:\n" % (time_with_guests.total_seconds() / (end - start).total_seconds() * 100)
+        text = u"%d%% времени с гостями:\n" % (time_with_guests.total_seconds() / (end - start).total_seconds() * 100)
 
         text += u"<ul>\n"
-        for username, timedeltas in sorted(guests.items(), key=lambda kv: -sum([b - a for a, b in kv[1]], timedelta()))[:5]:
+        for username, timedeltas in sorted(guests.items(), key=lambda kv: -sum([b - a for a, b in kv[1]], timedelta())):
             text += u"<li>%s (%s)</li>\n" % (username, pytils.numeral.get_plural(int(sum([b - a for a, b in timedeltas], timedelta()).total_seconds() / 3600), (u"час", u"часа", u"часов")))
         text += u"</ul>\n"
 
