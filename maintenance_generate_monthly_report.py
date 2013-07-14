@@ -10,6 +10,7 @@ import paramiko
 from PIL import Image
 import pymorphy2
 import pytils
+from sqlalchemy import func
 import re
 import subprocess
 import sys
@@ -393,12 +394,15 @@ def music():
 @report_item
 def guests():
     guests = {}
+    username2userid = {}
     for event in db.query(ContentItem).filter(
         ContentItem.type.in_(["guest_in", "guest_out"]),
         ContentItem.created_at >= start, ContentItem.created_at <= end,
     ).order_by(ContentItem.created_at):
         identity = db.query(User).get(int(event.type_key.split(",")[0].split("=")[1])).default_identity
         username = all_social_services[identity.service].get_user_name(identity.service_data)
+
+        username2userid[username] = identity.user.id
 
         if event.type == "guest_in":
             if guests.get(username, []) and guests[username][-1][1] is None:
@@ -444,9 +448,14 @@ def guests():
     if time_with_guests:        
         text = u"%d%% времени с гостями:\n" % (time_with_guests.total_seconds() / (end - start).total_seconds() * 100)
 
-        text += u"<ul>\n"
+        text += u"<ul class=\"guest-list\">\n"
         for username, timedeltas in sorted(guests.items(), key=lambda kv: -sum([b - a for a, b in kv[1]], timedelta())):
-            text += u"<li>%s (%s)</li>\n" % (username, pytils.numeral.get_plural(int(sum([b - a for a, b in timedeltas], timedelta()).total_seconds() / 3600), (u"час", u"часа", u"часов")))
+            is_new_guest = db.query(func.count(ContentItem.id)).filter(
+                ContentItem.type_key.like("user=%d, %%" % username2userid[username]),
+                ContentItem.created_at < start
+            ).scalar() == 0
+
+            text += u"<li%s>%s (%s)</li>\n" % (" class=\"new\"" if is_new_guest else "", username, pytils.numeral.get_plural(int(sum([b - a for a, b in timedeltas], timedelta()).total_seconds() / 3600), (u"час", u"часа", u"часов")))
         text += u"</ul>\n"
 
         return text
