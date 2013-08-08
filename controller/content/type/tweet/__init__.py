@@ -70,7 +70,7 @@ class Provider(abstract.Provider):
 
             def instagram_src(instagr_am_url):
                 html = urllib2.urlopen(urllib2.Request(instagr_am_url)).read()
-                return re.search("<img class=\"photo\" src=\"(.+?)\"", html).group(1)
+                return re.search("\"display_src\":\"(.+?)\"", html).group(1).replace("\\", "")
 
             yield self.provider_item(
                 id          =   tweet_as_dict["id"],
