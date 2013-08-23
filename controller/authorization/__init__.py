@@ -58,8 +58,7 @@ class Controller(Abstract):
             if identity.user is None:
                 if request.user is None:
                     identity.user = User()
-                    # identity.user.default_identity = identity causes CircularDependencyError
-                    identity.user.default_identity_id = identity.id
+                    identity.user.default_identity_id = identity.id # identity.user.default_identity = identity causes CircularDependencyError
                     identity.user.token = "".join(random.choice(string.letters) for i in xrange(32))
                     db.add(identity.user)
                     db.flush()
