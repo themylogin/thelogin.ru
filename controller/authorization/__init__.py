@@ -64,6 +64,8 @@ class Controller(Abstract):
                     for hardware in self._get_present_hardware():
                         if hardware["ip"] == request.remote_addr:
                             identity.user.settings["MacAddress"] = hardware["mac"]
+                            if identity.service == "last.fm":
+                                identity.user.settings["RunScrobbler"] = True
                     db.add(identity.user)
                     db.flush()
                 else:
