@@ -101,33 +101,7 @@ class Controller(Abstract):
             "html"  :   Markup(setting.render(request.user)),
         } for setting in all_settings if setting.is_available(request.user)]
 
-        macs = set()
-        present_hardware = []
-        for ip, lease in reversed(re.findall("lease([\d\s.]+){(.+?)}", open("/var/lib/dhcp/dhcpd.leases").read(), re.DOTALL)):
-            ip              = ip.strip()
-            start           = dateutil.parser.parse(re.search("starts.* ([0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})", lease).group(1)) + config.timezone
-            mac             = re.search("hardware ethernet ([0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2})", lease).group(1)
-            hostname        = re.search("client-hostname (.+);", lease)
-            if hostname:
-                hostname    = hostname.group(1).strip('"')
-            else:
-                hostname    = ""
 
-            if config.owner_hardware(ip, mac):
-                continue
-
-            if datetime.now() - start > timedelta(days=1):
-                continue
-
-            if mac in macs:
-                continue
-            macs.add(mac)
-            
-            present_hardware.append({
-                "start"     : start,
-                "mac"       : mac,
-                "hostname"  : hostname,
-            })
 
         visit_history = []
         for user_in in db.query(ContentItem).filter(ContentItem.type == "guest_in",
@@ -142,7 +116,7 @@ class Controller(Abstract):
             "attached_identities"   : attached_identities,
             "available_services"    : available_services,
             "settings"              : settings,
-            "present_hardware"      : present_hardware,
+            "present_hardware"      : self._get_present_hardware(),
             "visit_history"         : visit_history,
             "breadcrumbs"           : [u"Подключенные сервисы"],
         })
@@ -183,3 +157,35 @@ class Controller(Abstract):
         response = redirect(request.referrer or "/")
         response.set_cookie("u", "")
         return response
+
+    def _get_present_hardware(self):
+        macs = set()
+        present_hardware = []
+        for ip, lease in reversed(re.findall("lease([\d\s.]+){(.+?)}", open("/var/lib/dhcp/dhcpd.leases").read(), re.DOTALL)):
+            start           = dateutil.parser.parse(re.search("starts.* ([0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})", lease).group(1)) + config.timezone
+            mac             = re.search("hardware ethernet ([0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2})", lease).group(1)
+            ip              = ip.strip()
+            hostname        = re.search("client-hostname (.+);", lease)
+            if hostname:
+                hostname    = hostname.group(1).strip('"')
+            else:
+                hostname    = ""
+
+            if config.owner_hardware(ip, mac):
+                continue
+
+            if datetime.now() - start > timedelta(days=1):
+                continue
+
+            if mac in macs:
+                continue
+            macs.add(mac)
+
+            present_hardware.append({
+                "start"     : start,
+                "mac"       : mac,
+                "ip"        : ip,
+                "hostname"  : hostname,
+            })
+
+        return present_hardware
