@@ -57,6 +57,7 @@ class Formatter(abstract.Formatter):
     def get_description(self, content_item, url):        
         text = self.summary(content_item)
         text = re.compile(r"""<a[^<>]+class="gravatar"(.+?)</a>""", re.DOTALL).sub(r"", text)
+        text = re.compile(r"""<a[^<>]+>\s*<img[^<>]+class="gravatar"(.+?)</a>""", re.DOTALL).sub(r"", text)
         text = re.compile(r"""<div class="title">(.+?)[^<>]+</div>""", re.DOTALL).sub(r"", text)
         text = re.compile(r"""<a [^<>]+ class="committer">.+</a> committed """).sub(r"", text)
         # text = text.replace("<div class=\"details\">", "<div class=\"text\">")
