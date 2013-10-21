@@ -25,6 +25,7 @@ class LastFM:
 
         self.username = username
 
+        """
         sys.path.append(thelogin_path)
         from lastfm.models import User, Scrobble
         sys.path.pop()
@@ -33,6 +34,7 @@ class LastFM:
         engine = engine_from_config(paste.deploy.appconfig("config://" + os.path.join(thelogin_path, "production.ini")), 'sqlalchemy.')
         self.thelogin_db = scoped_session(lambda: create_session(engine), local_manager.get_ident)
         self.thelogin_user = self.thelogin_db.query(self.thelogin_User).filter(self.thelogin_User.username == self.username)[0]
+        """
 
     #
     def oauth_initiate(self, callback_url):

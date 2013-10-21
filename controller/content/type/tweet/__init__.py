@@ -38,7 +38,7 @@ class Provider(abstract.Provider):
         self.service = service
 
     def provide(self):        
-        for tweet in self.service.api.GetUserTimeline(include_rts=True):
+        for tweet in self.service.api.GetUserTimeline(include_rts=True, count=100):
             tweet_as_dict = tweet.AsDict()
 
             urls = tweet.urls
