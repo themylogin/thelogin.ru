@@ -106,23 +106,11 @@ class Controller(Abstract):
             "html"  :   Markup(setting.render(request.user)),
         } for setting in all_settings if setting.is_available(request.user)]
 
-
-
-        visit_history = []
-        for user_in in db.query(ContentItem).filter(ContentItem.type == "guest_in",
-                                                    ContentItem.type_key.startswith("user=%d," % (request.user.id,))).order_by(ContentItem.created_at.desc()):
-            user_out = db.query(ContentItem).filter(ContentItem.type == "guest_out",
-                                                    ContentItem.type_key.startswith("user=%d," % (request.user.id,)),
-                                                    ContentItem.created_at >= user_in.created_at).order_by(ContentItem.created_at).first()
-            visit_history.append((user_in, user_out))
-
         return self.render_to_response(request, "authorization/usercp.html", **{
             "default_identity"      : default_identity,
             "attached_identities"   : attached_identities,
             "available_services"    : available_services,
             "settings"              : settings,
-            "present_hardware"      : self._get_present_hardware(),
-            "visit_history"         : visit_history,
             "breadcrumbs"           : [u"Подключенные сервисы"],
         })
 
