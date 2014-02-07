@@ -4,6 +4,7 @@
 from mimetypes import guess_type
 import os
 from PIL import Image
+from PIL.ExifTags import TAGS
 import urllib2
 import urlparse
 from werkzeug.exceptions import Forbidden, NotFound
@@ -91,6 +92,34 @@ class Controller(Abstract):
             processed_path = os.path.join(config.path, self.path, requested_path.encode("utf-8"))
             if not os.path.exists(processed_path):
                 im = Image.open(path)
+                metadata = {TAGS.get(k): v for k, v in im._getexif().iteritems()}
+                if "Orientation" in metadata:
+                    orientation = metadata["Orientation"]
+                    if orientation == 1:
+                        # Nothing
+                        im = im.copy()
+                    elif orientation == 2:
+                        # Vertical Mirror
+                        im = im.transpose(Image.FLIP_LEFT_RIGHT)
+                    elif orientation == 3:
+                        # Rotation 180°
+                        im = im.transpose(Image.ROTATE_180)
+                    elif orientation == 4:
+                        # Horizontal Mirror
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                    elif orientation == 5:
+                        # Horizontal Mirror + Rotation 90° CCW
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_90)
+                    elif orientation == 6:
+                        # Rotation 270°
+                        im = im.transpose(Image.ROTATE_270)
+                    elif orientation == 7:
+                        # Horizontal Mirror + Rotation 270°
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.ROTATE_270)
+                    elif orientation == 8:
+                        # Rotation 90°
+                        im = im.transpose(Image.ROTATE_90)
+
                 im_processed = image_handler(self, im, **kwargs)
 
                 if not os.path.isdir(os.path.dirname(processed_path)):
