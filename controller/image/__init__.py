@@ -92,7 +92,11 @@ class Controller(Abstract):
             processed_path = os.path.join(config.path, self.path, requested_path.encode("utf-8"))
             if not os.path.exists(processed_path):
                 im = Image.open(path)
-                metadata = {TAGS.get(k): v for k, v in im._getexif().iteritems()}
+                exif = im._getexif() if hasattr(im, "_getexif") else None
+                if exif:
+                    metadata = {TAGS.get(k): v for k, v in exif.iteritems()}
+                else:
+                    metadata = {}
                 if "Orientation" in metadata:
                     orientation = metadata["Orientation"]
                     if orientation == 1:
