@@ -59,7 +59,10 @@ class Controller(Abstract):
                 if request.user is None:
                     identity.user = User()
                     identity.user.default_identity_id = identity.id # identity.user.default_identity = identity causes CircularDependencyError
-                    identity.user.token = "".join(random.choice(string.letters) for i in xrange(32))
+                    identity.user.token = "".join(random.choice(string.letters + string.digits + string.punctuation)
+                                                  for i in xrange(32))
+                    identity.user.url_token = "".join(random.choice(string.letters + string.digits + string.punctuation)
+                                                      for i in xrange(32))
                     identity.user.settings = {}
                     for hardware in self._get_present_hardware():
                         if hardware["ip"] == request.remote_addr:

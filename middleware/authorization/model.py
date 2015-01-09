@@ -26,6 +26,7 @@ class User(Base):
 
     id                  = Column(Integer, primary_key=True)
     token               = Column(String(length=32), unique=True)
+    url_token           = Column(String(length=32), unique=True)
     last_visit          = Column(DateTime(), default=datetime.datetime.now)
     last_activity       = Column(DateTime(), default=datetime.datetime.now)
     default_identity_id = Column(Integer, ForeignKey("identity.id"))
