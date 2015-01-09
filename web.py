@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from binascii import unhexlify
+from binascii import hexlify, unhexlify
 from Crypto.Cipher import AES
 from datetime import datetime, timedelta
+from functools import partial
+import re
 from urlparse import urlparse
 from werkzeug.exceptions import HTTPException, Forbidden, InternalServerError
 from werkzeug.routing import EndpointPrefix, Map
@@ -23,6 +25,8 @@ class Application:
     def __init__(self):
         self.controllers = controllers
         self.url_map = Map([EndpointPrefix("{0}/".format(i), self.controllers[i].get_routes()) for i in range(0, len(self.controllers))])
+
+        self.local_domain = urlparse(config.url).netloc
 
     def __call__(self, environ, start_response):
         def app(environ, start_response):
@@ -53,7 +57,7 @@ class Application:
         if request.environ["PATH_INFO"].startswith("/private/"):
             path_info = request.environ["PATH_INFO"]
             path_info = path_info[len("/private/"):]
-            if request.user is not None:
+            if not (request.user is None or not request.user.trusted):
                 path_info_encrypted = path_info
                 path_info = AES.new(request.user.url_token).decrypt(unhexlify(path_info)).rstrip("@")
 
@@ -93,9 +97,9 @@ class Application:
             for middleware in all_middleware:
                 request = middleware(request)
         else:
-            if request.user is None:
+            if request.user is None or not request.user.trusted:
                 if not any(request.environ["PATH_INFO"].startswith(p)
-                           for p in ("/authorization/",)):
+                           for p in ("/authorization/", "/content/post-comment/")):
                     raise Forbidden()
 
         endpoint, values = self.url_map.bind_to_environ(request.environ, server_name=urlparse(config.url).netloc.split(":")[0]).match()
@@ -109,4 +113,69 @@ class Application:
         if request.anonymous is not None:
             response.set_cookie("a", request.anonymous.token, expires=datetime.now() + timedelta(days=365))
 
+        if request.user is not None and request.user.permissions == 0:
+            if isinstance(response.data, str):
+                response.data = re.sub('(data-url|href)="(.+?)"',
+                                       partial(self._hide_url_callback, request.user.url_token),
+                                       response.data)
+
+            if "Location" in response.headers:
+                response.headers["Location"] = self._encrypt_url(request.user.url_token,
+                                                                 response.headers["Location"])
+
+        if request.anonymous:
+            if "Location" in response.headers:
+                parts = self._encrypt_url_parts(response.headers["Location"])
+                if parts:
+                    url_prefix, url, anchor = parts
+                    url_view = db.query(AnonymousUrlView).\
+                                  join(Url).\
+                                  filter(AnonymousUrlView.anonymous == request.anonymous,
+                                         Url.decrypted_url == url).\
+                                  first()
+                    if url_view:
+                        response.headers["Location"] = self._build_url(url_prefix, url_view.url.encrypted_url, anchor)
+
+
         return response
+
+    def _hide_url_callback(self, url_token, m):
+        return '%s="%s"' % (m.group(1), self._encrypt_url(url_token, m.group(2)))
+
+    def _encrypt_url(self, url_token, url):
+        cipher = AES.new(url_token)
+
+        parts = self._encrypt_url_parts(url)
+        if parts:
+            url_prefix, url, anchor = parts
+            url = self._build_url(url_prefix, hexlify(cipher.encrypt(self._pad(url))), anchor)
+
+        return url
+
+    def _encrypt_url_parts(self, url):
+        if "#" in url:
+            url, anchor = url.split("#", 1)
+        else:
+            anchor = None
+        if url != "":
+            result = urlparse(url)
+            if ((result.netloc == "" or result.netloc.endswith(self.local_domain)) and
+                    not any(result.path.startswith(p) for p in ("/asset", "/data", "/images", "/favicon.ico"))):
+                if result.path == "":
+                    url_prefix = ""
+                else:
+                    url_prefix = url.split(result.path)[0]
+
+                return url_prefix, url[len(url_prefix):], anchor
+
+        return None
+
+    def _build_url(self, url_prefix, encrypted_url, anchor):
+        url = url_prefix + "/private/%s" % encrypted_url
+        if anchor is not None:
+            url += "#%s" % anchor
+        return url
+
+    def _pad(self, s):
+        BLOCK_SIZE = 32
+        return s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * "@"

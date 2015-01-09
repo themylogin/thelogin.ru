@@ -86,7 +86,7 @@ class Controller(Abstract):
         type = kwargs["type"]
         content_item = db.query(ContentItem).filter(ContentItem.type == type, ContentItem.type_key == url, ContentItem.permissions_for(request.user)).first()
         if content_item is None:
-        	raise NotFound()
+            raise NotFound()
         item_dict = self._item_dict(content_item)
         return self.render_to_response(request, [
             "content/type/%s/view.html" % (item_dict["type"],),

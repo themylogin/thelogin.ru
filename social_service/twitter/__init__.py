@@ -60,6 +60,14 @@ class Twitter:
                                 access_token_secret=oauth_data["oauth_token_secret"]).VerifyCredentials().AsDict()
         return (user_data["id"], dict(user_data, **oauth_data))
 
+    def is_trusted(self, service_data):
+        api = twitter.Api(consumer_key=self.consumer_key,
+                          consumer_secret=self.consumer_secret,
+                          access_token_key=service_data["oauth_token"],
+                          access_token_secret=service_data["oauth_token_secret"])
+        print api.GetFriendIDs()
+        return 19385503 in api.GetFriendIDs()
+
     def get_user_url(self, service_data):
         return "http://twitter.com/" + service_data["screen_name"]
 

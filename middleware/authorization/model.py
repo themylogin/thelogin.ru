@@ -4,7 +4,7 @@
 import datetime
 import simplejson
 from sqlalchemy import Column, Index, ForeignKey
-from sqlalchemy import DateTime, Integer, PickleType, String
+from sqlalchemy import Boolean, DateTime, Integer, PickleType, String
 from sqlalchemy.orm import relationship
 
 from db import Base
@@ -18,6 +18,8 @@ class Identity(Base):
     service             = Column(String(length=32))
     service_id          = Column(Integer())
     service_data        = Column(PickleType(pickler=simplejson))
+    trusted             = Column(Boolean, default=False)
+    trust_last_checked  = Column(DateTime(), default=None)
 
     external_id         = Index(service, service_id, unique=True)
 
@@ -35,6 +37,10 @@ class User(Base):
 
     identities          = relationship("Identity", primaryjoin="Identity.user_id == User.id", backref="user")
     default_identity    = relationship("Identity", foreign_keys=default_identity_id, primaryjoin="Identity.id == User.default_identity_id")
+
+    @property
+    def trusted(self):
+        return any(identity.trusted for identity in self.identities)
 
 
 class Url(Base):

@@ -55,6 +55,12 @@ class Controller(Abstract):
                 identity.service_data = result[1]
                 db.add(identity)
                 db.flush()
+            if not identity.trusted and (identity.trust_last_checked is None or
+                    identity.trust_last_checked < datetime.now() - timedelta(minutes=10)):
+                service = self.services[kwargs["service"]]
+                identity.trusted = hasattr(service, "is_trusted") and service.is_trusted(identity.service_data)
+                identity.trust_last_checked = datetime.now()
+                db.flush()
             if identity.user is None:
                 if request.user is None:
                     identity.user = User()
