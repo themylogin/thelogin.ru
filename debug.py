@@ -7,13 +7,13 @@ from werkzeug.contrib.profiler import ProfilerMiddleware
 from werkzeug.serving import run_simple
 
 from config import config
-from web import Application
 
 if __name__ == "__main__":
     config.__readonly__["debug"] = True
     config.__readonly__["url"] = config.url.replace("://", "://debug.")
     config.__readonly__["cache"] = { "type" : "memory" }
 
+    from web import Application
     application = Application()
     application = ProfilerMiddleware(application, open("profile.txt", "w"))
 

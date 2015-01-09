@@ -32,7 +32,7 @@ class Config:
         "timezone"                      : datetime.timedelta(hours=7),
                 
         "default_title"                 : "thelogin.ru",
-        "build_title"                   : lambda *breadcrumbs: u" - ".join(reversed(breadcrumbs)) + u" - thelogin.ru",
+        "build_title"                   : lambda *breadcrumbs: u" - ".join(list(reversed(breadcrumbs)) + [u"thelogin.ru"]),
 
         "user_inactivity_till_leave"    : datetime.timedelta(minutes=10),
 

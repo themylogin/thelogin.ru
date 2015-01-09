@@ -70,10 +70,12 @@
             </div></div>
         {% endblock %}
 
-        <div class="page-content">
-            {% block base_content %}{% endblock %}
-            <div class="clear"></div>
-        </div>
+        {% block base_content_wrapper %}
+            <div class="page-content">
+                {% block base_content %}{% endblock %}
+                <div class="clear"></div>
+            </div>
+        {% endblock %}
 
         <div class="page-footer">
             {% block base_footer %}{% endblock %}

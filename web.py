@@ -35,6 +35,8 @@ class Application:
             else:
                 try:
                     response = self.process_request(request)
+                except Forbidden:
+                    response = self.controllers[0].render_to_response(request, "private.html")
                 except HTTPException, e:
                     response = e
                 except Exception, e:               
@@ -94,7 +96,7 @@ class Application:
             if request.user is None:
                 if not any(request.environ["PATH_INFO"].startswith(p)
                            for p in ("/authorization/",)):
-                    return Forbidden()
+                    raise Forbidden()
 
         endpoint, values = self.url_map.bind_to_environ(request.environ, server_name=urlparse(config.url).netloc.split(":")[0]).match()
         controller, controller_endpoint = endpoint.split("/", 1)
