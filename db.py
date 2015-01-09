@@ -10,7 +10,11 @@ from config import config
 from local import local_manager
 
 engine = create_engine(config.db, echo=config.debug)
-db = scoped_session(lambda: create_session(engine), local_manager.get_ident)
+def sessionmaker():
+    session = create_session(engine)
+    session._model_changes = {}
+    return session
+db = scoped_session(sessionmaker, local_manager.get_ident)
 
 @event.listens_for(Pool, "checkout")
 def ping_connection(dbapi_connection, connection_record, connection_proxy):
