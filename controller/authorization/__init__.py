@@ -64,11 +64,6 @@ class Controller(Abstract):
                     identity.user.url_token = "".join(random.choice(string.letters + string.digits + string.punctuation)
                                                       for i in xrange(32))
                     identity.user.settings = {}
-                    for hardware in self._get_present_hardware():
-                        if hardware["ip"] == request.remote_addr:
-                            identity.user.settings["MacAddress"] = hardware["mac"]
-                            if identity.service == "last.fm":
-                                identity.user.settings["RunScrobbler"] = True
                     db.add(identity.user)
                     db.flush()
                 else:
@@ -153,35 +148,3 @@ class Controller(Abstract):
         response = redirect(request.referrer or "/")
         response.set_cookie("u", "")
         return response
-
-    def _get_present_hardware(self):
-        macs = set()
-        present_hardware = []
-        for ip, lease in reversed(re.findall("lease([\d\s.]+){(.+?)}", open("/var/lib/dhcp/dhcpd.leases").read(), re.DOTALL)):
-            start           = dateutil.parser.parse(re.search("starts.* ([0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})", lease).group(1)) + config.timezone
-            mac             = re.search("hardware ethernet ([0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2})", lease).group(1)
-            ip              = ip.strip()
-            hostname        = re.search("client-hostname (.+);", lease)
-            if hostname:
-                hostname    = hostname.group(1).strip('"')
-            else:
-                hostname    = ""
-
-            if config.owner_hardware(ip, mac):
-                continue
-
-            if datetime.now() - start > timedelta(days=1):
-                continue
-
-            if mac in macs:
-                continue
-            macs.add(mac)
-
-            present_hardware.append({
-                "start"     : start,
-                "mac"       : mac,
-                "ip"        : ip,
-                "hostname"  : hostname,
-            })
-
-        return present_hardware
