@@ -58,7 +58,6 @@ class Config:
         "lastfm_api_key"                : "http://www.lastfm.ru/api/accounts"
         "lastfm_api_secret"             : "http://www.lastfm.ru/api/accounts"
         "lastfm_username"               : "themylogin",
-        "lastfm_thelogin_path"          : "/home/themylogin/www/apps/last.fm",
 
         "foursquare_client_id"          : "https://ru.foursquare.com/developers/apps"
         "foursquare_client_secret"      : "https://ru.foursquare.com/developers/apps"

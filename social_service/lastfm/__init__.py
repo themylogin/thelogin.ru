@@ -18,23 +18,19 @@ from threading import Thread
 from utils import urlencode
 
 class LastFM:	
-    def __init__(self, api_key, api_secret, username, thelogin_path=None):
+    def __init__(self, api_key, api_secret, username):
         self.api_key = api_key
         self.api_secret = api_secret
         self.network = pylast.LastFMNetwork(self.api_key, self.api_secret)
 
         self.username = username
 
-        """
-        sys.path.append(thelogin_path)
-        from lastfm.models import User, Scrobble
-        sys.path.pop()
+        from last_fm.db import db
+        from last_fm.models import User, Scrobble
         self.thelogin_User = User
         self.thelogin_Scrobble = Scrobble
-        engine = engine_from_config(paste.deploy.appconfig("config://" + os.path.join(thelogin_path, "production.ini")), 'sqlalchemy.')
-        self.thelogin_db = scoped_session(lambda: create_session(engine), local_manager.get_ident)
+        self.thelogin_db = db.session
         self.thelogin_user = self.thelogin_db.query(self.thelogin_User).filter(self.thelogin_User.username == self.username)[0]
-        """
 
     #
     def oauth_initiate(self, callback_url):

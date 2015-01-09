@@ -31,7 +31,7 @@ def block(to, from_=None, limit=6):
                 func.count(last_fm.thelogin_Scrobble),
                 func.min(last_fm.thelogin_Scrobble.uts)
             ).filter(
-                last_fm.thelogin_Scrobble.user == last_fm.thelogin_user.id,
+                last_fm.thelogin_Scrobble.user == last_fm.thelogin_user,
                 last_fm.thelogin_Scrobble.uts >= time.mktime(from_.timetuple()),
                 last_fm.thelogin_Scrobble.uts <= time.mktime(to.timetuple()),
             ).group_by(last_fm.thelogin_Scrobble.artist).order_by(-func.count(last_fm.thelogin_Scrobble))[:limit]
