@@ -9,6 +9,9 @@ from controller.content import get_content_feeds
 from controller.content.model import ContentItem
 
 def block(request, item=None):
+    if request.user is None:
+        return None
+
     if item is not None:
         start = item["created_at"]
     else:

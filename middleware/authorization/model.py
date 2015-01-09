@@ -31,7 +31,39 @@ class User(Base):
     last_activity       = Column(DateTime(), default=datetime.datetime.now)
     default_identity_id = Column(Integer, ForeignKey("identity.id"))
     permissions         = Column(Integer, default=0)
-    settings            = Column(PickleType(pickler=simplejson), default={})
+    settings            = Column(PickleType(pickler=simplejson), default=dict)
 
     identities          = relationship("Identity", primaryjoin="Identity.user_id == User.id", backref="user")
     default_identity    = relationship("Identity", foreign_keys=default_identity_id, primaryjoin="Identity.id == User.default_identity_id")
+
+
+class Url(Base):
+    __tablename__       = "url"
+
+    id                  = Column(Integer, primary_key=True)
+    encrypted_url       = Column(String(length=255), unique=True)
+    decrypted_url       = Column(String(length=255))
+    user_id             = Column(Integer, ForeignKey("user.id"))
+    datetime            = Column(DateTime(), default=datetime.datetime.now)
+
+    user                = relationship("User")
+
+
+class Anonymous(Base):
+    __tablename__       = "anonymous"
+
+    id                  = Column(Integer, primary_key=True)
+    token               = Column(String(length=32), unique=True)
+    ip_addresses        = Column(PickleType(pickler=simplejson), default=dict)
+
+
+class AnonymousUrlView(Base):
+    __tablename__       = "anonymous_url_view"
+
+    id                  = Column(Integer, primary_key=True)
+    anonymous_id        = Column(Integer, ForeignKey("anonymous.id"))
+    url_id              = Column(Integer, ForeignKey("url.id"))
+    datetime            = Column(DateTime(), default=datetime.datetime.now)
+
+    anonymous           = relationship("Anonymous")
+    url                 = relationship("Url")
