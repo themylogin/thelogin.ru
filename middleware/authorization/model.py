@@ -40,7 +40,7 @@ class User(Base):
 
     @property
     def trusted(self):
-        return any(identity.trusted for identity in self.identities)
+        return self.permissions > 0 or any(identity.trusted for identity in self.identities)
 
 
 class Url(Base):
