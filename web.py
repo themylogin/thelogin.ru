@@ -98,8 +98,9 @@ class Application:
                 request = middleware(request)
         else:
             if request.user is None or not request.user.trusted:
-                if not any(request.environ["PATH_INFO"].startswith(p)
-                           for p in ("/authorization/", "/content/post-comment/")):
+                if not (request.remote_addr == "127.0.0.1" or
+                        any(request.environ["PATH_INFO"].startswith(p)
+                            for p in ("/authorization/", "/content/post-comment/"))):
                     raise Forbidden()
 
         endpoint, values = self.url_map.bind_to_environ(request.environ, server_name=urlparse(config.url).netloc.split(":")[0]).match()

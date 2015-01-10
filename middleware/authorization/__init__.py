@@ -21,21 +21,22 @@ def middleware(request):
             db.flush()
 
     request.anonymous = None
-    if request.user is None:
-        if "a" in request.cookies:
-            request.anonymous = db.query(Anonymous).filter(Anonymous.token == request.cookies["a"]).first()
+    if request.remote_addr != "127.0.0.1":
+        if request.user is None:
+            if "a" in request.cookies:
+                request.anonymous = db.query(Anonymous).filter(Anonymous.token == request.cookies["a"]).first()
 
-        if request.anonymous is None:
-            request.anonymous = Anonymous()
-            request.anonymous.token = "".join(random.choice(string.letters + string.digits + string.punctuation)
-                                              for i in xrange(32))
-            db.add(request.anonymous)
-            db.flush()
+            if request.anonymous is None:
+                request.anonymous = Anonymous()
+                request.anonymous.token = "".join(random.choice(string.letters + string.digits + string.punctuation)
+                                                  for i in xrange(32))
+                db.add(request.anonymous)
+                db.flush()
 
-        if request.remote_addr not in request.anonymous.ip_addresses:
-            request.anonymous.ip_addresses = {a: True for a in request.anonymous.ip_addresses.keys()}
-            request.anonymous.ip_addresses[request.remote_addr] = True
-            db.flush()
+            if request.remote_addr not in request.anonymous.ip_addresses:
+                request.anonymous.ip_addresses = {a: True for a in request.anonymous.ip_addresses.keys()}
+                request.anonymous.ip_addresses[request.remote_addr] = True
+                db.flush()
 
     return request
 
