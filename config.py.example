@@ -82,6 +82,8 @@ class Config:
         "imap_password"                 : "http://mail.google.com"
 
         "yandex_maps_api_key"           : "http://api.yandex.ru/maps/getkey.xml"
+
+        "sentry_dsn"                    : "https://getsentry.com/"
         
         # { "Смайлик" : "путь к нему" }
         "smilies"       :   {

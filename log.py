@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os.path
-import sys
+from raven import Client
 
-from local import local
+from config import config
+
+client = Client(config.sentry_dsn)
 
 logger = logging.getLogger("thelogin")
 logger.setLevel(logging.DEBUG)

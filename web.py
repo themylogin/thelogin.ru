@@ -16,7 +16,7 @@ from config import config
 from controller import all as controllers
 from db import db
 from local import local, local_manager
-from log import logger
+from log import client
 from middleware import all as all_middleware
 from middleware.authorization.model import AnonymousUrlView, Url
 
@@ -43,8 +43,8 @@ class Application:
                     response = self.controllers[0].render_to_response(request, "private.html")
                 except HTTPException, e:
                     response = e
-                except Exception, e:               
-                    logger.exception("An unhandled exception occurred during the execution of the current web request")
+                except Exception:
+                    client.captureException()
                     response = InternalServerError()
             return response(environ, start_response)
 
