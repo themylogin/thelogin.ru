@@ -378,7 +378,7 @@ class Controller(Abstract):
                     db_tag.url = tag.split(":", 2)[0] if ":" in tag else tag
                     db_tag.title = tag.split(":", 2)[1] if ":" in tag else tag
                     db.add(db_tag)
-                    db.flush
+                    db.flush()
                 c.tags.append(db_tag)
 
             data = editor.form_to_db(request, c.data)
