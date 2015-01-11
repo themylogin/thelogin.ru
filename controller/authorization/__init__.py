@@ -55,6 +55,9 @@ class Controller(Abstract):
                 identity.service_data = result[1]
                 db.add(identity)
                 db.flush()
+            else:
+                identity.service_data = result[1]
+                db.flush()
             if not identity.trusted and (identity.trust_last_checked is None or
                     identity.trust_last_checked < datetime.now() - timedelta(minutes=10)):
                 service = self.services[kwargs["service"]]
