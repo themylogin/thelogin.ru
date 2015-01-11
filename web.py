@@ -9,6 +9,7 @@ import re
 from urlparse import urlparse
 from werkzeug.exceptions import HTTPException, Forbidden, InternalServerError
 from werkzeug.routing import EndpointPrefix, Map
+from werkzeug.utils import redirect
 from werkzeug.wrappers import Request
 from werkzeug.wsgi import ClosingIterator
 
@@ -57,7 +58,11 @@ class Application:
         if request.environ["PATH_INFO"].startswith("/private/"):
             path_info = request.environ["PATH_INFO"]
             path_info = path_info[len("/private/"):]
-            if not (request.user is None or not request.user.trusted):
+            url = db.query(Url).filter(Url.encrypted_url == path_info).first()
+            if request.user is not None and request.user.trusted:
+                if url is not None and url.user != request.user:
+                    return redirect(self._encrypt_url(request.user.url_token, url.decrypted_url))
+
                 path_info_encrypted = path_info
                 path_info = AES.new(request.user.url_token).decrypt(unhexlify(path_info)).rstrip("@")
 
@@ -69,7 +74,6 @@ class Application:
                     url.user = request.user
                     db.add(url)
             else:
-                url = db.query(Url).filter(Url.encrypted_url == path_info).first()
                 if url is None:
                     raise Forbidden()
                 if not any(url.decrypted_url.startswith(p)
