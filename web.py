@@ -102,7 +102,8 @@ class Application:
                 request = middleware(request)
         else:
             if request.user is None or not request.user.trusted:
-                if not (request.remote_addr == "127.0.0.1" or
+                if not (request.host.startswith("i.") or
+                        request.remote_addr == "127.0.0.1" or
                         any(request.environ["PATH_INFO"].startswith(p)
                             for p in ("/authorization/", "/content/post-comment/"))):
                     raise Forbidden()
