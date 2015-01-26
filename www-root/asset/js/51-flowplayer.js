@@ -1,9 +1,26 @@
 $(function(){
+    function pauseOthers(thisPlayer)
+    {
+        for (var i = 0, player; (player = flowplayer(i)) !== undefined; i++)
+        {
+            if (player != thisPlayer)
+            {
+                player.pause();
+            }
+        }
+    }
+
     $.fn.extend({
         handle_flowplayers: function(){
             $("a.flowplayer-audio:not(:has(object))").flowplayer("/asset/js/flowplayer-3.2.7.swf", {
                 clip: {
-                    autoPlay: false
+                    autoPlay: false,
+                    onResume: function(){
+                        pauseOthers(this);
+                    },
+                    onStart: function(){
+                        pauseOthers(this);
+                    }
                 },
                 plugins: {
                     controls: {
@@ -30,7 +47,13 @@ $(function(){
             $("a.flowplayer-video:not(:has(object))").flowplayer("/asset/js/flowplayer-3.2.7.swf", {
                 clip: {
                     autoPlay: false,
-                    scaling: 'fit'
+                    onResume: function(){
+                        pauseOthers(this);
+                    },
+                    onStart: function(){
+                        pauseOthers(this);
+                    },
+                    scaling: 'fit',
                 },
                 plugins: {
                     controls: {

@@ -20,6 +20,7 @@ from local import local, local_manager
 from log import client
 from middleware import all as all_middleware
 from middleware.authorization.model import AnonymousUrlView, Url
+from social_service import all as all_social_service
 
 # WSGI application
 class Application:
@@ -47,6 +48,7 @@ class Application:
                 except Exception:
                     client.captureException()
                     response = InternalServerError()
+            all_social_service["last.fm"].thelogin_db.remove()
             return response(environ, start_response)
 
         return ClosingIterator(local_manager.make_middleware(app)(environ, start_response), db.remove)

@@ -2,12 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-import os
-import paste.deploy
 import pylast
-from sqlalchemy import engine_from_config
-from sqlalchemy.orm import create_session, scoped_session
-import sys
 from werkzeug.utils import redirect
 
 from config import config
@@ -29,7 +24,7 @@ class LastFM:
         from last_fm.models import User, Scrobble
         self.thelogin_User = User
         self.thelogin_Scrobble = Scrobble
-        self.thelogin_db = db.session
+        self.thelogin_db = db.create_scoped_session({"scopefunc": local_manager.get_ident})
         self.thelogin_user = self.thelogin_db.query(self.thelogin_User).filter(self.thelogin_User.username == self.username)[0]
 
     #
