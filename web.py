@@ -57,6 +57,14 @@ class Application:
         for middleware in all_middleware:
             request = middleware(request)
 
+        if (request.user is not None and
+            request.user.permissions == 0 and
+            request.user.trusted and            
+            any(request.environ["PATH_INFO"].startswith(p)
+                for p in ("/blog/post/", "/gallery/view/", "/video/view/",
+                          "/chatlogs/view/", "/library/view/", "/shop/view/"))):
+            return redirect(self._encrypt_url(request.user.url_token, request.environ["PATH_INFO"]))
+
         if request.environ["PATH_INFO"].startswith("/private/"):
             path_info = request.environ["PATH_INFO"]
             path_info = path_info[len("/private/"):]
