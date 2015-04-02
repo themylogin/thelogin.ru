@@ -9,6 +9,11 @@ import urllib
 from werkzeug.contrib.securecookie import SecureCookie
 from werkzeug.utils import redirect
 
+REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
+ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
+AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
+SIGNIN_URL = 'https://api.twitter.com/oauth/authenticate'
+
 class Twitter:	
     def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
         self.consumer_key = consumer_key
@@ -25,12 +30,12 @@ class Twitter:
         oauth_consumer  = oauth2.Consumer(key=self.consumer_key, secret=self.consumer_secret)
         oauth_client    = oauth2.Client(oauth_consumer)
 
-        resp, content   = oauth_client.request(twitter.REQUEST_TOKEN_URL, "POST", body=urllib.urlencode({ "oauth_callback" : callback_url }))
+        resp, content   = oauth_client.request(REQUEST_TOKEN_URL, "POST", body=urllib.urlencode({ "oauth_callback" : callback_url }))
         if resp["status"] != "200":
             raise Exception("Unable to request token from Twitter: %s" % resp["status"])
         oauth_data = dict(parse_qsl(content))
         
-        response = redirect(twitter.AUTHORIZATION_URL + "?oauth_token=" + oauth_data["oauth_token"])
+        response = redirect(AUTHORIZATION_URL + "?oauth_token=" + oauth_data["oauth_token"])
         response.set_cookie("twitter_oauth", SecureCookie(oauth_data, self.consumer_secret).serialize(), httponly=True)
         return response
 
@@ -49,7 +54,7 @@ class Twitter:
         oauth_consumer  = oauth2.Consumer(key=self.consumer_key, secret=self.consumer_secret)
         oauth_client    = oauth2.Client(oauth_consumer, oauth_token)
 
-        resp, content   = oauth_client.request(twitter.ACCESS_TOKEN_URL, "POST")
+        resp, content   = oauth_client.request(ACCESS_TOKEN_URL, "POST")
         if resp["status"] != "200":
             return False
         oauth_data = dict(parse_qsl(content))
