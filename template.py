@@ -3,9 +3,8 @@
 
 from datetime import datetime
 import dateutil.parser
-from jinja2 import ChoiceLoader, contextfunction, Environment, FileSystemLoader, Markup, MemcachedBytecodeCache
+from jinja2 import ChoiceLoader, contextfunction, Environment, FileSystemLoader, Markup
 import inspect
-import memcache
 import os
 import sys
 import urllib
@@ -18,13 +17,10 @@ if config.debug:
     bytecode_cache = None
 else:
     auto_reload = False    
-    if config.cache["type"] == "memcached":
-        bytecode_cache = MemcachedBytecodeCache(memcache.Client([config.cache["url"]]))
-    else:        
-        bytecode_cache = None
+    bytecode_cache = None
 
 jinja = Environment(
-    loader 	        =   FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")),
+    loader          =   FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")),
     autoescape      =   True,
     auto_reload     =   auto_reload,
     bytecode_cache  =   bytecode_cache

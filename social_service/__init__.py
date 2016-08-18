@@ -23,6 +23,7 @@ all = {
                             api_secret          = config.lastfm_api_secret,
 
                             username            = config.lastfm_username,
+                            last_fm_thelogin_ru_url = config.last_fm_thelogin_ru_url,
                         ),
     "twitter"       :   Twitter(
                             consumer_key        = config.twitter_oauth_consumer_key,

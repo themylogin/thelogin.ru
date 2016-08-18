@@ -58,10 +58,7 @@ def math(text, url):
                 os.path.join(
                     "/tmp",
                     Popen([
-                        os.path.join(
-                            config.path,
-                            "w/extensions/Math/math/texvc"
-                        ),
+                        "texvc",
                         "/tmp",
                         "/tmp",
                         match.group(2),

@@ -3,6 +3,8 @@
 
 from datetime import datetime
 import pylast
+import requests
+import simplejson
 from werkzeug.utils import redirect
 
 from config import config
@@ -13,19 +15,18 @@ from threading import Thread
 from utils import urlencode
 
 class LastFM:	
-    def __init__(self, api_key, api_secret, username):
+    def __init__(self, api_key, api_secret, username, last_fm_thelogin_ru_url):
         self.api_key = api_key
         self.api_secret = api_secret
         self.network = pylast.LastFMNetwork(self.api_key, self.api_secret)
 
         self.username = username
 
-        from last_fm.db import db
-        from last_fm.models import User, Scrobble
-        self.thelogin_User = User
-        self.thelogin_Scrobble = Scrobble
-        self.thelogin_db = db.create_scoped_session({"scopefunc": local_manager.get_ident})
-        self.thelogin_user = self.thelogin_db.query(self.thelogin_User).filter(self.thelogin_User.username == self.username)[0]
+        self.last_fm_thelogin_ru_url = last_fm_thelogin_ru_url
+        self.last_fm_thelogin_ru_user_id = self.execute_last_fm_thelogin_ru_query(
+            "SELECT * FROM \"user\" WHERE username = :username",
+            {"username": self.username}
+        )[0]["id"]
 
     #
     def oauth_initiate(self, callback_url):
@@ -103,3 +104,17 @@ class LastFM:
 
             Thread(target=get_image_for_now).start()            
             return config.url + "/asset/img/social_service/last.fm/none.png"
+
+    def execute_last_fm_thelogin_ru_query(self, query, params):
+        r = requests.post(
+            "%s/api/sql" % self.last_fm_thelogin_ru_url,
+            headers={"Content-type": "application/json"},
+            data=simplejson.dumps({
+                "query": query,
+                "params": params,
+            })
+        )
+        if r.status_code == 200:
+            return r.json()
+        else:
+            raise Exception(r.content)

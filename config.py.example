@@ -4,7 +4,6 @@
 import datetime
 import logging
 import os
-import pika
 
 import russian_datetime
 from utils import ReadonlyPropertiesMetaclass
@@ -15,12 +14,12 @@ class Config:
         "debug"                         : False,
 
         "url"                           : "http://thelogin.ru",
-        "path"                          : "/home/themylogin/www/thelogin.ru",
+        "path"                          : "/www-root",
 
-        "db"                            : "mysql://user:password@localhost/db?charset=utf8"
+        "db"                            : "mysql://thelogin:thelogin@mysql/thelogin?charset=utf8",
         "cache"                         : {
-                                              "type"    : "ext:memcached",
-                                              "url"     : "127.0.0.1:11211",
+                                              "type"    : "file",
+                                              "data_dir": "/tmp/thelogin/data",
                                               "lock_dir": "/tmp/thelogin/lock",
                                           },
 
@@ -58,6 +57,7 @@ class Config:
         "lastfm_api_key"                : "http://www.lastfm.ru/api/accounts"
         "lastfm_api_secret"             : "http://www.lastfm.ru/api/accounts"
         "lastfm_username"               : "themylogin",
+        "last_fm_thelogin_ru_url"       : "http://last.fm.thelogin.ru",
 
         "foursquare_client_id"          : "https://ru.foursquare.com/developers/apps"
         "foursquare_client_secret"      : "https://ru.foursquare.com/developers/apps"

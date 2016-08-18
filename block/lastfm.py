@@ -19,22 +19,33 @@ def block(to, from_=None, limit=6):
 
         "artists"   : [
             {
-                "artist"        : artist,
-                "artist_url"    : last_fm.network.get_artist(artist).get_url(),
-                "scrobble_url"  : last_fm.get_scrobble_url(artist, min_uts),
-                "image"         : last_fm.get_artist_image_at(artist, to),
-                "scrobbles"     : scrobbles,
-                "min_uts"       : min_uts,
+                "artist"        : artist["artist"],
+                "artist_url"    : last_fm.network.get_artist(artist["artist"]).get_url(),
+                "scrobble_url"  : last_fm.get_scrobble_url(artist["artist"], artist["min_uts"]),
+                "image"         : last_fm.get_artist_image_at(artist["artist"], to),
+                "scrobbles"     : artist["scrobbles"],
+                "min_uts"       : artist["min_uts"],
             }
-            for artist, scrobbles, min_uts in last_fm.thelogin_db.query(
-                last_fm.thelogin_Scrobble.artist,
-                func.count(last_fm.thelogin_Scrobble),
-                func.min(last_fm.thelogin_Scrobble.uts)
-            ).filter(
-                last_fm.thelogin_Scrobble.user == last_fm.thelogin_user,
-                last_fm.thelogin_Scrobble.uts >= time.mktime(from_.timetuple()),
-                last_fm.thelogin_Scrobble.uts <= time.mktime(to.timetuple()),
-            ).group_by(last_fm.thelogin_Scrobble.artist).order_by(-func.count(last_fm.thelogin_Scrobble))[:limit]
+            for artist in last_fm.execute_last_fm_thelogin_ru_query(
+                """
+                    SELECT artist,
+                           COUNT(scrobble.id) AS scrobbles,
+                           MIN(scrobble.uts) AS min_uts
+                    FROM scrobble
+                    WHERE user_id = :user_id
+                      AND uts >= :from
+                      AND uts <= :to
+                    GROUP BY artist
+                    ORDER BY COUNT(scrobble.id) DESC
+                    LIMIT :limit
+                """,
+                {
+                    "user_id": last_fm.last_fm_thelogin_ru_user_id,
+                    "from": time.mktime(from_.timetuple()),
+                    "to": time.mktime(to.timetuple()),
+                    "limit": limit,
+                }
+            )
         ],
     }
     if not result["artists"]:

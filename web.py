@@ -48,7 +48,6 @@ class Application:
                 except Exception:
                     client.captureException()
                     response = InternalServerError()
-            all_social_service["last.fm"].thelogin_db.remove()
             return response(environ, start_response)
 
         return ClosingIterator(local_manager.make_middleware(app)(environ, start_response), db.remove)
