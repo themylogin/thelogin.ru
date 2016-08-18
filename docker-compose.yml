@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  uwsgi:
+    build: .
+    command: >
+      sh -cex "
+        cd /thelogin;
+        exec /virtualenv/bin/uwsgi --master --need-app --module 'web:Application()' --processes 5 --enable-threads --chmod-socket=666 --socket /var/run/thelogin/uwsgi.socket;
+      "
+    links:
+      - mysql
+    restart: always
+    volumes:
+      - /mnt/themylogin/www/thelogin.ru:/www-root
+      - /var/run/thelogin
+
+  nginx:
+    build: nginx
+    ports:
+      - "$PORT:80"
+    restart: always
+    volumes_from:
+      - uwsgi
+
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: thelogin
+      MYSQL_DATABASE: thelogin
+      MYSQL_USER: thelogin
+      MYSQL_PASSWORD: thelogin
+    restart: always
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
