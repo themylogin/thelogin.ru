@@ -12,8 +12,8 @@ services:
       - mysql
     restart: always
     volumes:
-      - /mnt/themylogin/www/thelogin.ru:/www-root
-      - /var/run/thelogin
+      - /home/themylogin/apps/blog.thelogin.ru/www-root:/www-root
+      - run:/var/run/thelogin
 
   nginx:
     build: nginx
@@ -36,3 +36,4 @@ services:
 
 volumes:
   mysql-data:
+  run:
