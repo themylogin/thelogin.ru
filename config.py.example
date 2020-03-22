@@ -13,7 +13,7 @@ class Config:
     __readonly__ = {
         "debug"                         : False,
 
-        "url"                           : "http://thelogin.ru",
+        "url"                           : "http://blog.thelogin.ru",
         "path"                          : "/www-root",
 
         "db"                            : "mysql://thelogin:thelogin@mysql/thelogin?charset=utf8",
@@ -35,7 +35,7 @@ class Config:
 
         "user_inactivity_till_leave"    : datetime.timedelta(minutes=10),
 
-        "forbid_internet_image"         : ["thelogin.ru", "debug.thelogin.ru"],
+        "forbid_internet_image"         : ["blog.thelogin.ru", "debug.blog.thelogin.ru"],
 
         "owner_hardware"                : lambda ip, mac: int(ip.split(".")[3]) < 7 or mac in ["90:84:0d:9f:ad:3b"],
         "smarthome_api_addresses"       : ["127.0.0.1", "192.168.0.1", "192.168.0.3", "37.193.98.32"],

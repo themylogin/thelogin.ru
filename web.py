@@ -56,6 +56,7 @@ class Application:
         for middleware in all_middleware:
             request = middleware(request)
 
+        """
         if (request.user is not None and
             request.user.permissions == 0 and
             request.user.trusted and            
@@ -113,9 +114,19 @@ class Application:
             if request.user is None or not request.user.trusted:
                 if not (request.host.startswith("i.") or
                         request.remote_addr == "127.0.0.1" or
+                        request.remote_addr.startswith("172.") or
                         any(request.environ["PATH_INFO"].startswith(p)
                             for p in ("/authorization/", "/content/post-comment/"))):
                     raise Forbidden()
+        """
+
+        if request.user is None or not request.user.trusted:
+            if not (request.host.startswith("i.") or
+                    request.remote_addr == "127.0.0.1" or
+                    request.remote_addr.startswith("172.") or
+                    any(request.environ["PATH_INFO"].startswith(p)
+                        for p in ("/authorization/",))):
+                raise Forbidden()
 
         endpoint, values = self.url_map.bind_to_environ(request.environ, server_name=urlparse(config.url).netloc.split(":")[0]).match()
         controller, controller_endpoint = endpoint.split("/", 1)
@@ -125,6 +136,7 @@ class Application:
 
         response = getattr(controller, controller_method)(request, **values)
 
+        """
         if request.anonymous is not None:
             response.set_cookie("a", request.anonymous.token, expires=datetime.now() + timedelta(days=365))
 
@@ -150,7 +162,7 @@ class Application:
                                   first()
                     if url_view:
                         response.headers["Location"] = self._build_url(url_prefix, url_view.url.encrypted_url, anchor)
-
+        """
 
         return response
 
