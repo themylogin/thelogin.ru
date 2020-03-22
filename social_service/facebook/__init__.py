@@ -23,7 +23,7 @@ class Facebook:
 
         access_token = facebook.get_access_token_from_code(request.args.get("code"), callback_url, self.client_id, self.client_secret)["access_token"]
         user = facebook.GraphAPI(access_token).get_object("me")
-        
+
         return (int(user["id"]), dict(user, access_token=access_token))
 
     def get_user_url(self, service_data):

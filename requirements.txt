@@ -3,7 +3,7 @@ BeautifulSoup==3.2.1
 beautifulsoup4==4.3.2
 contextlib2==0.5.4
 cssmin==0.2.0
-Facebook==0.0
+facebook-sdk==2.0.0
 feedparser==5.2.1
 foursquare==1!2015.5.26
 funcsigs==1.0.2
