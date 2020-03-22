@@ -22,7 +22,10 @@ def image(text, url):
         src = image.get("src")
         original = re.sub("images/(.*?)([0-9]+)\.", "images/\\2.", src)
 
-        width, height = Image.open(StringIO.StringIO(urllib2.urlopen(config.url + src).read())).size
+        try:
+            width, height = Image.open(StringIO.StringIO(urllib2.urlopen(config.url + src).read())).size
+        except IOError:
+            width, height = 16, 16
 
         if "class" in image.attrib:
             image.attrib["class"] = "image " + image.attrib["class"]
@@ -53,20 +56,23 @@ def math(text, url):
         hash = hashlib.md5(match.group(2))
         filename = os.path.join(config.path, "data/blog/math", hash.hexdigest() + ".png")
         if not os.path.exists(filename):
-            Popen([
-                "mv",
-                os.path.join(
-                    "/tmp",
-                    Popen([
-                        "texvc",
+            try:
+                Popen([
+                    "mv",
+                    os.path.join(
                         "/tmp",
-                        "/tmp",
-                        match.group(2),
-                        "UTF-8"
-                    ], stdout=PIPE).communicate()[0][1:33] + ".png"
-                ),
-                filename
-            ]).communicate()
+                        Popen([
+                            "texvc",
+                            "/tmp",
+                            "/tmp",
+                            match.group(2),
+                            "UTF-8"
+                        ], stdout=PIPE).communicate()[0][1:33] + ".png"
+                    ),
+                    filename
+                ]).communicate()
+            except Exception:
+                pass
         return "<img class=\"math\" src=\"/data/blog/math/" + hash.hexdigest() + ".png\" " + match.group(1) + " />"
     return re.sub(re.compile("<math(.*?)>(.*?)</math>", flags=re.DOTALL), math_cb, text)
 
