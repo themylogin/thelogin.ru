@@ -11,7 +11,7 @@ future==0.15.2
 httplib2==0.9.2
 Jinja2==2.8
 jsmin==2.2.1
-lxml==3.4.4
+lxml==4.6.5
 MarkupSafe==0.23
 MySQL-python==1.2.5
 oauth2==1.9.0.post1
